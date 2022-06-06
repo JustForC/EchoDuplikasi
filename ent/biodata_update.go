@@ -8,6 +8,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -24,6 +25,144 @@ type BiodataUpdate struct {
 // Where appends a list predicates to the BiodataUpdate builder.
 func (bu *BiodataUpdate) Where(ps ...predicate.Biodata) *BiodataUpdate {
 	bu.mutation.Where(ps...)
+	return bu
+}
+
+// SetName sets the "name" field.
+func (bu *BiodataUpdate) SetName(s string) *BiodataUpdate {
+	bu.mutation.SetName(s)
+	return bu
+}
+
+// SetNickname sets the "nickname" field.
+func (bu *BiodataUpdate) SetNickname(s string) *BiodataUpdate {
+	bu.mutation.SetNickname(s)
+	return bu
+}
+
+// SetGender sets the "gender" field.
+func (bu *BiodataUpdate) SetGender(s string) *BiodataUpdate {
+	bu.mutation.SetGender(s)
+	return bu
+}
+
+// SetBirthplace sets the "birthplace" field.
+func (bu *BiodataUpdate) SetBirthplace(s string) *BiodataUpdate {
+	bu.mutation.SetBirthplace(s)
+	return bu
+}
+
+// SetBirthdate sets the "birthdate" field.
+func (bu *BiodataUpdate) SetBirthdate(t time.Time) *BiodataUpdate {
+	bu.mutation.SetBirthdate(t)
+	return bu
+}
+
+// SetTelephone sets the "telephone" field.
+func (bu *BiodataUpdate) SetTelephone(s string) *BiodataUpdate {
+	bu.mutation.SetTelephone(s)
+	return bu
+}
+
+// SetEmail sets the "email" field.
+func (bu *BiodataUpdate) SetEmail(s string) *BiodataUpdate {
+	bu.mutation.SetEmail(s)
+	return bu
+}
+
+// SetIdType sets the "idType" field.
+func (bu *BiodataUpdate) SetIdType(s string) *BiodataUpdate {
+	bu.mutation.SetIdType(s)
+	return bu
+}
+
+// SetIdNumber sets the "idNumber" field.
+func (bu *BiodataUpdate) SetIdNumber(s string) *BiodataUpdate {
+	bu.mutation.SetIdNumber(s)
+	return bu
+}
+
+// SetAddressID sets the "addressID" field.
+func (bu *BiodataUpdate) SetAddressID(s string) *BiodataUpdate {
+	bu.mutation.SetAddressID(s)
+	return bu
+}
+
+// SetPostCodeID sets the "postCodeID" field.
+func (bu *BiodataUpdate) SetPostCodeID(s string) *BiodataUpdate {
+	bu.mutation.SetPostCodeID(s)
+	return bu
+}
+
+// SetDistrictID sets the "districtID" field.
+func (bu *BiodataUpdate) SetDistrictID(s string) *BiodataUpdate {
+	bu.mutation.SetDistrictID(s)
+	return bu
+}
+
+// SetCityID sets the "cityID" field.
+func (bu *BiodataUpdate) SetCityID(s string) *BiodataUpdate {
+	bu.mutation.SetCityID(s)
+	return bu
+}
+
+// SetProvinceID sets the "provinceID" field.
+func (bu *BiodataUpdate) SetProvinceID(s string) *BiodataUpdate {
+	bu.mutation.SetProvinceID(s)
+	return bu
+}
+
+// SetAddressLiving sets the "addressLiving" field.
+func (bu *BiodataUpdate) SetAddressLiving(s string) *BiodataUpdate {
+	bu.mutation.SetAddressLiving(s)
+	return bu
+}
+
+// SetPostCodeLiving sets the "postCodeLiving" field.
+func (bu *BiodataUpdate) SetPostCodeLiving(s string) *BiodataUpdate {
+	bu.mutation.SetPostCodeLiving(s)
+	return bu
+}
+
+// SetDistrictLiving sets the "districtLiving" field.
+func (bu *BiodataUpdate) SetDistrictLiving(s string) *BiodataUpdate {
+	bu.mutation.SetDistrictLiving(s)
+	return bu
+}
+
+// SetCityLiving sets the "cityLiving" field.
+func (bu *BiodataUpdate) SetCityLiving(s string) *BiodataUpdate {
+	bu.mutation.SetCityLiving(s)
+	return bu
+}
+
+// SetProvinceLiving sets the "provinceLiving" field.
+func (bu *BiodataUpdate) SetProvinceLiving(s string) *BiodataUpdate {
+	bu.mutation.SetProvinceLiving(s)
+	return bu
+}
+
+// SetEntrance sets the "entrance" field.
+func (bu *BiodataUpdate) SetEntrance(s string) *BiodataUpdate {
+	bu.mutation.SetEntrance(s)
+	return bu
+}
+
+// SetEntranceNumber sets the "entranceNumber" field.
+func (bu *BiodataUpdate) SetEntranceNumber(s string) *BiodataUpdate {
+	bu.mutation.SetEntranceNumber(s)
+	return bu
+}
+
+// SetMajor sets the "major" field.
+func (bu *BiodataUpdate) SetMajor(s string) *BiodataUpdate {
+	bu.mutation.SetMajor(s)
+	return bu
+}
+
+// SetUniversity sets the "university" field.
+func (bu *BiodataUpdate) SetUniversity(s string) *BiodataUpdate {
+	bu.mutation.SetUniversity(s)
 	return bu
 }
 
@@ -104,6 +243,167 @@ func (bu *BiodataUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if value, ok := bu.mutation.Name(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldName,
+		})
+	}
+	if value, ok := bu.mutation.Nickname(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldNickname,
+		})
+	}
+	if value, ok := bu.mutation.Gender(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldGender,
+		})
+	}
+	if value, ok := bu.mutation.Birthplace(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldBirthplace,
+		})
+	}
+	if value, ok := bu.mutation.Birthdate(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: biodata.FieldBirthdate,
+		})
+	}
+	if value, ok := bu.mutation.Telephone(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldTelephone,
+		})
+	}
+	if value, ok := bu.mutation.Email(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldEmail,
+		})
+	}
+	if value, ok := bu.mutation.IdType(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldIdType,
+		})
+	}
+	if value, ok := bu.mutation.IdNumber(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldIdNumber,
+		})
+	}
+	if value, ok := bu.mutation.AddressID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldAddressID,
+		})
+	}
+	if value, ok := bu.mutation.PostCodeID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldPostCodeID,
+		})
+	}
+	if value, ok := bu.mutation.DistrictID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldDistrictID,
+		})
+	}
+	if value, ok := bu.mutation.CityID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldCityID,
+		})
+	}
+	if value, ok := bu.mutation.ProvinceID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldProvinceID,
+		})
+	}
+	if value, ok := bu.mutation.AddressLiving(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldAddressLiving,
+		})
+	}
+	if value, ok := bu.mutation.PostCodeLiving(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldPostCodeLiving,
+		})
+	}
+	if value, ok := bu.mutation.DistrictLiving(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldDistrictLiving,
+		})
+	}
+	if value, ok := bu.mutation.CityLiving(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldCityLiving,
+		})
+	}
+	if value, ok := bu.mutation.ProvinceLiving(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldProvinceLiving,
+		})
+	}
+	if value, ok := bu.mutation.Entrance(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldEntrance,
+		})
+	}
+	if value, ok := bu.mutation.EntranceNumber(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldEntranceNumber,
+		})
+	}
+	if value, ok := bu.mutation.Major(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldMajor,
+		})
+	}
+	if value, ok := bu.mutation.University(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldUniversity,
+		})
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, bu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{biodata.Label}
@@ -121,6 +421,144 @@ type BiodataUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *BiodataMutation
+}
+
+// SetName sets the "name" field.
+func (buo *BiodataUpdateOne) SetName(s string) *BiodataUpdateOne {
+	buo.mutation.SetName(s)
+	return buo
+}
+
+// SetNickname sets the "nickname" field.
+func (buo *BiodataUpdateOne) SetNickname(s string) *BiodataUpdateOne {
+	buo.mutation.SetNickname(s)
+	return buo
+}
+
+// SetGender sets the "gender" field.
+func (buo *BiodataUpdateOne) SetGender(s string) *BiodataUpdateOne {
+	buo.mutation.SetGender(s)
+	return buo
+}
+
+// SetBirthplace sets the "birthplace" field.
+func (buo *BiodataUpdateOne) SetBirthplace(s string) *BiodataUpdateOne {
+	buo.mutation.SetBirthplace(s)
+	return buo
+}
+
+// SetBirthdate sets the "birthdate" field.
+func (buo *BiodataUpdateOne) SetBirthdate(t time.Time) *BiodataUpdateOne {
+	buo.mutation.SetBirthdate(t)
+	return buo
+}
+
+// SetTelephone sets the "telephone" field.
+func (buo *BiodataUpdateOne) SetTelephone(s string) *BiodataUpdateOne {
+	buo.mutation.SetTelephone(s)
+	return buo
+}
+
+// SetEmail sets the "email" field.
+func (buo *BiodataUpdateOne) SetEmail(s string) *BiodataUpdateOne {
+	buo.mutation.SetEmail(s)
+	return buo
+}
+
+// SetIdType sets the "idType" field.
+func (buo *BiodataUpdateOne) SetIdType(s string) *BiodataUpdateOne {
+	buo.mutation.SetIdType(s)
+	return buo
+}
+
+// SetIdNumber sets the "idNumber" field.
+func (buo *BiodataUpdateOne) SetIdNumber(s string) *BiodataUpdateOne {
+	buo.mutation.SetIdNumber(s)
+	return buo
+}
+
+// SetAddressID sets the "addressID" field.
+func (buo *BiodataUpdateOne) SetAddressID(s string) *BiodataUpdateOne {
+	buo.mutation.SetAddressID(s)
+	return buo
+}
+
+// SetPostCodeID sets the "postCodeID" field.
+func (buo *BiodataUpdateOne) SetPostCodeID(s string) *BiodataUpdateOne {
+	buo.mutation.SetPostCodeID(s)
+	return buo
+}
+
+// SetDistrictID sets the "districtID" field.
+func (buo *BiodataUpdateOne) SetDistrictID(s string) *BiodataUpdateOne {
+	buo.mutation.SetDistrictID(s)
+	return buo
+}
+
+// SetCityID sets the "cityID" field.
+func (buo *BiodataUpdateOne) SetCityID(s string) *BiodataUpdateOne {
+	buo.mutation.SetCityID(s)
+	return buo
+}
+
+// SetProvinceID sets the "provinceID" field.
+func (buo *BiodataUpdateOne) SetProvinceID(s string) *BiodataUpdateOne {
+	buo.mutation.SetProvinceID(s)
+	return buo
+}
+
+// SetAddressLiving sets the "addressLiving" field.
+func (buo *BiodataUpdateOne) SetAddressLiving(s string) *BiodataUpdateOne {
+	buo.mutation.SetAddressLiving(s)
+	return buo
+}
+
+// SetPostCodeLiving sets the "postCodeLiving" field.
+func (buo *BiodataUpdateOne) SetPostCodeLiving(s string) *BiodataUpdateOne {
+	buo.mutation.SetPostCodeLiving(s)
+	return buo
+}
+
+// SetDistrictLiving sets the "districtLiving" field.
+func (buo *BiodataUpdateOne) SetDistrictLiving(s string) *BiodataUpdateOne {
+	buo.mutation.SetDistrictLiving(s)
+	return buo
+}
+
+// SetCityLiving sets the "cityLiving" field.
+func (buo *BiodataUpdateOne) SetCityLiving(s string) *BiodataUpdateOne {
+	buo.mutation.SetCityLiving(s)
+	return buo
+}
+
+// SetProvinceLiving sets the "provinceLiving" field.
+func (buo *BiodataUpdateOne) SetProvinceLiving(s string) *BiodataUpdateOne {
+	buo.mutation.SetProvinceLiving(s)
+	return buo
+}
+
+// SetEntrance sets the "entrance" field.
+func (buo *BiodataUpdateOne) SetEntrance(s string) *BiodataUpdateOne {
+	buo.mutation.SetEntrance(s)
+	return buo
+}
+
+// SetEntranceNumber sets the "entranceNumber" field.
+func (buo *BiodataUpdateOne) SetEntranceNumber(s string) *BiodataUpdateOne {
+	buo.mutation.SetEntranceNumber(s)
+	return buo
+}
+
+// SetMajor sets the "major" field.
+func (buo *BiodataUpdateOne) SetMajor(s string) *BiodataUpdateOne {
+	buo.mutation.SetMajor(s)
+	return buo
+}
+
+// SetUniversity sets the "university" field.
+func (buo *BiodataUpdateOne) SetUniversity(s string) *BiodataUpdateOne {
+	buo.mutation.SetUniversity(s)
+	return buo
 }
 
 // Mutation returns the BiodataMutation object of the builder.
@@ -223,6 +661,167 @@ func (buo *BiodataUpdateOne) sqlSave(ctx context.Context) (_node *Biodata, err e
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := buo.mutation.Name(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldName,
+		})
+	}
+	if value, ok := buo.mutation.Nickname(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldNickname,
+		})
+	}
+	if value, ok := buo.mutation.Gender(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldGender,
+		})
+	}
+	if value, ok := buo.mutation.Birthplace(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldBirthplace,
+		})
+	}
+	if value, ok := buo.mutation.Birthdate(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: biodata.FieldBirthdate,
+		})
+	}
+	if value, ok := buo.mutation.Telephone(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldTelephone,
+		})
+	}
+	if value, ok := buo.mutation.Email(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldEmail,
+		})
+	}
+	if value, ok := buo.mutation.IdType(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldIdType,
+		})
+	}
+	if value, ok := buo.mutation.IdNumber(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldIdNumber,
+		})
+	}
+	if value, ok := buo.mutation.AddressID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldAddressID,
+		})
+	}
+	if value, ok := buo.mutation.PostCodeID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldPostCodeID,
+		})
+	}
+	if value, ok := buo.mutation.DistrictID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldDistrictID,
+		})
+	}
+	if value, ok := buo.mutation.CityID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldCityID,
+		})
+	}
+	if value, ok := buo.mutation.ProvinceID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldProvinceID,
+		})
+	}
+	if value, ok := buo.mutation.AddressLiving(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldAddressLiving,
+		})
+	}
+	if value, ok := buo.mutation.PostCodeLiving(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldPostCodeLiving,
+		})
+	}
+	if value, ok := buo.mutation.DistrictLiving(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldDistrictLiving,
+		})
+	}
+	if value, ok := buo.mutation.CityLiving(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldCityLiving,
+		})
+	}
+	if value, ok := buo.mutation.ProvinceLiving(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldProvinceLiving,
+		})
+	}
+	if value, ok := buo.mutation.Entrance(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldEntrance,
+		})
+	}
+	if value, ok := buo.mutation.EntranceNumber(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldEntranceNumber,
+		})
+	}
+	if value, ok := buo.mutation.Major(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldMajor,
+		})
+	}
+	if value, ok := buo.mutation.University(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldUniversity,
+		})
 	}
 	_node = &Biodata{config: buo.config}
 	_spec.Assign = _node.assignValues

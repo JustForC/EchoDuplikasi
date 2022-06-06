@@ -494,7 +494,7 @@ func HasUser() predicate.Register {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(UserTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, UserTable, UserColumn),
+			sqlgraph.Edge(sqlgraph.M2M, false, UserTable, UserPrimaryKey...),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
@@ -506,7 +506,7 @@ func HasUserWith(preds ...predicate.User) predicate.Register {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(UserInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, UserTable, UserColumn),
+			sqlgraph.Edge(sqlgraph.M2M, false, UserTable, UserPrimaryKey...),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
@@ -522,7 +522,7 @@ func HasScholarship() predicate.Register {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(ScholarshipTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, ScholarshipTable, ScholarshipColumn),
+			sqlgraph.Edge(sqlgraph.M2M, false, ScholarshipTable, ScholarshipPrimaryKey...),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
@@ -534,7 +534,7 @@ func HasScholarshipWith(preds ...predicate.Scholarship) predicate.Register {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(ScholarshipInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, ScholarshipTable, ScholarshipColumn),
+			sqlgraph.Edge(sqlgraph.M2M, false, ScholarshipTable, ScholarshipPrimaryKey...),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

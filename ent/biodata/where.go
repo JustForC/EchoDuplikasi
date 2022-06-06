@@ -4,6 +4,7 @@ package biodata
 
 import (
 	"Kynesia/ent/predicate"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 )
@@ -88,6 +89,2685 @@ func IDLT(id int) predicate.Biodata {
 func IDLTE(id int) predicate.Biodata {
 	return predicate.Biodata(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldID), id))
+	})
+}
+
+// Name applies equality check predicate on the "name" field. It's identical to NameEQ.
+func Name(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldName), v))
+	})
+}
+
+// Nickname applies equality check predicate on the "nickname" field. It's identical to NicknameEQ.
+func Nickname(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldNickname), v))
+	})
+}
+
+// Gender applies equality check predicate on the "gender" field. It's identical to GenderEQ.
+func Gender(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldGender), v))
+	})
+}
+
+// Birthplace applies equality check predicate on the "birthplace" field. It's identical to BirthplaceEQ.
+func Birthplace(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldBirthplace), v))
+	})
+}
+
+// Birthdate applies equality check predicate on the "birthdate" field. It's identical to BirthdateEQ.
+func Birthdate(v time.Time) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldBirthdate), v))
+	})
+}
+
+// Telephone applies equality check predicate on the "telephone" field. It's identical to TelephoneEQ.
+func Telephone(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldTelephone), v))
+	})
+}
+
+// Email applies equality check predicate on the "email" field. It's identical to EmailEQ.
+func Email(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldEmail), v))
+	})
+}
+
+// IdType applies equality check predicate on the "idType" field. It's identical to IdTypeEQ.
+func IdType(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldIdType), v))
+	})
+}
+
+// IdNumber applies equality check predicate on the "idNumber" field. It's identical to IdNumberEQ.
+func IdNumber(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldIdNumber), v))
+	})
+}
+
+// AddressID applies equality check predicate on the "addressID" field. It's identical to AddressIDEQ.
+func AddressID(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldAddressID), v))
+	})
+}
+
+// PostCodeID applies equality check predicate on the "postCodeID" field. It's identical to PostCodeIDEQ.
+func PostCodeID(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldPostCodeID), v))
+	})
+}
+
+// DistrictID applies equality check predicate on the "districtID" field. It's identical to DistrictIDEQ.
+func DistrictID(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldDistrictID), v))
+	})
+}
+
+// CityID applies equality check predicate on the "cityID" field. It's identical to CityIDEQ.
+func CityID(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCityID), v))
+	})
+}
+
+// ProvinceID applies equality check predicate on the "provinceID" field. It's identical to ProvinceIDEQ.
+func ProvinceID(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldProvinceID), v))
+	})
+}
+
+// AddressLiving applies equality check predicate on the "addressLiving" field. It's identical to AddressLivingEQ.
+func AddressLiving(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldAddressLiving), v))
+	})
+}
+
+// PostCodeLiving applies equality check predicate on the "postCodeLiving" field. It's identical to PostCodeLivingEQ.
+func PostCodeLiving(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldPostCodeLiving), v))
+	})
+}
+
+// DistrictLiving applies equality check predicate on the "districtLiving" field. It's identical to DistrictLivingEQ.
+func DistrictLiving(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldDistrictLiving), v))
+	})
+}
+
+// CityLiving applies equality check predicate on the "cityLiving" field. It's identical to CityLivingEQ.
+func CityLiving(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCityLiving), v))
+	})
+}
+
+// ProvinceLiving applies equality check predicate on the "provinceLiving" field. It's identical to ProvinceLivingEQ.
+func ProvinceLiving(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldProvinceLiving), v))
+	})
+}
+
+// Entrance applies equality check predicate on the "entrance" field. It's identical to EntranceEQ.
+func Entrance(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldEntrance), v))
+	})
+}
+
+// EntranceNumber applies equality check predicate on the "entranceNumber" field. It's identical to EntranceNumberEQ.
+func EntranceNumber(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldEntranceNumber), v))
+	})
+}
+
+// Major applies equality check predicate on the "major" field. It's identical to MajorEQ.
+func Major(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldMajor), v))
+	})
+}
+
+// University applies equality check predicate on the "university" field. It's identical to UniversityEQ.
+func University(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldUniversity), v))
+	})
+}
+
+// NameEQ applies the EQ predicate on the "name" field.
+func NameEQ(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldName), v))
+	})
+}
+
+// NameNEQ applies the NEQ predicate on the "name" field.
+func NameNEQ(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldName), v))
+	})
+}
+
+// NameIn applies the In predicate on the "name" field.
+func NameIn(vs ...string) predicate.Biodata {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Biodata(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldName), v...))
+	})
+}
+
+// NameNotIn applies the NotIn predicate on the "name" field.
+func NameNotIn(vs ...string) predicate.Biodata {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Biodata(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldName), v...))
+	})
+}
+
+// NameGT applies the GT predicate on the "name" field.
+func NameGT(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldName), v))
+	})
+}
+
+// NameGTE applies the GTE predicate on the "name" field.
+func NameGTE(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldName), v))
+	})
+}
+
+// NameLT applies the LT predicate on the "name" field.
+func NameLT(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldName), v))
+	})
+}
+
+// NameLTE applies the LTE predicate on the "name" field.
+func NameLTE(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldName), v))
+	})
+}
+
+// NameContains applies the Contains predicate on the "name" field.
+func NameContains(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldName), v))
+	})
+}
+
+// NameHasPrefix applies the HasPrefix predicate on the "name" field.
+func NameHasPrefix(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldName), v))
+	})
+}
+
+// NameHasSuffix applies the HasSuffix predicate on the "name" field.
+func NameHasSuffix(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldName), v))
+	})
+}
+
+// NameEqualFold applies the EqualFold predicate on the "name" field.
+func NameEqualFold(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldName), v))
+	})
+}
+
+// NameContainsFold applies the ContainsFold predicate on the "name" field.
+func NameContainsFold(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldName), v))
+	})
+}
+
+// NicknameEQ applies the EQ predicate on the "nickname" field.
+func NicknameEQ(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldNickname), v))
+	})
+}
+
+// NicknameNEQ applies the NEQ predicate on the "nickname" field.
+func NicknameNEQ(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldNickname), v))
+	})
+}
+
+// NicknameIn applies the In predicate on the "nickname" field.
+func NicknameIn(vs ...string) predicate.Biodata {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Biodata(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldNickname), v...))
+	})
+}
+
+// NicknameNotIn applies the NotIn predicate on the "nickname" field.
+func NicknameNotIn(vs ...string) predicate.Biodata {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Biodata(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldNickname), v...))
+	})
+}
+
+// NicknameGT applies the GT predicate on the "nickname" field.
+func NicknameGT(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldNickname), v))
+	})
+}
+
+// NicknameGTE applies the GTE predicate on the "nickname" field.
+func NicknameGTE(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldNickname), v))
+	})
+}
+
+// NicknameLT applies the LT predicate on the "nickname" field.
+func NicknameLT(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldNickname), v))
+	})
+}
+
+// NicknameLTE applies the LTE predicate on the "nickname" field.
+func NicknameLTE(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldNickname), v))
+	})
+}
+
+// NicknameContains applies the Contains predicate on the "nickname" field.
+func NicknameContains(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldNickname), v))
+	})
+}
+
+// NicknameHasPrefix applies the HasPrefix predicate on the "nickname" field.
+func NicknameHasPrefix(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldNickname), v))
+	})
+}
+
+// NicknameHasSuffix applies the HasSuffix predicate on the "nickname" field.
+func NicknameHasSuffix(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldNickname), v))
+	})
+}
+
+// NicknameEqualFold applies the EqualFold predicate on the "nickname" field.
+func NicknameEqualFold(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldNickname), v))
+	})
+}
+
+// NicknameContainsFold applies the ContainsFold predicate on the "nickname" field.
+func NicknameContainsFold(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldNickname), v))
+	})
+}
+
+// GenderEQ applies the EQ predicate on the "gender" field.
+func GenderEQ(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldGender), v))
+	})
+}
+
+// GenderNEQ applies the NEQ predicate on the "gender" field.
+func GenderNEQ(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldGender), v))
+	})
+}
+
+// GenderIn applies the In predicate on the "gender" field.
+func GenderIn(vs ...string) predicate.Biodata {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Biodata(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldGender), v...))
+	})
+}
+
+// GenderNotIn applies the NotIn predicate on the "gender" field.
+func GenderNotIn(vs ...string) predicate.Biodata {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Biodata(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldGender), v...))
+	})
+}
+
+// GenderGT applies the GT predicate on the "gender" field.
+func GenderGT(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldGender), v))
+	})
+}
+
+// GenderGTE applies the GTE predicate on the "gender" field.
+func GenderGTE(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldGender), v))
+	})
+}
+
+// GenderLT applies the LT predicate on the "gender" field.
+func GenderLT(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldGender), v))
+	})
+}
+
+// GenderLTE applies the LTE predicate on the "gender" field.
+func GenderLTE(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldGender), v))
+	})
+}
+
+// GenderContains applies the Contains predicate on the "gender" field.
+func GenderContains(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldGender), v))
+	})
+}
+
+// GenderHasPrefix applies the HasPrefix predicate on the "gender" field.
+func GenderHasPrefix(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldGender), v))
+	})
+}
+
+// GenderHasSuffix applies the HasSuffix predicate on the "gender" field.
+func GenderHasSuffix(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldGender), v))
+	})
+}
+
+// GenderEqualFold applies the EqualFold predicate on the "gender" field.
+func GenderEqualFold(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldGender), v))
+	})
+}
+
+// GenderContainsFold applies the ContainsFold predicate on the "gender" field.
+func GenderContainsFold(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldGender), v))
+	})
+}
+
+// BirthplaceEQ applies the EQ predicate on the "birthplace" field.
+func BirthplaceEQ(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldBirthplace), v))
+	})
+}
+
+// BirthplaceNEQ applies the NEQ predicate on the "birthplace" field.
+func BirthplaceNEQ(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldBirthplace), v))
+	})
+}
+
+// BirthplaceIn applies the In predicate on the "birthplace" field.
+func BirthplaceIn(vs ...string) predicate.Biodata {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Biodata(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldBirthplace), v...))
+	})
+}
+
+// BirthplaceNotIn applies the NotIn predicate on the "birthplace" field.
+func BirthplaceNotIn(vs ...string) predicate.Biodata {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Biodata(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldBirthplace), v...))
+	})
+}
+
+// BirthplaceGT applies the GT predicate on the "birthplace" field.
+func BirthplaceGT(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldBirthplace), v))
+	})
+}
+
+// BirthplaceGTE applies the GTE predicate on the "birthplace" field.
+func BirthplaceGTE(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldBirthplace), v))
+	})
+}
+
+// BirthplaceLT applies the LT predicate on the "birthplace" field.
+func BirthplaceLT(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldBirthplace), v))
+	})
+}
+
+// BirthplaceLTE applies the LTE predicate on the "birthplace" field.
+func BirthplaceLTE(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldBirthplace), v))
+	})
+}
+
+// BirthplaceContains applies the Contains predicate on the "birthplace" field.
+func BirthplaceContains(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldBirthplace), v))
+	})
+}
+
+// BirthplaceHasPrefix applies the HasPrefix predicate on the "birthplace" field.
+func BirthplaceHasPrefix(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldBirthplace), v))
+	})
+}
+
+// BirthplaceHasSuffix applies the HasSuffix predicate on the "birthplace" field.
+func BirthplaceHasSuffix(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldBirthplace), v))
+	})
+}
+
+// BirthplaceEqualFold applies the EqualFold predicate on the "birthplace" field.
+func BirthplaceEqualFold(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldBirthplace), v))
+	})
+}
+
+// BirthplaceContainsFold applies the ContainsFold predicate on the "birthplace" field.
+func BirthplaceContainsFold(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldBirthplace), v))
+	})
+}
+
+// BirthdateEQ applies the EQ predicate on the "birthdate" field.
+func BirthdateEQ(v time.Time) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldBirthdate), v))
+	})
+}
+
+// BirthdateNEQ applies the NEQ predicate on the "birthdate" field.
+func BirthdateNEQ(v time.Time) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldBirthdate), v))
+	})
+}
+
+// BirthdateIn applies the In predicate on the "birthdate" field.
+func BirthdateIn(vs ...time.Time) predicate.Biodata {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Biodata(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldBirthdate), v...))
+	})
+}
+
+// BirthdateNotIn applies the NotIn predicate on the "birthdate" field.
+func BirthdateNotIn(vs ...time.Time) predicate.Biodata {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Biodata(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldBirthdate), v...))
+	})
+}
+
+// BirthdateGT applies the GT predicate on the "birthdate" field.
+func BirthdateGT(v time.Time) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldBirthdate), v))
+	})
+}
+
+// BirthdateGTE applies the GTE predicate on the "birthdate" field.
+func BirthdateGTE(v time.Time) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldBirthdate), v))
+	})
+}
+
+// BirthdateLT applies the LT predicate on the "birthdate" field.
+func BirthdateLT(v time.Time) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldBirthdate), v))
+	})
+}
+
+// BirthdateLTE applies the LTE predicate on the "birthdate" field.
+func BirthdateLTE(v time.Time) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldBirthdate), v))
+	})
+}
+
+// TelephoneEQ applies the EQ predicate on the "telephone" field.
+func TelephoneEQ(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldTelephone), v))
+	})
+}
+
+// TelephoneNEQ applies the NEQ predicate on the "telephone" field.
+func TelephoneNEQ(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldTelephone), v))
+	})
+}
+
+// TelephoneIn applies the In predicate on the "telephone" field.
+func TelephoneIn(vs ...string) predicate.Biodata {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Biodata(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldTelephone), v...))
+	})
+}
+
+// TelephoneNotIn applies the NotIn predicate on the "telephone" field.
+func TelephoneNotIn(vs ...string) predicate.Biodata {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Biodata(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldTelephone), v...))
+	})
+}
+
+// TelephoneGT applies the GT predicate on the "telephone" field.
+func TelephoneGT(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldTelephone), v))
+	})
+}
+
+// TelephoneGTE applies the GTE predicate on the "telephone" field.
+func TelephoneGTE(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldTelephone), v))
+	})
+}
+
+// TelephoneLT applies the LT predicate on the "telephone" field.
+func TelephoneLT(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldTelephone), v))
+	})
+}
+
+// TelephoneLTE applies the LTE predicate on the "telephone" field.
+func TelephoneLTE(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldTelephone), v))
+	})
+}
+
+// TelephoneContains applies the Contains predicate on the "telephone" field.
+func TelephoneContains(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldTelephone), v))
+	})
+}
+
+// TelephoneHasPrefix applies the HasPrefix predicate on the "telephone" field.
+func TelephoneHasPrefix(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldTelephone), v))
+	})
+}
+
+// TelephoneHasSuffix applies the HasSuffix predicate on the "telephone" field.
+func TelephoneHasSuffix(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldTelephone), v))
+	})
+}
+
+// TelephoneEqualFold applies the EqualFold predicate on the "telephone" field.
+func TelephoneEqualFold(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldTelephone), v))
+	})
+}
+
+// TelephoneContainsFold applies the ContainsFold predicate on the "telephone" field.
+func TelephoneContainsFold(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldTelephone), v))
+	})
+}
+
+// EmailEQ applies the EQ predicate on the "email" field.
+func EmailEQ(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldEmail), v))
+	})
+}
+
+// EmailNEQ applies the NEQ predicate on the "email" field.
+func EmailNEQ(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldEmail), v))
+	})
+}
+
+// EmailIn applies the In predicate on the "email" field.
+func EmailIn(vs ...string) predicate.Biodata {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Biodata(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldEmail), v...))
+	})
+}
+
+// EmailNotIn applies the NotIn predicate on the "email" field.
+func EmailNotIn(vs ...string) predicate.Biodata {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Biodata(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldEmail), v...))
+	})
+}
+
+// EmailGT applies the GT predicate on the "email" field.
+func EmailGT(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldEmail), v))
+	})
+}
+
+// EmailGTE applies the GTE predicate on the "email" field.
+func EmailGTE(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldEmail), v))
+	})
+}
+
+// EmailLT applies the LT predicate on the "email" field.
+func EmailLT(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldEmail), v))
+	})
+}
+
+// EmailLTE applies the LTE predicate on the "email" field.
+func EmailLTE(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldEmail), v))
+	})
+}
+
+// EmailContains applies the Contains predicate on the "email" field.
+func EmailContains(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldEmail), v))
+	})
+}
+
+// EmailHasPrefix applies the HasPrefix predicate on the "email" field.
+func EmailHasPrefix(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldEmail), v))
+	})
+}
+
+// EmailHasSuffix applies the HasSuffix predicate on the "email" field.
+func EmailHasSuffix(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldEmail), v))
+	})
+}
+
+// EmailEqualFold applies the EqualFold predicate on the "email" field.
+func EmailEqualFold(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldEmail), v))
+	})
+}
+
+// EmailContainsFold applies the ContainsFold predicate on the "email" field.
+func EmailContainsFold(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldEmail), v))
+	})
+}
+
+// IdTypeEQ applies the EQ predicate on the "idType" field.
+func IdTypeEQ(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldIdType), v))
+	})
+}
+
+// IdTypeNEQ applies the NEQ predicate on the "idType" field.
+func IdTypeNEQ(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldIdType), v))
+	})
+}
+
+// IdTypeIn applies the In predicate on the "idType" field.
+func IdTypeIn(vs ...string) predicate.Biodata {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Biodata(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldIdType), v...))
+	})
+}
+
+// IdTypeNotIn applies the NotIn predicate on the "idType" field.
+func IdTypeNotIn(vs ...string) predicate.Biodata {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Biodata(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldIdType), v...))
+	})
+}
+
+// IdTypeGT applies the GT predicate on the "idType" field.
+func IdTypeGT(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldIdType), v))
+	})
+}
+
+// IdTypeGTE applies the GTE predicate on the "idType" field.
+func IdTypeGTE(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldIdType), v))
+	})
+}
+
+// IdTypeLT applies the LT predicate on the "idType" field.
+func IdTypeLT(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldIdType), v))
+	})
+}
+
+// IdTypeLTE applies the LTE predicate on the "idType" field.
+func IdTypeLTE(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldIdType), v))
+	})
+}
+
+// IdTypeContains applies the Contains predicate on the "idType" field.
+func IdTypeContains(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldIdType), v))
+	})
+}
+
+// IdTypeHasPrefix applies the HasPrefix predicate on the "idType" field.
+func IdTypeHasPrefix(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldIdType), v))
+	})
+}
+
+// IdTypeHasSuffix applies the HasSuffix predicate on the "idType" field.
+func IdTypeHasSuffix(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldIdType), v))
+	})
+}
+
+// IdTypeEqualFold applies the EqualFold predicate on the "idType" field.
+func IdTypeEqualFold(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldIdType), v))
+	})
+}
+
+// IdTypeContainsFold applies the ContainsFold predicate on the "idType" field.
+func IdTypeContainsFold(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldIdType), v))
+	})
+}
+
+// IdNumberEQ applies the EQ predicate on the "idNumber" field.
+func IdNumberEQ(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldIdNumber), v))
+	})
+}
+
+// IdNumberNEQ applies the NEQ predicate on the "idNumber" field.
+func IdNumberNEQ(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldIdNumber), v))
+	})
+}
+
+// IdNumberIn applies the In predicate on the "idNumber" field.
+func IdNumberIn(vs ...string) predicate.Biodata {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Biodata(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldIdNumber), v...))
+	})
+}
+
+// IdNumberNotIn applies the NotIn predicate on the "idNumber" field.
+func IdNumberNotIn(vs ...string) predicate.Biodata {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Biodata(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldIdNumber), v...))
+	})
+}
+
+// IdNumberGT applies the GT predicate on the "idNumber" field.
+func IdNumberGT(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldIdNumber), v))
+	})
+}
+
+// IdNumberGTE applies the GTE predicate on the "idNumber" field.
+func IdNumberGTE(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldIdNumber), v))
+	})
+}
+
+// IdNumberLT applies the LT predicate on the "idNumber" field.
+func IdNumberLT(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldIdNumber), v))
+	})
+}
+
+// IdNumberLTE applies the LTE predicate on the "idNumber" field.
+func IdNumberLTE(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldIdNumber), v))
+	})
+}
+
+// IdNumberContains applies the Contains predicate on the "idNumber" field.
+func IdNumberContains(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldIdNumber), v))
+	})
+}
+
+// IdNumberHasPrefix applies the HasPrefix predicate on the "idNumber" field.
+func IdNumberHasPrefix(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldIdNumber), v))
+	})
+}
+
+// IdNumberHasSuffix applies the HasSuffix predicate on the "idNumber" field.
+func IdNumberHasSuffix(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldIdNumber), v))
+	})
+}
+
+// IdNumberEqualFold applies the EqualFold predicate on the "idNumber" field.
+func IdNumberEqualFold(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldIdNumber), v))
+	})
+}
+
+// IdNumberContainsFold applies the ContainsFold predicate on the "idNumber" field.
+func IdNumberContainsFold(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldIdNumber), v))
+	})
+}
+
+// AddressIDEQ applies the EQ predicate on the "addressID" field.
+func AddressIDEQ(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldAddressID), v))
+	})
+}
+
+// AddressIDNEQ applies the NEQ predicate on the "addressID" field.
+func AddressIDNEQ(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldAddressID), v))
+	})
+}
+
+// AddressIDIn applies the In predicate on the "addressID" field.
+func AddressIDIn(vs ...string) predicate.Biodata {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Biodata(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldAddressID), v...))
+	})
+}
+
+// AddressIDNotIn applies the NotIn predicate on the "addressID" field.
+func AddressIDNotIn(vs ...string) predicate.Biodata {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Biodata(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldAddressID), v...))
+	})
+}
+
+// AddressIDGT applies the GT predicate on the "addressID" field.
+func AddressIDGT(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldAddressID), v))
+	})
+}
+
+// AddressIDGTE applies the GTE predicate on the "addressID" field.
+func AddressIDGTE(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldAddressID), v))
+	})
+}
+
+// AddressIDLT applies the LT predicate on the "addressID" field.
+func AddressIDLT(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldAddressID), v))
+	})
+}
+
+// AddressIDLTE applies the LTE predicate on the "addressID" field.
+func AddressIDLTE(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldAddressID), v))
+	})
+}
+
+// AddressIDContains applies the Contains predicate on the "addressID" field.
+func AddressIDContains(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldAddressID), v))
+	})
+}
+
+// AddressIDHasPrefix applies the HasPrefix predicate on the "addressID" field.
+func AddressIDHasPrefix(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldAddressID), v))
+	})
+}
+
+// AddressIDHasSuffix applies the HasSuffix predicate on the "addressID" field.
+func AddressIDHasSuffix(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldAddressID), v))
+	})
+}
+
+// AddressIDEqualFold applies the EqualFold predicate on the "addressID" field.
+func AddressIDEqualFold(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldAddressID), v))
+	})
+}
+
+// AddressIDContainsFold applies the ContainsFold predicate on the "addressID" field.
+func AddressIDContainsFold(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldAddressID), v))
+	})
+}
+
+// PostCodeIDEQ applies the EQ predicate on the "postCodeID" field.
+func PostCodeIDEQ(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldPostCodeID), v))
+	})
+}
+
+// PostCodeIDNEQ applies the NEQ predicate on the "postCodeID" field.
+func PostCodeIDNEQ(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldPostCodeID), v))
+	})
+}
+
+// PostCodeIDIn applies the In predicate on the "postCodeID" field.
+func PostCodeIDIn(vs ...string) predicate.Biodata {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Biodata(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldPostCodeID), v...))
+	})
+}
+
+// PostCodeIDNotIn applies the NotIn predicate on the "postCodeID" field.
+func PostCodeIDNotIn(vs ...string) predicate.Biodata {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Biodata(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldPostCodeID), v...))
+	})
+}
+
+// PostCodeIDGT applies the GT predicate on the "postCodeID" field.
+func PostCodeIDGT(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldPostCodeID), v))
+	})
+}
+
+// PostCodeIDGTE applies the GTE predicate on the "postCodeID" field.
+func PostCodeIDGTE(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldPostCodeID), v))
+	})
+}
+
+// PostCodeIDLT applies the LT predicate on the "postCodeID" field.
+func PostCodeIDLT(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldPostCodeID), v))
+	})
+}
+
+// PostCodeIDLTE applies the LTE predicate on the "postCodeID" field.
+func PostCodeIDLTE(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldPostCodeID), v))
+	})
+}
+
+// PostCodeIDContains applies the Contains predicate on the "postCodeID" field.
+func PostCodeIDContains(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldPostCodeID), v))
+	})
+}
+
+// PostCodeIDHasPrefix applies the HasPrefix predicate on the "postCodeID" field.
+func PostCodeIDHasPrefix(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldPostCodeID), v))
+	})
+}
+
+// PostCodeIDHasSuffix applies the HasSuffix predicate on the "postCodeID" field.
+func PostCodeIDHasSuffix(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldPostCodeID), v))
+	})
+}
+
+// PostCodeIDEqualFold applies the EqualFold predicate on the "postCodeID" field.
+func PostCodeIDEqualFold(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldPostCodeID), v))
+	})
+}
+
+// PostCodeIDContainsFold applies the ContainsFold predicate on the "postCodeID" field.
+func PostCodeIDContainsFold(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldPostCodeID), v))
+	})
+}
+
+// DistrictIDEQ applies the EQ predicate on the "districtID" field.
+func DistrictIDEQ(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldDistrictID), v))
+	})
+}
+
+// DistrictIDNEQ applies the NEQ predicate on the "districtID" field.
+func DistrictIDNEQ(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldDistrictID), v))
+	})
+}
+
+// DistrictIDIn applies the In predicate on the "districtID" field.
+func DistrictIDIn(vs ...string) predicate.Biodata {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Biodata(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldDistrictID), v...))
+	})
+}
+
+// DistrictIDNotIn applies the NotIn predicate on the "districtID" field.
+func DistrictIDNotIn(vs ...string) predicate.Biodata {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Biodata(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldDistrictID), v...))
+	})
+}
+
+// DistrictIDGT applies the GT predicate on the "districtID" field.
+func DistrictIDGT(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldDistrictID), v))
+	})
+}
+
+// DistrictIDGTE applies the GTE predicate on the "districtID" field.
+func DistrictIDGTE(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldDistrictID), v))
+	})
+}
+
+// DistrictIDLT applies the LT predicate on the "districtID" field.
+func DistrictIDLT(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldDistrictID), v))
+	})
+}
+
+// DistrictIDLTE applies the LTE predicate on the "districtID" field.
+func DistrictIDLTE(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldDistrictID), v))
+	})
+}
+
+// DistrictIDContains applies the Contains predicate on the "districtID" field.
+func DistrictIDContains(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldDistrictID), v))
+	})
+}
+
+// DistrictIDHasPrefix applies the HasPrefix predicate on the "districtID" field.
+func DistrictIDHasPrefix(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldDistrictID), v))
+	})
+}
+
+// DistrictIDHasSuffix applies the HasSuffix predicate on the "districtID" field.
+func DistrictIDHasSuffix(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldDistrictID), v))
+	})
+}
+
+// DistrictIDEqualFold applies the EqualFold predicate on the "districtID" field.
+func DistrictIDEqualFold(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldDistrictID), v))
+	})
+}
+
+// DistrictIDContainsFold applies the ContainsFold predicate on the "districtID" field.
+func DistrictIDContainsFold(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldDistrictID), v))
+	})
+}
+
+// CityIDEQ applies the EQ predicate on the "cityID" field.
+func CityIDEQ(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCityID), v))
+	})
+}
+
+// CityIDNEQ applies the NEQ predicate on the "cityID" field.
+func CityIDNEQ(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldCityID), v))
+	})
+}
+
+// CityIDIn applies the In predicate on the "cityID" field.
+func CityIDIn(vs ...string) predicate.Biodata {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Biodata(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldCityID), v...))
+	})
+}
+
+// CityIDNotIn applies the NotIn predicate on the "cityID" field.
+func CityIDNotIn(vs ...string) predicate.Biodata {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Biodata(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldCityID), v...))
+	})
+}
+
+// CityIDGT applies the GT predicate on the "cityID" field.
+func CityIDGT(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldCityID), v))
+	})
+}
+
+// CityIDGTE applies the GTE predicate on the "cityID" field.
+func CityIDGTE(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldCityID), v))
+	})
+}
+
+// CityIDLT applies the LT predicate on the "cityID" field.
+func CityIDLT(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldCityID), v))
+	})
+}
+
+// CityIDLTE applies the LTE predicate on the "cityID" field.
+func CityIDLTE(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldCityID), v))
+	})
+}
+
+// CityIDContains applies the Contains predicate on the "cityID" field.
+func CityIDContains(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldCityID), v))
+	})
+}
+
+// CityIDHasPrefix applies the HasPrefix predicate on the "cityID" field.
+func CityIDHasPrefix(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldCityID), v))
+	})
+}
+
+// CityIDHasSuffix applies the HasSuffix predicate on the "cityID" field.
+func CityIDHasSuffix(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldCityID), v))
+	})
+}
+
+// CityIDEqualFold applies the EqualFold predicate on the "cityID" field.
+func CityIDEqualFold(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldCityID), v))
+	})
+}
+
+// CityIDContainsFold applies the ContainsFold predicate on the "cityID" field.
+func CityIDContainsFold(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldCityID), v))
+	})
+}
+
+// ProvinceIDEQ applies the EQ predicate on the "provinceID" field.
+func ProvinceIDEQ(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldProvinceID), v))
+	})
+}
+
+// ProvinceIDNEQ applies the NEQ predicate on the "provinceID" field.
+func ProvinceIDNEQ(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldProvinceID), v))
+	})
+}
+
+// ProvinceIDIn applies the In predicate on the "provinceID" field.
+func ProvinceIDIn(vs ...string) predicate.Biodata {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Biodata(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldProvinceID), v...))
+	})
+}
+
+// ProvinceIDNotIn applies the NotIn predicate on the "provinceID" field.
+func ProvinceIDNotIn(vs ...string) predicate.Biodata {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Biodata(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldProvinceID), v...))
+	})
+}
+
+// ProvinceIDGT applies the GT predicate on the "provinceID" field.
+func ProvinceIDGT(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldProvinceID), v))
+	})
+}
+
+// ProvinceIDGTE applies the GTE predicate on the "provinceID" field.
+func ProvinceIDGTE(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldProvinceID), v))
+	})
+}
+
+// ProvinceIDLT applies the LT predicate on the "provinceID" field.
+func ProvinceIDLT(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldProvinceID), v))
+	})
+}
+
+// ProvinceIDLTE applies the LTE predicate on the "provinceID" field.
+func ProvinceIDLTE(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldProvinceID), v))
+	})
+}
+
+// ProvinceIDContains applies the Contains predicate on the "provinceID" field.
+func ProvinceIDContains(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldProvinceID), v))
+	})
+}
+
+// ProvinceIDHasPrefix applies the HasPrefix predicate on the "provinceID" field.
+func ProvinceIDHasPrefix(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldProvinceID), v))
+	})
+}
+
+// ProvinceIDHasSuffix applies the HasSuffix predicate on the "provinceID" field.
+func ProvinceIDHasSuffix(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldProvinceID), v))
+	})
+}
+
+// ProvinceIDEqualFold applies the EqualFold predicate on the "provinceID" field.
+func ProvinceIDEqualFold(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldProvinceID), v))
+	})
+}
+
+// ProvinceIDContainsFold applies the ContainsFold predicate on the "provinceID" field.
+func ProvinceIDContainsFold(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldProvinceID), v))
+	})
+}
+
+// AddressLivingEQ applies the EQ predicate on the "addressLiving" field.
+func AddressLivingEQ(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldAddressLiving), v))
+	})
+}
+
+// AddressLivingNEQ applies the NEQ predicate on the "addressLiving" field.
+func AddressLivingNEQ(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldAddressLiving), v))
+	})
+}
+
+// AddressLivingIn applies the In predicate on the "addressLiving" field.
+func AddressLivingIn(vs ...string) predicate.Biodata {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Biodata(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldAddressLiving), v...))
+	})
+}
+
+// AddressLivingNotIn applies the NotIn predicate on the "addressLiving" field.
+func AddressLivingNotIn(vs ...string) predicate.Biodata {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Biodata(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldAddressLiving), v...))
+	})
+}
+
+// AddressLivingGT applies the GT predicate on the "addressLiving" field.
+func AddressLivingGT(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldAddressLiving), v))
+	})
+}
+
+// AddressLivingGTE applies the GTE predicate on the "addressLiving" field.
+func AddressLivingGTE(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldAddressLiving), v))
+	})
+}
+
+// AddressLivingLT applies the LT predicate on the "addressLiving" field.
+func AddressLivingLT(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldAddressLiving), v))
+	})
+}
+
+// AddressLivingLTE applies the LTE predicate on the "addressLiving" field.
+func AddressLivingLTE(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldAddressLiving), v))
+	})
+}
+
+// AddressLivingContains applies the Contains predicate on the "addressLiving" field.
+func AddressLivingContains(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldAddressLiving), v))
+	})
+}
+
+// AddressLivingHasPrefix applies the HasPrefix predicate on the "addressLiving" field.
+func AddressLivingHasPrefix(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldAddressLiving), v))
+	})
+}
+
+// AddressLivingHasSuffix applies the HasSuffix predicate on the "addressLiving" field.
+func AddressLivingHasSuffix(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldAddressLiving), v))
+	})
+}
+
+// AddressLivingEqualFold applies the EqualFold predicate on the "addressLiving" field.
+func AddressLivingEqualFold(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldAddressLiving), v))
+	})
+}
+
+// AddressLivingContainsFold applies the ContainsFold predicate on the "addressLiving" field.
+func AddressLivingContainsFold(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldAddressLiving), v))
+	})
+}
+
+// PostCodeLivingEQ applies the EQ predicate on the "postCodeLiving" field.
+func PostCodeLivingEQ(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldPostCodeLiving), v))
+	})
+}
+
+// PostCodeLivingNEQ applies the NEQ predicate on the "postCodeLiving" field.
+func PostCodeLivingNEQ(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldPostCodeLiving), v))
+	})
+}
+
+// PostCodeLivingIn applies the In predicate on the "postCodeLiving" field.
+func PostCodeLivingIn(vs ...string) predicate.Biodata {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Biodata(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldPostCodeLiving), v...))
+	})
+}
+
+// PostCodeLivingNotIn applies the NotIn predicate on the "postCodeLiving" field.
+func PostCodeLivingNotIn(vs ...string) predicate.Biodata {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Biodata(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldPostCodeLiving), v...))
+	})
+}
+
+// PostCodeLivingGT applies the GT predicate on the "postCodeLiving" field.
+func PostCodeLivingGT(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldPostCodeLiving), v))
+	})
+}
+
+// PostCodeLivingGTE applies the GTE predicate on the "postCodeLiving" field.
+func PostCodeLivingGTE(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldPostCodeLiving), v))
+	})
+}
+
+// PostCodeLivingLT applies the LT predicate on the "postCodeLiving" field.
+func PostCodeLivingLT(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldPostCodeLiving), v))
+	})
+}
+
+// PostCodeLivingLTE applies the LTE predicate on the "postCodeLiving" field.
+func PostCodeLivingLTE(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldPostCodeLiving), v))
+	})
+}
+
+// PostCodeLivingContains applies the Contains predicate on the "postCodeLiving" field.
+func PostCodeLivingContains(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldPostCodeLiving), v))
+	})
+}
+
+// PostCodeLivingHasPrefix applies the HasPrefix predicate on the "postCodeLiving" field.
+func PostCodeLivingHasPrefix(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldPostCodeLiving), v))
+	})
+}
+
+// PostCodeLivingHasSuffix applies the HasSuffix predicate on the "postCodeLiving" field.
+func PostCodeLivingHasSuffix(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldPostCodeLiving), v))
+	})
+}
+
+// PostCodeLivingEqualFold applies the EqualFold predicate on the "postCodeLiving" field.
+func PostCodeLivingEqualFold(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldPostCodeLiving), v))
+	})
+}
+
+// PostCodeLivingContainsFold applies the ContainsFold predicate on the "postCodeLiving" field.
+func PostCodeLivingContainsFold(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldPostCodeLiving), v))
+	})
+}
+
+// DistrictLivingEQ applies the EQ predicate on the "districtLiving" field.
+func DistrictLivingEQ(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldDistrictLiving), v))
+	})
+}
+
+// DistrictLivingNEQ applies the NEQ predicate on the "districtLiving" field.
+func DistrictLivingNEQ(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldDistrictLiving), v))
+	})
+}
+
+// DistrictLivingIn applies the In predicate on the "districtLiving" field.
+func DistrictLivingIn(vs ...string) predicate.Biodata {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Biodata(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldDistrictLiving), v...))
+	})
+}
+
+// DistrictLivingNotIn applies the NotIn predicate on the "districtLiving" field.
+func DistrictLivingNotIn(vs ...string) predicate.Biodata {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Biodata(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldDistrictLiving), v...))
+	})
+}
+
+// DistrictLivingGT applies the GT predicate on the "districtLiving" field.
+func DistrictLivingGT(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldDistrictLiving), v))
+	})
+}
+
+// DistrictLivingGTE applies the GTE predicate on the "districtLiving" field.
+func DistrictLivingGTE(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldDistrictLiving), v))
+	})
+}
+
+// DistrictLivingLT applies the LT predicate on the "districtLiving" field.
+func DistrictLivingLT(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldDistrictLiving), v))
+	})
+}
+
+// DistrictLivingLTE applies the LTE predicate on the "districtLiving" field.
+func DistrictLivingLTE(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldDistrictLiving), v))
+	})
+}
+
+// DistrictLivingContains applies the Contains predicate on the "districtLiving" field.
+func DistrictLivingContains(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldDistrictLiving), v))
+	})
+}
+
+// DistrictLivingHasPrefix applies the HasPrefix predicate on the "districtLiving" field.
+func DistrictLivingHasPrefix(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldDistrictLiving), v))
+	})
+}
+
+// DistrictLivingHasSuffix applies the HasSuffix predicate on the "districtLiving" field.
+func DistrictLivingHasSuffix(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldDistrictLiving), v))
+	})
+}
+
+// DistrictLivingEqualFold applies the EqualFold predicate on the "districtLiving" field.
+func DistrictLivingEqualFold(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldDistrictLiving), v))
+	})
+}
+
+// DistrictLivingContainsFold applies the ContainsFold predicate on the "districtLiving" field.
+func DistrictLivingContainsFold(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldDistrictLiving), v))
+	})
+}
+
+// CityLivingEQ applies the EQ predicate on the "cityLiving" field.
+func CityLivingEQ(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCityLiving), v))
+	})
+}
+
+// CityLivingNEQ applies the NEQ predicate on the "cityLiving" field.
+func CityLivingNEQ(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldCityLiving), v))
+	})
+}
+
+// CityLivingIn applies the In predicate on the "cityLiving" field.
+func CityLivingIn(vs ...string) predicate.Biodata {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Biodata(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldCityLiving), v...))
+	})
+}
+
+// CityLivingNotIn applies the NotIn predicate on the "cityLiving" field.
+func CityLivingNotIn(vs ...string) predicate.Biodata {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Biodata(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldCityLiving), v...))
+	})
+}
+
+// CityLivingGT applies the GT predicate on the "cityLiving" field.
+func CityLivingGT(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldCityLiving), v))
+	})
+}
+
+// CityLivingGTE applies the GTE predicate on the "cityLiving" field.
+func CityLivingGTE(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldCityLiving), v))
+	})
+}
+
+// CityLivingLT applies the LT predicate on the "cityLiving" field.
+func CityLivingLT(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldCityLiving), v))
+	})
+}
+
+// CityLivingLTE applies the LTE predicate on the "cityLiving" field.
+func CityLivingLTE(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldCityLiving), v))
+	})
+}
+
+// CityLivingContains applies the Contains predicate on the "cityLiving" field.
+func CityLivingContains(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldCityLiving), v))
+	})
+}
+
+// CityLivingHasPrefix applies the HasPrefix predicate on the "cityLiving" field.
+func CityLivingHasPrefix(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldCityLiving), v))
+	})
+}
+
+// CityLivingHasSuffix applies the HasSuffix predicate on the "cityLiving" field.
+func CityLivingHasSuffix(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldCityLiving), v))
+	})
+}
+
+// CityLivingEqualFold applies the EqualFold predicate on the "cityLiving" field.
+func CityLivingEqualFold(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldCityLiving), v))
+	})
+}
+
+// CityLivingContainsFold applies the ContainsFold predicate on the "cityLiving" field.
+func CityLivingContainsFold(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldCityLiving), v))
+	})
+}
+
+// ProvinceLivingEQ applies the EQ predicate on the "provinceLiving" field.
+func ProvinceLivingEQ(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldProvinceLiving), v))
+	})
+}
+
+// ProvinceLivingNEQ applies the NEQ predicate on the "provinceLiving" field.
+func ProvinceLivingNEQ(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldProvinceLiving), v))
+	})
+}
+
+// ProvinceLivingIn applies the In predicate on the "provinceLiving" field.
+func ProvinceLivingIn(vs ...string) predicate.Biodata {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Biodata(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldProvinceLiving), v...))
+	})
+}
+
+// ProvinceLivingNotIn applies the NotIn predicate on the "provinceLiving" field.
+func ProvinceLivingNotIn(vs ...string) predicate.Biodata {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Biodata(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldProvinceLiving), v...))
+	})
+}
+
+// ProvinceLivingGT applies the GT predicate on the "provinceLiving" field.
+func ProvinceLivingGT(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldProvinceLiving), v))
+	})
+}
+
+// ProvinceLivingGTE applies the GTE predicate on the "provinceLiving" field.
+func ProvinceLivingGTE(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldProvinceLiving), v))
+	})
+}
+
+// ProvinceLivingLT applies the LT predicate on the "provinceLiving" field.
+func ProvinceLivingLT(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldProvinceLiving), v))
+	})
+}
+
+// ProvinceLivingLTE applies the LTE predicate on the "provinceLiving" field.
+func ProvinceLivingLTE(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldProvinceLiving), v))
+	})
+}
+
+// ProvinceLivingContains applies the Contains predicate on the "provinceLiving" field.
+func ProvinceLivingContains(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldProvinceLiving), v))
+	})
+}
+
+// ProvinceLivingHasPrefix applies the HasPrefix predicate on the "provinceLiving" field.
+func ProvinceLivingHasPrefix(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldProvinceLiving), v))
+	})
+}
+
+// ProvinceLivingHasSuffix applies the HasSuffix predicate on the "provinceLiving" field.
+func ProvinceLivingHasSuffix(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldProvinceLiving), v))
+	})
+}
+
+// ProvinceLivingEqualFold applies the EqualFold predicate on the "provinceLiving" field.
+func ProvinceLivingEqualFold(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldProvinceLiving), v))
+	})
+}
+
+// ProvinceLivingContainsFold applies the ContainsFold predicate on the "provinceLiving" field.
+func ProvinceLivingContainsFold(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldProvinceLiving), v))
+	})
+}
+
+// EntranceEQ applies the EQ predicate on the "entrance" field.
+func EntranceEQ(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldEntrance), v))
+	})
+}
+
+// EntranceNEQ applies the NEQ predicate on the "entrance" field.
+func EntranceNEQ(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldEntrance), v))
+	})
+}
+
+// EntranceIn applies the In predicate on the "entrance" field.
+func EntranceIn(vs ...string) predicate.Biodata {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Biodata(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldEntrance), v...))
+	})
+}
+
+// EntranceNotIn applies the NotIn predicate on the "entrance" field.
+func EntranceNotIn(vs ...string) predicate.Biodata {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Biodata(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldEntrance), v...))
+	})
+}
+
+// EntranceGT applies the GT predicate on the "entrance" field.
+func EntranceGT(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldEntrance), v))
+	})
+}
+
+// EntranceGTE applies the GTE predicate on the "entrance" field.
+func EntranceGTE(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldEntrance), v))
+	})
+}
+
+// EntranceLT applies the LT predicate on the "entrance" field.
+func EntranceLT(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldEntrance), v))
+	})
+}
+
+// EntranceLTE applies the LTE predicate on the "entrance" field.
+func EntranceLTE(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldEntrance), v))
+	})
+}
+
+// EntranceContains applies the Contains predicate on the "entrance" field.
+func EntranceContains(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldEntrance), v))
+	})
+}
+
+// EntranceHasPrefix applies the HasPrefix predicate on the "entrance" field.
+func EntranceHasPrefix(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldEntrance), v))
+	})
+}
+
+// EntranceHasSuffix applies the HasSuffix predicate on the "entrance" field.
+func EntranceHasSuffix(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldEntrance), v))
+	})
+}
+
+// EntranceEqualFold applies the EqualFold predicate on the "entrance" field.
+func EntranceEqualFold(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldEntrance), v))
+	})
+}
+
+// EntranceContainsFold applies the ContainsFold predicate on the "entrance" field.
+func EntranceContainsFold(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldEntrance), v))
+	})
+}
+
+// EntranceNumberEQ applies the EQ predicate on the "entranceNumber" field.
+func EntranceNumberEQ(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldEntranceNumber), v))
+	})
+}
+
+// EntranceNumberNEQ applies the NEQ predicate on the "entranceNumber" field.
+func EntranceNumberNEQ(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldEntranceNumber), v))
+	})
+}
+
+// EntranceNumberIn applies the In predicate on the "entranceNumber" field.
+func EntranceNumberIn(vs ...string) predicate.Biodata {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Biodata(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldEntranceNumber), v...))
+	})
+}
+
+// EntranceNumberNotIn applies the NotIn predicate on the "entranceNumber" field.
+func EntranceNumberNotIn(vs ...string) predicate.Biodata {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Biodata(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldEntranceNumber), v...))
+	})
+}
+
+// EntranceNumberGT applies the GT predicate on the "entranceNumber" field.
+func EntranceNumberGT(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldEntranceNumber), v))
+	})
+}
+
+// EntranceNumberGTE applies the GTE predicate on the "entranceNumber" field.
+func EntranceNumberGTE(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldEntranceNumber), v))
+	})
+}
+
+// EntranceNumberLT applies the LT predicate on the "entranceNumber" field.
+func EntranceNumberLT(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldEntranceNumber), v))
+	})
+}
+
+// EntranceNumberLTE applies the LTE predicate on the "entranceNumber" field.
+func EntranceNumberLTE(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldEntranceNumber), v))
+	})
+}
+
+// EntranceNumberContains applies the Contains predicate on the "entranceNumber" field.
+func EntranceNumberContains(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldEntranceNumber), v))
+	})
+}
+
+// EntranceNumberHasPrefix applies the HasPrefix predicate on the "entranceNumber" field.
+func EntranceNumberHasPrefix(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldEntranceNumber), v))
+	})
+}
+
+// EntranceNumberHasSuffix applies the HasSuffix predicate on the "entranceNumber" field.
+func EntranceNumberHasSuffix(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldEntranceNumber), v))
+	})
+}
+
+// EntranceNumberEqualFold applies the EqualFold predicate on the "entranceNumber" field.
+func EntranceNumberEqualFold(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldEntranceNumber), v))
+	})
+}
+
+// EntranceNumberContainsFold applies the ContainsFold predicate on the "entranceNumber" field.
+func EntranceNumberContainsFold(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldEntranceNumber), v))
+	})
+}
+
+// MajorEQ applies the EQ predicate on the "major" field.
+func MajorEQ(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldMajor), v))
+	})
+}
+
+// MajorNEQ applies the NEQ predicate on the "major" field.
+func MajorNEQ(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldMajor), v))
+	})
+}
+
+// MajorIn applies the In predicate on the "major" field.
+func MajorIn(vs ...string) predicate.Biodata {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Biodata(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldMajor), v...))
+	})
+}
+
+// MajorNotIn applies the NotIn predicate on the "major" field.
+func MajorNotIn(vs ...string) predicate.Biodata {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Biodata(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldMajor), v...))
+	})
+}
+
+// MajorGT applies the GT predicate on the "major" field.
+func MajorGT(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldMajor), v))
+	})
+}
+
+// MajorGTE applies the GTE predicate on the "major" field.
+func MajorGTE(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldMajor), v))
+	})
+}
+
+// MajorLT applies the LT predicate on the "major" field.
+func MajorLT(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldMajor), v))
+	})
+}
+
+// MajorLTE applies the LTE predicate on the "major" field.
+func MajorLTE(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldMajor), v))
+	})
+}
+
+// MajorContains applies the Contains predicate on the "major" field.
+func MajorContains(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldMajor), v))
+	})
+}
+
+// MajorHasPrefix applies the HasPrefix predicate on the "major" field.
+func MajorHasPrefix(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldMajor), v))
+	})
+}
+
+// MajorHasSuffix applies the HasSuffix predicate on the "major" field.
+func MajorHasSuffix(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldMajor), v))
+	})
+}
+
+// MajorEqualFold applies the EqualFold predicate on the "major" field.
+func MajorEqualFold(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldMajor), v))
+	})
+}
+
+// MajorContainsFold applies the ContainsFold predicate on the "major" field.
+func MajorContainsFold(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldMajor), v))
+	})
+}
+
+// UniversityEQ applies the EQ predicate on the "university" field.
+func UniversityEQ(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldUniversity), v))
+	})
+}
+
+// UniversityNEQ applies the NEQ predicate on the "university" field.
+func UniversityNEQ(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldUniversity), v))
+	})
+}
+
+// UniversityIn applies the In predicate on the "university" field.
+func UniversityIn(vs ...string) predicate.Biodata {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Biodata(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldUniversity), v...))
+	})
+}
+
+// UniversityNotIn applies the NotIn predicate on the "university" field.
+func UniversityNotIn(vs ...string) predicate.Biodata {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Biodata(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldUniversity), v...))
+	})
+}
+
+// UniversityGT applies the GT predicate on the "university" field.
+func UniversityGT(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldUniversity), v))
+	})
+}
+
+// UniversityGTE applies the GTE predicate on the "university" field.
+func UniversityGTE(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldUniversity), v))
+	})
+}
+
+// UniversityLT applies the LT predicate on the "university" field.
+func UniversityLT(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldUniversity), v))
+	})
+}
+
+// UniversityLTE applies the LTE predicate on the "university" field.
+func UniversityLTE(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldUniversity), v))
+	})
+}
+
+// UniversityContains applies the Contains predicate on the "university" field.
+func UniversityContains(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldUniversity), v))
+	})
+}
+
+// UniversityHasPrefix applies the HasPrefix predicate on the "university" field.
+func UniversityHasPrefix(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldUniversity), v))
+	})
+}
+
+// UniversityHasSuffix applies the HasSuffix predicate on the "university" field.
+func UniversityHasSuffix(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldUniversity), v))
+	})
+}
+
+// UniversityEqualFold applies the EqualFold predicate on the "university" field.
+func UniversityEqualFold(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldUniversity), v))
+	})
+}
+
+// UniversityContainsFold applies the ContainsFold predicate on the "university" field.
+func UniversityContainsFold(v string) predicate.Biodata {
+	return predicate.Biodata(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldUniversity), v))
 	})
 }
 

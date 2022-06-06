@@ -41,20 +41,20 @@ type Scholarship struct {
 
 // ScholarshipEdges holds the relations/edges for other nodes in the graph.
 type ScholarshipEdges struct {
-	// Registers holds the value of the registers edge.
-	Registers []*Register `json:"registers,omitempty"`
+	// Register holds the value of the register edge.
+	Register []*Register `json:"register,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [1]bool
 }
 
-// RegistersOrErr returns the Registers value or an error if the edge
+// RegisterOrErr returns the Register value or an error if the edge
 // was not loaded in eager-loading.
-func (e ScholarshipEdges) RegistersOrErr() ([]*Register, error) {
+func (e ScholarshipEdges) RegisterOrErr() ([]*Register, error) {
 	if e.loadedTypes[0] {
-		return e.Registers, nil
+		return e.Register, nil
 	}
-	return nil, &NotLoadedError{edge: "registers"}
+	return nil, &NotLoadedError{edge: "register"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -148,9 +148,9 @@ func (s *Scholarship) assignValues(columns []string, values []interface{}) error
 	return nil
 }
 
-// QueryRegisters queries the "registers" edge of the Scholarship entity.
-func (s *Scholarship) QueryRegisters() *RegisterQuery {
-	return (&ScholarshipClient{config: s.config}).QueryRegisters(s)
+// QueryRegister queries the "register" edge of the Scholarship entity.
+func (s *Scholarship) QueryRegister() *RegisterQuery {
+	return (&ScholarshipClient{config: s.config}).QueryRegister(s)
 }
 
 // Update returns a builder for updating this Scholarship.

@@ -250,6 +250,19 @@ func (bq *BiodataQuery) Clone() *BiodataQuery {
 
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
+//
+// Example:
+//
+//	var v []struct {
+//		Name string `json:"name,omitempty"`
+//		Count int `json:"count,omitempty"`
+//	}
+//
+//	client.Biodata.Query().
+//		GroupBy(biodata.FieldName).
+//		Aggregate(ent.Count()).
+//		Scan(ctx, &v)
+//
 func (bq *BiodataQuery) GroupBy(field string, fields ...string) *BiodataGroupBy {
 	group := &BiodataGroupBy{config: bq.config}
 	group.fields = append([]string{field}, fields...)
@@ -264,6 +277,17 @@ func (bq *BiodataQuery) GroupBy(field string, fields ...string) *BiodataGroupBy 
 
 // Select allows the selection one or more fields/columns for the given query,
 // instead of selecting all fields in the entity.
+//
+// Example:
+//
+//	var v []struct {
+//		Name string `json:"name,omitempty"`
+//	}
+//
+//	client.Biodata.Query().
+//		Select(biodata.FieldName).
+//		Scan(ctx, &v)
+//
 func (bq *BiodataQuery) Select(fields ...string) *BiodataSelect {
 	bq.fields = append(bq.fields, fields...)
 	return &BiodataSelect{BiodataQuery: bq}

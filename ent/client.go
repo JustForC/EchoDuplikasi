@@ -9,9 +9,18 @@ import (
 
 	"Kynesia/ent/migrate"
 
+	"Kynesia/ent/achievement"
 	"Kynesia/ent/biodata"
+	"Kynesia/ent/education"
+	"Kynesia/ent/family"
+	"Kynesia/ent/language"
+	"Kynesia/ent/networth"
+	"Kynesia/ent/organization"
 	"Kynesia/ent/register"
 	"Kynesia/ent/scholarship"
+	"Kynesia/ent/socialmedia"
+	"Kynesia/ent/talent"
+	"Kynesia/ent/training"
 	"Kynesia/ent/user"
 
 	"entgo.io/ent/dialect"
@@ -24,12 +33,30 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
+	// Achievement is the client for interacting with the Achievement builders.
+	Achievement *AchievementClient
 	// Biodata is the client for interacting with the Biodata builders.
 	Biodata *BiodataClient
+	// Education is the client for interacting with the Education builders.
+	Education *EducationClient
+	// Family is the client for interacting with the Family builders.
+	Family *FamilyClient
+	// Language is the client for interacting with the Language builders.
+	Language *LanguageClient
+	// Networth is the client for interacting with the Networth builders.
+	Networth *NetworthClient
+	// Organization is the client for interacting with the Organization builders.
+	Organization *OrganizationClient
 	// Register is the client for interacting with the Register builders.
 	Register *RegisterClient
 	// Scholarship is the client for interacting with the Scholarship builders.
 	Scholarship *ScholarshipClient
+	// SocialMedia is the client for interacting with the SocialMedia builders.
+	SocialMedia *SocialMediaClient
+	// Talent is the client for interacting with the Talent builders.
+	Talent *TalentClient
+	// Training is the client for interacting with the Training builders.
+	Training *TrainingClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 }
@@ -45,9 +72,18 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
+	c.Achievement = NewAchievementClient(c.config)
 	c.Biodata = NewBiodataClient(c.config)
+	c.Education = NewEducationClient(c.config)
+	c.Family = NewFamilyClient(c.config)
+	c.Language = NewLanguageClient(c.config)
+	c.Networth = NewNetworthClient(c.config)
+	c.Organization = NewOrganizationClient(c.config)
 	c.Register = NewRegisterClient(c.config)
 	c.Scholarship = NewScholarshipClient(c.config)
+	c.SocialMedia = NewSocialMediaClient(c.config)
+	c.Talent = NewTalentClient(c.config)
+	c.Training = NewTrainingClient(c.config)
 	c.User = NewUserClient(c.config)
 }
 
@@ -80,12 +116,21 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:         ctx,
-		config:      cfg,
-		Biodata:     NewBiodataClient(cfg),
-		Register:    NewRegisterClient(cfg),
-		Scholarship: NewScholarshipClient(cfg),
-		User:        NewUserClient(cfg),
+		ctx:          ctx,
+		config:       cfg,
+		Achievement:  NewAchievementClient(cfg),
+		Biodata:      NewBiodataClient(cfg),
+		Education:    NewEducationClient(cfg),
+		Family:       NewFamilyClient(cfg),
+		Language:     NewLanguageClient(cfg),
+		Networth:     NewNetworthClient(cfg),
+		Organization: NewOrganizationClient(cfg),
+		Register:     NewRegisterClient(cfg),
+		Scholarship:  NewScholarshipClient(cfg),
+		SocialMedia:  NewSocialMediaClient(cfg),
+		Talent:       NewTalentClient(cfg),
+		Training:     NewTrainingClient(cfg),
+		User:         NewUserClient(cfg),
 	}, nil
 }
 
@@ -103,19 +148,28 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:         ctx,
-		config:      cfg,
-		Biodata:     NewBiodataClient(cfg),
-		Register:    NewRegisterClient(cfg),
-		Scholarship: NewScholarshipClient(cfg),
-		User:        NewUserClient(cfg),
+		ctx:          ctx,
+		config:       cfg,
+		Achievement:  NewAchievementClient(cfg),
+		Biodata:      NewBiodataClient(cfg),
+		Education:    NewEducationClient(cfg),
+		Family:       NewFamilyClient(cfg),
+		Language:     NewLanguageClient(cfg),
+		Networth:     NewNetworthClient(cfg),
+		Organization: NewOrganizationClient(cfg),
+		Register:     NewRegisterClient(cfg),
+		Scholarship:  NewScholarshipClient(cfg),
+		SocialMedia:  NewSocialMediaClient(cfg),
+		Talent:       NewTalentClient(cfg),
+		Training:     NewTrainingClient(cfg),
+		User:         NewUserClient(cfg),
 	}, nil
 }
 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		Biodata.
+//		Achievement.
 //		Query().
 //		Count(ctx)
 //
@@ -138,10 +192,109 @@ func (c *Client) Close() error {
 // Use adds the mutation hooks to all the entity clients.
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
+	c.Achievement.Use(hooks...)
 	c.Biodata.Use(hooks...)
+	c.Education.Use(hooks...)
+	c.Family.Use(hooks...)
+	c.Language.Use(hooks...)
+	c.Networth.Use(hooks...)
+	c.Organization.Use(hooks...)
 	c.Register.Use(hooks...)
 	c.Scholarship.Use(hooks...)
+	c.SocialMedia.Use(hooks...)
+	c.Talent.Use(hooks...)
+	c.Training.Use(hooks...)
 	c.User.Use(hooks...)
+}
+
+// AchievementClient is a client for the Achievement schema.
+type AchievementClient struct {
+	config
+}
+
+// NewAchievementClient returns a client for the Achievement from the given config.
+func NewAchievementClient(c config) *AchievementClient {
+	return &AchievementClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `achievement.Hooks(f(g(h())))`.
+func (c *AchievementClient) Use(hooks ...Hook) {
+	c.hooks.Achievement = append(c.hooks.Achievement, hooks...)
+}
+
+// Create returns a create builder for Achievement.
+func (c *AchievementClient) Create() *AchievementCreate {
+	mutation := newAchievementMutation(c.config, OpCreate)
+	return &AchievementCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Achievement entities.
+func (c *AchievementClient) CreateBulk(builders ...*AchievementCreate) *AchievementCreateBulk {
+	return &AchievementCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Achievement.
+func (c *AchievementClient) Update() *AchievementUpdate {
+	mutation := newAchievementMutation(c.config, OpUpdate)
+	return &AchievementUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *AchievementClient) UpdateOne(a *Achievement) *AchievementUpdateOne {
+	mutation := newAchievementMutation(c.config, OpUpdateOne, withAchievement(a))
+	return &AchievementUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *AchievementClient) UpdateOneID(id int) *AchievementUpdateOne {
+	mutation := newAchievementMutation(c.config, OpUpdateOne, withAchievementID(id))
+	return &AchievementUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Achievement.
+func (c *AchievementClient) Delete() *AchievementDelete {
+	mutation := newAchievementMutation(c.config, OpDelete)
+	return &AchievementDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *AchievementClient) DeleteOne(a *Achievement) *AchievementDeleteOne {
+	return c.DeleteOneID(a.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *AchievementClient) DeleteOneID(id int) *AchievementDeleteOne {
+	builder := c.Delete().Where(achievement.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &AchievementDeleteOne{builder}
+}
+
+// Query returns a query builder for Achievement.
+func (c *AchievementClient) Query() *AchievementQuery {
+	return &AchievementQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a Achievement entity by its id.
+func (c *AchievementClient) Get(ctx context.Context, id int) (*Achievement, error) {
+	return c.Query().Where(achievement.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *AchievementClient) GetX(ctx context.Context, id int) *Achievement {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *AchievementClient) Hooks() []Hook {
+	return c.hooks.Achievement
 }
 
 // BiodataClient is a client for the Biodata schema.
@@ -232,6 +385,456 @@ func (c *BiodataClient) GetX(ctx context.Context, id int) *Biodata {
 // Hooks returns the client hooks.
 func (c *BiodataClient) Hooks() []Hook {
 	return c.hooks.Biodata
+}
+
+// EducationClient is a client for the Education schema.
+type EducationClient struct {
+	config
+}
+
+// NewEducationClient returns a client for the Education from the given config.
+func NewEducationClient(c config) *EducationClient {
+	return &EducationClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `education.Hooks(f(g(h())))`.
+func (c *EducationClient) Use(hooks ...Hook) {
+	c.hooks.Education = append(c.hooks.Education, hooks...)
+}
+
+// Create returns a create builder for Education.
+func (c *EducationClient) Create() *EducationCreate {
+	mutation := newEducationMutation(c.config, OpCreate)
+	return &EducationCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Education entities.
+func (c *EducationClient) CreateBulk(builders ...*EducationCreate) *EducationCreateBulk {
+	return &EducationCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Education.
+func (c *EducationClient) Update() *EducationUpdate {
+	mutation := newEducationMutation(c.config, OpUpdate)
+	return &EducationUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *EducationClient) UpdateOne(e *Education) *EducationUpdateOne {
+	mutation := newEducationMutation(c.config, OpUpdateOne, withEducation(e))
+	return &EducationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *EducationClient) UpdateOneID(id int) *EducationUpdateOne {
+	mutation := newEducationMutation(c.config, OpUpdateOne, withEducationID(id))
+	return &EducationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Education.
+func (c *EducationClient) Delete() *EducationDelete {
+	mutation := newEducationMutation(c.config, OpDelete)
+	return &EducationDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *EducationClient) DeleteOne(e *Education) *EducationDeleteOne {
+	return c.DeleteOneID(e.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *EducationClient) DeleteOneID(id int) *EducationDeleteOne {
+	builder := c.Delete().Where(education.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &EducationDeleteOne{builder}
+}
+
+// Query returns a query builder for Education.
+func (c *EducationClient) Query() *EducationQuery {
+	return &EducationQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a Education entity by its id.
+func (c *EducationClient) Get(ctx context.Context, id int) (*Education, error) {
+	return c.Query().Where(education.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *EducationClient) GetX(ctx context.Context, id int) *Education {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *EducationClient) Hooks() []Hook {
+	return c.hooks.Education
+}
+
+// FamilyClient is a client for the Family schema.
+type FamilyClient struct {
+	config
+}
+
+// NewFamilyClient returns a client for the Family from the given config.
+func NewFamilyClient(c config) *FamilyClient {
+	return &FamilyClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `family.Hooks(f(g(h())))`.
+func (c *FamilyClient) Use(hooks ...Hook) {
+	c.hooks.Family = append(c.hooks.Family, hooks...)
+}
+
+// Create returns a create builder for Family.
+func (c *FamilyClient) Create() *FamilyCreate {
+	mutation := newFamilyMutation(c.config, OpCreate)
+	return &FamilyCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Family entities.
+func (c *FamilyClient) CreateBulk(builders ...*FamilyCreate) *FamilyCreateBulk {
+	return &FamilyCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Family.
+func (c *FamilyClient) Update() *FamilyUpdate {
+	mutation := newFamilyMutation(c.config, OpUpdate)
+	return &FamilyUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *FamilyClient) UpdateOne(f *Family) *FamilyUpdateOne {
+	mutation := newFamilyMutation(c.config, OpUpdateOne, withFamily(f))
+	return &FamilyUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *FamilyClient) UpdateOneID(id int) *FamilyUpdateOne {
+	mutation := newFamilyMutation(c.config, OpUpdateOne, withFamilyID(id))
+	return &FamilyUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Family.
+func (c *FamilyClient) Delete() *FamilyDelete {
+	mutation := newFamilyMutation(c.config, OpDelete)
+	return &FamilyDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *FamilyClient) DeleteOne(f *Family) *FamilyDeleteOne {
+	return c.DeleteOneID(f.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *FamilyClient) DeleteOneID(id int) *FamilyDeleteOne {
+	builder := c.Delete().Where(family.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &FamilyDeleteOne{builder}
+}
+
+// Query returns a query builder for Family.
+func (c *FamilyClient) Query() *FamilyQuery {
+	return &FamilyQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a Family entity by its id.
+func (c *FamilyClient) Get(ctx context.Context, id int) (*Family, error) {
+	return c.Query().Where(family.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *FamilyClient) GetX(ctx context.Context, id int) *Family {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *FamilyClient) Hooks() []Hook {
+	return c.hooks.Family
+}
+
+// LanguageClient is a client for the Language schema.
+type LanguageClient struct {
+	config
+}
+
+// NewLanguageClient returns a client for the Language from the given config.
+func NewLanguageClient(c config) *LanguageClient {
+	return &LanguageClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `language.Hooks(f(g(h())))`.
+func (c *LanguageClient) Use(hooks ...Hook) {
+	c.hooks.Language = append(c.hooks.Language, hooks...)
+}
+
+// Create returns a create builder for Language.
+func (c *LanguageClient) Create() *LanguageCreate {
+	mutation := newLanguageMutation(c.config, OpCreate)
+	return &LanguageCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Language entities.
+func (c *LanguageClient) CreateBulk(builders ...*LanguageCreate) *LanguageCreateBulk {
+	return &LanguageCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Language.
+func (c *LanguageClient) Update() *LanguageUpdate {
+	mutation := newLanguageMutation(c.config, OpUpdate)
+	return &LanguageUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *LanguageClient) UpdateOne(l *Language) *LanguageUpdateOne {
+	mutation := newLanguageMutation(c.config, OpUpdateOne, withLanguage(l))
+	return &LanguageUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *LanguageClient) UpdateOneID(id int) *LanguageUpdateOne {
+	mutation := newLanguageMutation(c.config, OpUpdateOne, withLanguageID(id))
+	return &LanguageUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Language.
+func (c *LanguageClient) Delete() *LanguageDelete {
+	mutation := newLanguageMutation(c.config, OpDelete)
+	return &LanguageDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *LanguageClient) DeleteOne(l *Language) *LanguageDeleteOne {
+	return c.DeleteOneID(l.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *LanguageClient) DeleteOneID(id int) *LanguageDeleteOne {
+	builder := c.Delete().Where(language.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &LanguageDeleteOne{builder}
+}
+
+// Query returns a query builder for Language.
+func (c *LanguageClient) Query() *LanguageQuery {
+	return &LanguageQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a Language entity by its id.
+func (c *LanguageClient) Get(ctx context.Context, id int) (*Language, error) {
+	return c.Query().Where(language.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *LanguageClient) GetX(ctx context.Context, id int) *Language {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *LanguageClient) Hooks() []Hook {
+	return c.hooks.Language
+}
+
+// NetworthClient is a client for the Networth schema.
+type NetworthClient struct {
+	config
+}
+
+// NewNetworthClient returns a client for the Networth from the given config.
+func NewNetworthClient(c config) *NetworthClient {
+	return &NetworthClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `networth.Hooks(f(g(h())))`.
+func (c *NetworthClient) Use(hooks ...Hook) {
+	c.hooks.Networth = append(c.hooks.Networth, hooks...)
+}
+
+// Create returns a create builder for Networth.
+func (c *NetworthClient) Create() *NetworthCreate {
+	mutation := newNetworthMutation(c.config, OpCreate)
+	return &NetworthCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Networth entities.
+func (c *NetworthClient) CreateBulk(builders ...*NetworthCreate) *NetworthCreateBulk {
+	return &NetworthCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Networth.
+func (c *NetworthClient) Update() *NetworthUpdate {
+	mutation := newNetworthMutation(c.config, OpUpdate)
+	return &NetworthUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *NetworthClient) UpdateOne(n *Networth) *NetworthUpdateOne {
+	mutation := newNetworthMutation(c.config, OpUpdateOne, withNetworth(n))
+	return &NetworthUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *NetworthClient) UpdateOneID(id int) *NetworthUpdateOne {
+	mutation := newNetworthMutation(c.config, OpUpdateOne, withNetworthID(id))
+	return &NetworthUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Networth.
+func (c *NetworthClient) Delete() *NetworthDelete {
+	mutation := newNetworthMutation(c.config, OpDelete)
+	return &NetworthDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *NetworthClient) DeleteOne(n *Networth) *NetworthDeleteOne {
+	return c.DeleteOneID(n.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *NetworthClient) DeleteOneID(id int) *NetworthDeleteOne {
+	builder := c.Delete().Where(networth.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &NetworthDeleteOne{builder}
+}
+
+// Query returns a query builder for Networth.
+func (c *NetworthClient) Query() *NetworthQuery {
+	return &NetworthQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a Networth entity by its id.
+func (c *NetworthClient) Get(ctx context.Context, id int) (*Networth, error) {
+	return c.Query().Where(networth.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *NetworthClient) GetX(ctx context.Context, id int) *Networth {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *NetworthClient) Hooks() []Hook {
+	return c.hooks.Networth
+}
+
+// OrganizationClient is a client for the Organization schema.
+type OrganizationClient struct {
+	config
+}
+
+// NewOrganizationClient returns a client for the Organization from the given config.
+func NewOrganizationClient(c config) *OrganizationClient {
+	return &OrganizationClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `organization.Hooks(f(g(h())))`.
+func (c *OrganizationClient) Use(hooks ...Hook) {
+	c.hooks.Organization = append(c.hooks.Organization, hooks...)
+}
+
+// Create returns a create builder for Organization.
+func (c *OrganizationClient) Create() *OrganizationCreate {
+	mutation := newOrganizationMutation(c.config, OpCreate)
+	return &OrganizationCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Organization entities.
+func (c *OrganizationClient) CreateBulk(builders ...*OrganizationCreate) *OrganizationCreateBulk {
+	return &OrganizationCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Organization.
+func (c *OrganizationClient) Update() *OrganizationUpdate {
+	mutation := newOrganizationMutation(c.config, OpUpdate)
+	return &OrganizationUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *OrganizationClient) UpdateOne(o *Organization) *OrganizationUpdateOne {
+	mutation := newOrganizationMutation(c.config, OpUpdateOne, withOrganization(o))
+	return &OrganizationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *OrganizationClient) UpdateOneID(id int) *OrganizationUpdateOne {
+	mutation := newOrganizationMutation(c.config, OpUpdateOne, withOrganizationID(id))
+	return &OrganizationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Organization.
+func (c *OrganizationClient) Delete() *OrganizationDelete {
+	mutation := newOrganizationMutation(c.config, OpDelete)
+	return &OrganizationDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *OrganizationClient) DeleteOne(o *Organization) *OrganizationDeleteOne {
+	return c.DeleteOneID(o.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *OrganizationClient) DeleteOneID(id int) *OrganizationDeleteOne {
+	builder := c.Delete().Where(organization.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &OrganizationDeleteOne{builder}
+}
+
+// Query returns a query builder for Organization.
+func (c *OrganizationClient) Query() *OrganizationQuery {
+	return &OrganizationQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a Organization entity by its id.
+func (c *OrganizationClient) Get(ctx context.Context, id int) (*Organization, error) {
+	return c.Query().Where(organization.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *OrganizationClient) GetX(ctx context.Context, id int) *Organization {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *OrganizationClient) Hooks() []Hook {
+	return c.hooks.Organization
 }
 
 // RegisterClient is a client for the Register schema.
@@ -327,7 +930,7 @@ func (c *RegisterClient) QueryUser(r *Register) *UserQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(register.Table, register.FieldID, id),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, register.UserTable, register.UserColumn),
+			sqlgraph.Edge(sqlgraph.M2M, false, register.UserTable, register.UserPrimaryKey...),
 		)
 		fromV = sqlgraph.Neighbors(r.driver.Dialect(), step)
 		return fromV, nil
@@ -343,7 +946,7 @@ func (c *RegisterClient) QueryScholarship(r *Register) *ScholarshipQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(register.Table, register.FieldID, id),
 			sqlgraph.To(scholarship.Table, scholarship.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, register.ScholarshipTable, register.ScholarshipColumn),
+			sqlgraph.Edge(sqlgraph.M2M, false, register.ScholarshipTable, register.ScholarshipPrimaryKey...),
 		)
 		fromV = sqlgraph.Neighbors(r.driver.Dialect(), step)
 		return fromV, nil
@@ -441,15 +1044,15 @@ func (c *ScholarshipClient) GetX(ctx context.Context, id int) *Scholarship {
 	return obj
 }
 
-// QueryRegisters queries the registers edge of a Scholarship.
-func (c *ScholarshipClient) QueryRegisters(s *Scholarship) *RegisterQuery {
+// QueryRegister queries the register edge of a Scholarship.
+func (c *ScholarshipClient) QueryRegister(s *Scholarship) *RegisterQuery {
 	query := &RegisterQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := s.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(scholarship.Table, scholarship.FieldID, id),
 			sqlgraph.To(register.Table, register.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, scholarship.RegistersTable, scholarship.RegistersColumn),
+			sqlgraph.Edge(sqlgraph.M2M, true, scholarship.RegisterTable, scholarship.RegisterPrimaryKey...),
 		)
 		fromV = sqlgraph.Neighbors(s.driver.Dialect(), step)
 		return fromV, nil
@@ -460,6 +1063,276 @@ func (c *ScholarshipClient) QueryRegisters(s *Scholarship) *RegisterQuery {
 // Hooks returns the client hooks.
 func (c *ScholarshipClient) Hooks() []Hook {
 	return c.hooks.Scholarship
+}
+
+// SocialMediaClient is a client for the SocialMedia schema.
+type SocialMediaClient struct {
+	config
+}
+
+// NewSocialMediaClient returns a client for the SocialMedia from the given config.
+func NewSocialMediaClient(c config) *SocialMediaClient {
+	return &SocialMediaClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `socialmedia.Hooks(f(g(h())))`.
+func (c *SocialMediaClient) Use(hooks ...Hook) {
+	c.hooks.SocialMedia = append(c.hooks.SocialMedia, hooks...)
+}
+
+// Create returns a create builder for SocialMedia.
+func (c *SocialMediaClient) Create() *SocialMediaCreate {
+	mutation := newSocialMediaMutation(c.config, OpCreate)
+	return &SocialMediaCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of SocialMedia entities.
+func (c *SocialMediaClient) CreateBulk(builders ...*SocialMediaCreate) *SocialMediaCreateBulk {
+	return &SocialMediaCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for SocialMedia.
+func (c *SocialMediaClient) Update() *SocialMediaUpdate {
+	mutation := newSocialMediaMutation(c.config, OpUpdate)
+	return &SocialMediaUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *SocialMediaClient) UpdateOne(sm *SocialMedia) *SocialMediaUpdateOne {
+	mutation := newSocialMediaMutation(c.config, OpUpdateOne, withSocialMedia(sm))
+	return &SocialMediaUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *SocialMediaClient) UpdateOneID(id int) *SocialMediaUpdateOne {
+	mutation := newSocialMediaMutation(c.config, OpUpdateOne, withSocialMediaID(id))
+	return &SocialMediaUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for SocialMedia.
+func (c *SocialMediaClient) Delete() *SocialMediaDelete {
+	mutation := newSocialMediaMutation(c.config, OpDelete)
+	return &SocialMediaDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *SocialMediaClient) DeleteOne(sm *SocialMedia) *SocialMediaDeleteOne {
+	return c.DeleteOneID(sm.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *SocialMediaClient) DeleteOneID(id int) *SocialMediaDeleteOne {
+	builder := c.Delete().Where(socialmedia.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &SocialMediaDeleteOne{builder}
+}
+
+// Query returns a query builder for SocialMedia.
+func (c *SocialMediaClient) Query() *SocialMediaQuery {
+	return &SocialMediaQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a SocialMedia entity by its id.
+func (c *SocialMediaClient) Get(ctx context.Context, id int) (*SocialMedia, error) {
+	return c.Query().Where(socialmedia.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *SocialMediaClient) GetX(ctx context.Context, id int) *SocialMedia {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *SocialMediaClient) Hooks() []Hook {
+	return c.hooks.SocialMedia
+}
+
+// TalentClient is a client for the Talent schema.
+type TalentClient struct {
+	config
+}
+
+// NewTalentClient returns a client for the Talent from the given config.
+func NewTalentClient(c config) *TalentClient {
+	return &TalentClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `talent.Hooks(f(g(h())))`.
+func (c *TalentClient) Use(hooks ...Hook) {
+	c.hooks.Talent = append(c.hooks.Talent, hooks...)
+}
+
+// Create returns a create builder for Talent.
+func (c *TalentClient) Create() *TalentCreate {
+	mutation := newTalentMutation(c.config, OpCreate)
+	return &TalentCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Talent entities.
+func (c *TalentClient) CreateBulk(builders ...*TalentCreate) *TalentCreateBulk {
+	return &TalentCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Talent.
+func (c *TalentClient) Update() *TalentUpdate {
+	mutation := newTalentMutation(c.config, OpUpdate)
+	return &TalentUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *TalentClient) UpdateOne(t *Talent) *TalentUpdateOne {
+	mutation := newTalentMutation(c.config, OpUpdateOne, withTalent(t))
+	return &TalentUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *TalentClient) UpdateOneID(id int) *TalentUpdateOne {
+	mutation := newTalentMutation(c.config, OpUpdateOne, withTalentID(id))
+	return &TalentUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Talent.
+func (c *TalentClient) Delete() *TalentDelete {
+	mutation := newTalentMutation(c.config, OpDelete)
+	return &TalentDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *TalentClient) DeleteOne(t *Talent) *TalentDeleteOne {
+	return c.DeleteOneID(t.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *TalentClient) DeleteOneID(id int) *TalentDeleteOne {
+	builder := c.Delete().Where(talent.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &TalentDeleteOne{builder}
+}
+
+// Query returns a query builder for Talent.
+func (c *TalentClient) Query() *TalentQuery {
+	return &TalentQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a Talent entity by its id.
+func (c *TalentClient) Get(ctx context.Context, id int) (*Talent, error) {
+	return c.Query().Where(talent.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *TalentClient) GetX(ctx context.Context, id int) *Talent {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *TalentClient) Hooks() []Hook {
+	return c.hooks.Talent
+}
+
+// TrainingClient is a client for the Training schema.
+type TrainingClient struct {
+	config
+}
+
+// NewTrainingClient returns a client for the Training from the given config.
+func NewTrainingClient(c config) *TrainingClient {
+	return &TrainingClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `training.Hooks(f(g(h())))`.
+func (c *TrainingClient) Use(hooks ...Hook) {
+	c.hooks.Training = append(c.hooks.Training, hooks...)
+}
+
+// Create returns a create builder for Training.
+func (c *TrainingClient) Create() *TrainingCreate {
+	mutation := newTrainingMutation(c.config, OpCreate)
+	return &TrainingCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Training entities.
+func (c *TrainingClient) CreateBulk(builders ...*TrainingCreate) *TrainingCreateBulk {
+	return &TrainingCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Training.
+func (c *TrainingClient) Update() *TrainingUpdate {
+	mutation := newTrainingMutation(c.config, OpUpdate)
+	return &TrainingUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *TrainingClient) UpdateOne(t *Training) *TrainingUpdateOne {
+	mutation := newTrainingMutation(c.config, OpUpdateOne, withTraining(t))
+	return &TrainingUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *TrainingClient) UpdateOneID(id int) *TrainingUpdateOne {
+	mutation := newTrainingMutation(c.config, OpUpdateOne, withTrainingID(id))
+	return &TrainingUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Training.
+func (c *TrainingClient) Delete() *TrainingDelete {
+	mutation := newTrainingMutation(c.config, OpDelete)
+	return &TrainingDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *TrainingClient) DeleteOne(t *Training) *TrainingDeleteOne {
+	return c.DeleteOneID(t.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *TrainingClient) DeleteOneID(id int) *TrainingDeleteOne {
+	builder := c.Delete().Where(training.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &TrainingDeleteOne{builder}
+}
+
+// Query returns a query builder for Training.
+func (c *TrainingClient) Query() *TrainingQuery {
+	return &TrainingQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a Training entity by its id.
+func (c *TrainingClient) Get(ctx context.Context, id int) (*Training, error) {
+	return c.Query().Where(training.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *TrainingClient) GetX(ctx context.Context, id int) *Training {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *TrainingClient) Hooks() []Hook {
+	return c.hooks.Training
 }
 
 // UserClient is a client for the User schema.
@@ -547,15 +1420,15 @@ func (c *UserClient) GetX(ctx context.Context, id int) *User {
 	return obj
 }
 
-// QueryRegisters queries the registers edge of a User.
-func (c *UserClient) QueryRegisters(u *User) *RegisterQuery {
+// QueryRegister queries the register edge of a User.
+func (c *UserClient) QueryRegister(u *User) *RegisterQuery {
 	query := &RegisterQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := u.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(register.Table, register.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.RegistersTable, user.RegistersColumn),
+			sqlgraph.Edge(sqlgraph.M2M, true, user.RegisterTable, user.RegisterPrimaryKey...),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil

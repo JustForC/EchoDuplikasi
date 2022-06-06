@@ -6,14 +6,41 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
+// Achievement is the predicate function for achievement builders.
+type Achievement func(*sql.Selector)
+
 // Biodata is the predicate function for biodata builders.
 type Biodata func(*sql.Selector)
+
+// Education is the predicate function for education builders.
+type Education func(*sql.Selector)
+
+// Family is the predicate function for family builders.
+type Family func(*sql.Selector)
+
+// Language is the predicate function for language builders.
+type Language func(*sql.Selector)
+
+// Networth is the predicate function for networth builders.
+type Networth func(*sql.Selector)
+
+// Organization is the predicate function for organization builders.
+type Organization func(*sql.Selector)
 
 // Register is the predicate function for register builders.
 type Register func(*sql.Selector)
 
 // Scholarship is the predicate function for scholarship builders.
 type Scholarship func(*sql.Selector)
+
+// SocialMedia is the predicate function for socialmedia builders.
+type SocialMedia func(*sql.Selector)
+
+// Talent is the predicate function for talent builders.
+type Talent func(*sql.Selector)
+
+// Training is the predicate function for training builders.
+type Training func(*sql.Selector)
 
 // User is the predicate function for user builders.
 type User func(*sql.Selector)

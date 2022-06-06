@@ -70,42 +70,34 @@ func (rc *RegisterCreate) SetNillableInterviewTime(t *time.Time) *RegisterCreate
 	return rc
 }
 
-// SetUserID sets the "user" edge to the User entity by ID.
-func (rc *RegisterCreate) SetUserID(id int) *RegisterCreate {
-	rc.mutation.SetUserID(id)
+// AddUserIDs adds the "user" edge to the User entity by IDs.
+func (rc *RegisterCreate) AddUserIDs(ids ...int) *RegisterCreate {
+	rc.mutation.AddUserIDs(ids...)
 	return rc
 }
 
-// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (rc *RegisterCreate) SetNillableUserID(id *int) *RegisterCreate {
-	if id != nil {
-		rc = rc.SetUserID(*id)
+// AddUser adds the "user" edges to the User entity.
+func (rc *RegisterCreate) AddUser(u ...*User) *RegisterCreate {
+	ids := make([]int, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
 	}
+	return rc.AddUserIDs(ids...)
+}
+
+// AddScholarshipIDs adds the "scholarship" edge to the Scholarship entity by IDs.
+func (rc *RegisterCreate) AddScholarshipIDs(ids ...int) *RegisterCreate {
+	rc.mutation.AddScholarshipIDs(ids...)
 	return rc
 }
 
-// SetUser sets the "user" edge to the User entity.
-func (rc *RegisterCreate) SetUser(u *User) *RegisterCreate {
-	return rc.SetUserID(u.ID)
-}
-
-// SetScholarshipID sets the "scholarship" edge to the Scholarship entity by ID.
-func (rc *RegisterCreate) SetScholarshipID(id int) *RegisterCreate {
-	rc.mutation.SetScholarshipID(id)
-	return rc
-}
-
-// SetNillableScholarshipID sets the "scholarship" edge to the Scholarship entity by ID if the given value is not nil.
-func (rc *RegisterCreate) SetNillableScholarshipID(id *int) *RegisterCreate {
-	if id != nil {
-		rc = rc.SetScholarshipID(*id)
+// AddScholarship adds the "scholarship" edges to the Scholarship entity.
+func (rc *RegisterCreate) AddScholarship(s ...*Scholarship) *RegisterCreate {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
 	}
-	return rc
-}
-
-// SetScholarship sets the "scholarship" edge to the Scholarship entity.
-func (rc *RegisterCreate) SetScholarship(s *Scholarship) *RegisterCreate {
-	return rc.SetScholarshipID(s.ID)
+	return rc.AddScholarshipIDs(ids...)
 }
 
 // Mutation returns the RegisterMutation object of the builder.
@@ -254,10 +246,10 @@ func (rc *RegisterCreate) createSpec() (*Register, *sqlgraph.CreateSpec) {
 	}
 	if nodes := rc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
 			Table:   register.UserTable,
-			Columns: []string{register.UserColumn},
+			Columns: register.UserPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -269,15 +261,14 @@ func (rc *RegisterCreate) createSpec() (*Register, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.user_registers = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := rc.mutation.ScholarshipIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
 			Table:   register.ScholarshipTable,
-			Columns: []string{register.ScholarshipColumn},
+			Columns: register.ScholarshipPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -289,7 +280,6 @@ func (rc *RegisterCreate) createSpec() (*Register, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.scholarship_registers = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

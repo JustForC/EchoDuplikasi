@@ -104,42 +104,34 @@ func (ru *RegisterUpdate) ClearInterviewTime() *RegisterUpdate {
 	return ru
 }
 
-// SetUserID sets the "user" edge to the User entity by ID.
-func (ru *RegisterUpdate) SetUserID(id int) *RegisterUpdate {
-	ru.mutation.SetUserID(id)
+// AddUserIDs adds the "user" edge to the User entity by IDs.
+func (ru *RegisterUpdate) AddUserIDs(ids ...int) *RegisterUpdate {
+	ru.mutation.AddUserIDs(ids...)
 	return ru
 }
 
-// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (ru *RegisterUpdate) SetNillableUserID(id *int) *RegisterUpdate {
-	if id != nil {
-		ru = ru.SetUserID(*id)
+// AddUser adds the "user" edges to the User entity.
+func (ru *RegisterUpdate) AddUser(u ...*User) *RegisterUpdate {
+	ids := make([]int, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
 	}
+	return ru.AddUserIDs(ids...)
+}
+
+// AddScholarshipIDs adds the "scholarship" edge to the Scholarship entity by IDs.
+func (ru *RegisterUpdate) AddScholarshipIDs(ids ...int) *RegisterUpdate {
+	ru.mutation.AddScholarshipIDs(ids...)
 	return ru
 }
 
-// SetUser sets the "user" edge to the User entity.
-func (ru *RegisterUpdate) SetUser(u *User) *RegisterUpdate {
-	return ru.SetUserID(u.ID)
-}
-
-// SetScholarshipID sets the "scholarship" edge to the Scholarship entity by ID.
-func (ru *RegisterUpdate) SetScholarshipID(id int) *RegisterUpdate {
-	ru.mutation.SetScholarshipID(id)
-	return ru
-}
-
-// SetNillableScholarshipID sets the "scholarship" edge to the Scholarship entity by ID if the given value is not nil.
-func (ru *RegisterUpdate) SetNillableScholarshipID(id *int) *RegisterUpdate {
-	if id != nil {
-		ru = ru.SetScholarshipID(*id)
+// AddScholarship adds the "scholarship" edges to the Scholarship entity.
+func (ru *RegisterUpdate) AddScholarship(s ...*Scholarship) *RegisterUpdate {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
 	}
-	return ru
-}
-
-// SetScholarship sets the "scholarship" edge to the Scholarship entity.
-func (ru *RegisterUpdate) SetScholarship(s *Scholarship) *RegisterUpdate {
-	return ru.SetScholarshipID(s.ID)
+	return ru.AddScholarshipIDs(ids...)
 }
 
 // Mutation returns the RegisterMutation object of the builder.
@@ -147,16 +139,46 @@ func (ru *RegisterUpdate) Mutation() *RegisterMutation {
 	return ru.mutation
 }
 
-// ClearUser clears the "user" edge to the User entity.
+// ClearUser clears all "user" edges to the User entity.
 func (ru *RegisterUpdate) ClearUser() *RegisterUpdate {
 	ru.mutation.ClearUser()
 	return ru
 }
 
-// ClearScholarship clears the "scholarship" edge to the Scholarship entity.
+// RemoveUserIDs removes the "user" edge to User entities by IDs.
+func (ru *RegisterUpdate) RemoveUserIDs(ids ...int) *RegisterUpdate {
+	ru.mutation.RemoveUserIDs(ids...)
+	return ru
+}
+
+// RemoveUser removes "user" edges to User entities.
+func (ru *RegisterUpdate) RemoveUser(u ...*User) *RegisterUpdate {
+	ids := make([]int, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return ru.RemoveUserIDs(ids...)
+}
+
+// ClearScholarship clears all "scholarship" edges to the Scholarship entity.
 func (ru *RegisterUpdate) ClearScholarship() *RegisterUpdate {
 	ru.mutation.ClearScholarship()
 	return ru
+}
+
+// RemoveScholarshipIDs removes the "scholarship" edge to Scholarship entities by IDs.
+func (ru *RegisterUpdate) RemoveScholarshipIDs(ids ...int) *RegisterUpdate {
+	ru.mutation.RemoveScholarshipIDs(ids...)
+	return ru
+}
+
+// RemoveScholarship removes "scholarship" edges to Scholarship entities.
+func (ru *RegisterUpdate) RemoveScholarship(s ...*Scholarship) *RegisterUpdate {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return ru.RemoveScholarshipIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -287,10 +309,10 @@ func (ru *RegisterUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if ru.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
 			Table:   register.UserTable,
-			Columns: []string{register.UserColumn},
+			Columns: register.UserPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -301,12 +323,31 @@ func (ru *RegisterUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
+	if nodes := ru.mutation.RemovedUserIDs(); len(nodes) > 0 && !ru.mutation.UserCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   register.UserTable,
+			Columns: register.UserPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: user.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
 	if nodes := ru.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
 			Table:   register.UserTable,
-			Columns: []string{register.UserColumn},
+			Columns: register.UserPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -322,10 +363,10 @@ func (ru *RegisterUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if ru.mutation.ScholarshipCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
 			Table:   register.ScholarshipTable,
-			Columns: []string{register.ScholarshipColumn},
+			Columns: register.ScholarshipPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -336,12 +377,31 @@ func (ru *RegisterUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
+	if nodes := ru.mutation.RemovedScholarshipIDs(); len(nodes) > 0 && !ru.mutation.ScholarshipCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   register.ScholarshipTable,
+			Columns: register.ScholarshipPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: scholarship.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
 	if nodes := ru.mutation.ScholarshipIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
 			Table:   register.ScholarshipTable,
-			Columns: []string{register.ScholarshipColumn},
+			Columns: register.ScholarshipPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -448,42 +508,34 @@ func (ruo *RegisterUpdateOne) ClearInterviewTime() *RegisterUpdateOne {
 	return ruo
 }
 
-// SetUserID sets the "user" edge to the User entity by ID.
-func (ruo *RegisterUpdateOne) SetUserID(id int) *RegisterUpdateOne {
-	ruo.mutation.SetUserID(id)
+// AddUserIDs adds the "user" edge to the User entity by IDs.
+func (ruo *RegisterUpdateOne) AddUserIDs(ids ...int) *RegisterUpdateOne {
+	ruo.mutation.AddUserIDs(ids...)
 	return ruo
 }
 
-// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (ruo *RegisterUpdateOne) SetNillableUserID(id *int) *RegisterUpdateOne {
-	if id != nil {
-		ruo = ruo.SetUserID(*id)
+// AddUser adds the "user" edges to the User entity.
+func (ruo *RegisterUpdateOne) AddUser(u ...*User) *RegisterUpdateOne {
+	ids := make([]int, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
 	}
+	return ruo.AddUserIDs(ids...)
+}
+
+// AddScholarshipIDs adds the "scholarship" edge to the Scholarship entity by IDs.
+func (ruo *RegisterUpdateOne) AddScholarshipIDs(ids ...int) *RegisterUpdateOne {
+	ruo.mutation.AddScholarshipIDs(ids...)
 	return ruo
 }
 
-// SetUser sets the "user" edge to the User entity.
-func (ruo *RegisterUpdateOne) SetUser(u *User) *RegisterUpdateOne {
-	return ruo.SetUserID(u.ID)
-}
-
-// SetScholarshipID sets the "scholarship" edge to the Scholarship entity by ID.
-func (ruo *RegisterUpdateOne) SetScholarshipID(id int) *RegisterUpdateOne {
-	ruo.mutation.SetScholarshipID(id)
-	return ruo
-}
-
-// SetNillableScholarshipID sets the "scholarship" edge to the Scholarship entity by ID if the given value is not nil.
-func (ruo *RegisterUpdateOne) SetNillableScholarshipID(id *int) *RegisterUpdateOne {
-	if id != nil {
-		ruo = ruo.SetScholarshipID(*id)
+// AddScholarship adds the "scholarship" edges to the Scholarship entity.
+func (ruo *RegisterUpdateOne) AddScholarship(s ...*Scholarship) *RegisterUpdateOne {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
 	}
-	return ruo
-}
-
-// SetScholarship sets the "scholarship" edge to the Scholarship entity.
-func (ruo *RegisterUpdateOne) SetScholarship(s *Scholarship) *RegisterUpdateOne {
-	return ruo.SetScholarshipID(s.ID)
+	return ruo.AddScholarshipIDs(ids...)
 }
 
 // Mutation returns the RegisterMutation object of the builder.
@@ -491,16 +543,46 @@ func (ruo *RegisterUpdateOne) Mutation() *RegisterMutation {
 	return ruo.mutation
 }
 
-// ClearUser clears the "user" edge to the User entity.
+// ClearUser clears all "user" edges to the User entity.
 func (ruo *RegisterUpdateOne) ClearUser() *RegisterUpdateOne {
 	ruo.mutation.ClearUser()
 	return ruo
 }
 
-// ClearScholarship clears the "scholarship" edge to the Scholarship entity.
+// RemoveUserIDs removes the "user" edge to User entities by IDs.
+func (ruo *RegisterUpdateOne) RemoveUserIDs(ids ...int) *RegisterUpdateOne {
+	ruo.mutation.RemoveUserIDs(ids...)
+	return ruo
+}
+
+// RemoveUser removes "user" edges to User entities.
+func (ruo *RegisterUpdateOne) RemoveUser(u ...*User) *RegisterUpdateOne {
+	ids := make([]int, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return ruo.RemoveUserIDs(ids...)
+}
+
+// ClearScholarship clears all "scholarship" edges to the Scholarship entity.
 func (ruo *RegisterUpdateOne) ClearScholarship() *RegisterUpdateOne {
 	ruo.mutation.ClearScholarship()
 	return ruo
+}
+
+// RemoveScholarshipIDs removes the "scholarship" edge to Scholarship entities by IDs.
+func (ruo *RegisterUpdateOne) RemoveScholarshipIDs(ids ...int) *RegisterUpdateOne {
+	ruo.mutation.RemoveScholarshipIDs(ids...)
+	return ruo
+}
+
+// RemoveScholarship removes "scholarship" edges to Scholarship entities.
+func (ruo *RegisterUpdateOne) RemoveScholarship(s ...*Scholarship) *RegisterUpdateOne {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return ruo.RemoveScholarshipIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -655,10 +737,10 @@ func (ruo *RegisterUpdateOne) sqlSave(ctx context.Context) (_node *Register, err
 	}
 	if ruo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
 			Table:   register.UserTable,
-			Columns: []string{register.UserColumn},
+			Columns: register.UserPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -669,12 +751,31 @@ func (ruo *RegisterUpdateOne) sqlSave(ctx context.Context) (_node *Register, err
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
+	if nodes := ruo.mutation.RemovedUserIDs(); len(nodes) > 0 && !ruo.mutation.UserCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   register.UserTable,
+			Columns: register.UserPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: user.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
 	if nodes := ruo.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
 			Table:   register.UserTable,
-			Columns: []string{register.UserColumn},
+			Columns: register.UserPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -690,10 +791,10 @@ func (ruo *RegisterUpdateOne) sqlSave(ctx context.Context) (_node *Register, err
 	}
 	if ruo.mutation.ScholarshipCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
 			Table:   register.ScholarshipTable,
-			Columns: []string{register.ScholarshipColumn},
+			Columns: register.ScholarshipPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -704,12 +805,31 @@ func (ruo *RegisterUpdateOne) sqlSave(ctx context.Context) (_node *Register, err
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
+	if nodes := ruo.mutation.RemovedScholarshipIDs(); len(nodes) > 0 && !ruo.mutation.ScholarshipCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   register.ScholarshipTable,
+			Columns: register.ScholarshipPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: scholarship.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
 	if nodes := ruo.mutation.ScholarshipIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
 			Table:   register.ScholarshipTable,
-			Columns: []string{register.ScholarshipColumn},
+			Columns: register.ScholarshipPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{

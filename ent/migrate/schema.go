@@ -8,15 +8,124 @@ import (
 )
 
 var (
+	// AchievementsColumns holds the columns for the "achievements" table.
+	AchievementsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "name", Type: field.TypeString, Nullable: true},
+		{Name: "organizer", Type: field.TypeString, Nullable: true},
+		{Name: "level", Type: field.TypeString, Nullable: true},
+	}
+	// AchievementsTable holds the schema information for the "achievements" table.
+	AchievementsTable = &schema.Table{
+		Name:       "achievements",
+		Columns:    AchievementsColumns,
+		PrimaryKey: []*schema.Column{AchievementsColumns[0]},
+	}
 	// BiodataColumns holds the columns for the "biodata" table.
 	BiodataColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "nickname", Type: field.TypeString},
+		{Name: "gender", Type: field.TypeString},
+		{Name: "birthplace", Type: field.TypeString},
+		{Name: "birthdate", Type: field.TypeTime},
+		{Name: "telephone", Type: field.TypeString},
+		{Name: "email", Type: field.TypeString},
+		{Name: "id_type", Type: field.TypeString},
+		{Name: "id_number", Type: field.TypeString},
+		{Name: "address_id", Type: field.TypeString},
+		{Name: "post_code_id", Type: field.TypeString},
+		{Name: "district_id", Type: field.TypeString},
+		{Name: "city_id", Type: field.TypeString},
+		{Name: "province_id", Type: field.TypeString},
+		{Name: "address_living", Type: field.TypeString},
+		{Name: "post_code_living", Type: field.TypeString},
+		{Name: "district_living", Type: field.TypeString},
+		{Name: "city_living", Type: field.TypeString},
+		{Name: "province_living", Type: field.TypeString},
+		{Name: "entrance", Type: field.TypeString},
+		{Name: "entrance_number", Type: field.TypeString},
+		{Name: "major", Type: field.TypeString},
+		{Name: "university", Type: field.TypeString},
 	}
 	// BiodataTable holds the schema information for the "biodata" table.
 	BiodataTable = &schema.Table{
 		Name:       "biodata",
 		Columns:    BiodataColumns,
 		PrimaryKey: []*schema.Column{BiodataColumns[0]},
+	}
+	// EducationsColumns holds the columns for the "educations" table.
+	EducationsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "grade", Type: field.TypeString},
+		{Name: "name", Type: field.TypeString},
+		{Name: "province", Type: field.TypeString},
+		{Name: "city", Type: field.TypeString},
+		{Name: "enter", Type: field.TypeString},
+		{Name: "graduate", Type: field.TypeString},
+	}
+	// EducationsTable holds the schema information for the "educations" table.
+	EducationsTable = &schema.Table{
+		Name:       "educations",
+		Columns:    EducationsColumns,
+		PrimaryKey: []*schema.Column{EducationsColumns[0]},
+	}
+	// FamiliesColumns holds the columns for the "families" table.
+	FamiliesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "status", Type: field.TypeString},
+		{Name: "name", Type: field.TypeString},
+		{Name: "gender", Type: field.TypeString},
+		{Name: "birthplace", Type: field.TypeString},
+		{Name: "birthdate", Type: field.TypeTime},
+		{Name: "education", Type: field.TypeString},
+		{Name: "job", Type: field.TypeString, Default: "-"},
+	}
+	// FamiliesTable holds the schema information for the "families" table.
+	FamiliesTable = &schema.Table{
+		Name:       "families",
+		Columns:    FamiliesColumns,
+		PrimaryKey: []*schema.Column{FamiliesColumns[0]},
+	}
+	// LanguagesColumns holds the columns for the "languages" table.
+	LanguagesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "name", Type: field.TypeString, Nullable: true},
+		{Name: "talk", Type: field.TypeString, Nullable: true},
+		{Name: "write", Type: field.TypeString, Nullable: true},
+		{Name: "read", Type: field.TypeString, Nullable: true},
+		{Name: "listen", Type: field.TypeString, Nullable: true},
+	}
+	// LanguagesTable holds the schema information for the "languages" table.
+	LanguagesTable = &schema.Table{
+		Name:       "languages",
+		Columns:    LanguagesColumns,
+		PrimaryKey: []*schema.Column{LanguagesColumns[0]},
+	}
+	// NetworthsColumns holds the columns for the "networths" table.
+	NetworthsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "value", Type: field.TypeInt64},
+	}
+	// NetworthsTable holds the schema information for the "networths" table.
+	NetworthsTable = &schema.Table{
+		Name:       "networths",
+		Columns:    NetworthsColumns,
+		PrimaryKey: []*schema.Column{NetworthsColumns[0]},
+	}
+	// OrganizationsColumns holds the columns for the "organizations" table.
+	OrganizationsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "name", Type: field.TypeString, Nullable: true},
+		{Name: "period", Type: field.TypeString, Nullable: true},
+		{Name: "position", Type: field.TypeString, Nullable: true},
+		{Name: "detail", Type: field.TypeString, Nullable: true},
+	}
+	// OrganizationsTable holds the schema information for the "organizations" table.
+	OrganizationsTable = &schema.Table{
+		Name:       "organizations",
+		Columns:    OrganizationsColumns,
+		PrimaryKey: []*schema.Column{OrganizationsColumns[0]},
 	}
 	// RegistersColumns holds the columns for the "registers" table.
 	RegistersColumns = []*schema.Column{
@@ -25,28 +134,12 @@ var (
 		{Name: "status_two", Type: field.TypeInt, Default: 0},
 		{Name: "online_interview", Type: field.TypeString, Nullable: true},
 		{Name: "interview_time", Type: field.TypeTime, Nullable: true},
-		{Name: "scholarship_registers", Type: field.TypeInt, Nullable: true},
-		{Name: "user_registers", Type: field.TypeInt, Nullable: true},
 	}
 	// RegistersTable holds the schema information for the "registers" table.
 	RegistersTable = &schema.Table{
 		Name:       "registers",
 		Columns:    RegistersColumns,
 		PrimaryKey: []*schema.Column{RegistersColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "registers_scholarships_registers",
-				Columns:    []*schema.Column{RegistersColumns[5]},
-				RefColumns: []*schema.Column{ScholarshipsColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-			{
-				Symbol:     "registers_users_registers",
-				Columns:    []*schema.Column{RegistersColumns[6]},
-				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-		},
 	}
 	// ScholarshipsColumns holds the columns for the "scholarships" table.
 	ScholarshipsColumns = []*schema.Column{
@@ -67,6 +160,46 @@ var (
 		Columns:    ScholarshipsColumns,
 		PrimaryKey: []*schema.Column{ScholarshipsColumns[0]},
 	}
+	// SocialMediaColumns holds the columns for the "social_media" table.
+	SocialMediaColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "instagram", Type: field.TypeString, Nullable: true},
+		{Name: "facebook", Type: field.TypeString, Nullable: true},
+		{Name: "tiktok", Type: field.TypeString, Nullable: true},
+		{Name: "twitter", Type: field.TypeString, Nullable: true},
+	}
+	// SocialMediaTable holds the schema information for the "social_media" table.
+	SocialMediaTable = &schema.Table{
+		Name:       "social_media",
+		Columns:    SocialMediaColumns,
+		PrimaryKey: []*schema.Column{SocialMediaColumns[0]},
+	}
+	// TalentsColumns holds the columns for the "talents" table.
+	TalentsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "name", Type: field.TypeString},
+	}
+	// TalentsTable holds the schema information for the "talents" table.
+	TalentsTable = &schema.Table{
+		Name:       "talents",
+		Columns:    TalentsColumns,
+		PrimaryKey: []*schema.Column{TalentsColumns[0]},
+	}
+	// TrainingsColumns holds the columns for the "trainings" table.
+	TrainingsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "name", Type: field.TypeString, Nullable: true},
+		{Name: "period", Type: field.TypeString, Nullable: true},
+		{Name: "year", Type: field.TypeString, Nullable: true},
+		{Name: "organizer", Type: field.TypeString, Nullable: true},
+		{Name: "certificate", Type: field.TypeString, Nullable: true},
+	}
+	// TrainingsTable holds the schema information for the "trainings" table.
+	TrainingsTable = &schema.Table{
+		Name:       "trainings",
+		Columns:    TrainingsColumns,
+		PrimaryKey: []*schema.Column{TrainingsColumns[0]},
+	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -81,16 +214,79 @@ var (
 		Columns:    UsersColumns,
 		PrimaryKey: []*schema.Column{UsersColumns[0]},
 	}
+	// RegisterUserColumns holds the columns for the "register_user" table.
+	RegisterUserColumns = []*schema.Column{
+		{Name: "register_id", Type: field.TypeInt},
+		{Name: "user_id", Type: field.TypeInt},
+	}
+	// RegisterUserTable holds the schema information for the "register_user" table.
+	RegisterUserTable = &schema.Table{
+		Name:       "register_user",
+		Columns:    RegisterUserColumns,
+		PrimaryKey: []*schema.Column{RegisterUserColumns[0], RegisterUserColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "register_user_register_id",
+				Columns:    []*schema.Column{RegisterUserColumns[0]},
+				RefColumns: []*schema.Column{RegistersColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "register_user_user_id",
+				Columns:    []*schema.Column{RegisterUserColumns[1]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// RegisterScholarshipColumns holds the columns for the "register_scholarship" table.
+	RegisterScholarshipColumns = []*schema.Column{
+		{Name: "register_id", Type: field.TypeInt},
+		{Name: "scholarship_id", Type: field.TypeInt},
+	}
+	// RegisterScholarshipTable holds the schema information for the "register_scholarship" table.
+	RegisterScholarshipTable = &schema.Table{
+		Name:       "register_scholarship",
+		Columns:    RegisterScholarshipColumns,
+		PrimaryKey: []*schema.Column{RegisterScholarshipColumns[0], RegisterScholarshipColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "register_scholarship_register_id",
+				Columns:    []*schema.Column{RegisterScholarshipColumns[0]},
+				RefColumns: []*schema.Column{RegistersColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "register_scholarship_scholarship_id",
+				Columns:    []*schema.Column{RegisterScholarshipColumns[1]},
+				RefColumns: []*schema.Column{ScholarshipsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		AchievementsTable,
 		BiodataTable,
+		EducationsTable,
+		FamiliesTable,
+		LanguagesTable,
+		NetworthsTable,
+		OrganizationsTable,
 		RegistersTable,
 		ScholarshipsTable,
+		SocialMediaTable,
+		TalentsTable,
+		TrainingsTable,
 		UsersTable,
+		RegisterUserTable,
+		RegisterScholarshipTable,
 	}
 )
 
 func init() {
-	RegistersTable.ForeignKeys[0].RefTable = ScholarshipsTable
-	RegistersTable.ForeignKeys[1].RefTable = UsersTable
+	RegisterUserTable.ForeignKeys[0].RefTable = RegistersTable
+	RegisterUserTable.ForeignKeys[1].RefTable = UsersTable
+	RegisterScholarshipTable.ForeignKeys[0].RefTable = RegistersTable
+	RegisterScholarshipTable.ForeignKeys[1].RefTable = ScholarshipsTable
 }

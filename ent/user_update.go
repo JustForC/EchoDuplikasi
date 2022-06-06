@@ -59,14 +59,14 @@ func (uu *UserUpdate) AddRole(i int) *UserUpdate {
 	return uu
 }
 
-// AddRegisterIDs adds the "registers" edge to the Register entity by IDs.
+// AddRegisterIDs adds the "register" edge to the Register entity by IDs.
 func (uu *UserUpdate) AddRegisterIDs(ids ...int) *UserUpdate {
 	uu.mutation.AddRegisterIDs(ids...)
 	return uu
 }
 
-// AddRegisters adds the "registers" edges to the Register entity.
-func (uu *UserUpdate) AddRegisters(r ...*Register) *UserUpdate {
+// AddRegister adds the "register" edges to the Register entity.
+func (uu *UserUpdate) AddRegister(r ...*Register) *UserUpdate {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
@@ -79,20 +79,20 @@ func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
 }
 
-// ClearRegisters clears all "registers" edges to the Register entity.
-func (uu *UserUpdate) ClearRegisters() *UserUpdate {
-	uu.mutation.ClearRegisters()
+// ClearRegister clears all "register" edges to the Register entity.
+func (uu *UserUpdate) ClearRegister() *UserUpdate {
+	uu.mutation.ClearRegister()
 	return uu
 }
 
-// RemoveRegisterIDs removes the "registers" edge to Register entities by IDs.
+// RemoveRegisterIDs removes the "register" edge to Register entities by IDs.
 func (uu *UserUpdate) RemoveRegisterIDs(ids ...int) *UserUpdate {
 	uu.mutation.RemoveRegisterIDs(ids...)
 	return uu
 }
 
-// RemoveRegisters removes "registers" edges to Register entities.
-func (uu *UserUpdate) RemoveRegisters(r ...*Register) *UserUpdate {
+// RemoveRegister removes "register" edges to Register entities.
+func (uu *UserUpdate) RemoveRegister(r ...*Register) *UserUpdate {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
@@ -207,12 +207,12 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: user.FieldRole,
 		})
 	}
-	if uu.mutation.RegistersCleared() {
+	if uu.mutation.RegisterCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.RegistersTable,
-			Columns: []string{user.RegistersColumn},
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   user.RegisterTable,
+			Columns: user.RegisterPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -223,12 +223,12 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uu.mutation.RemovedRegistersIDs(); len(nodes) > 0 && !uu.mutation.RegistersCleared() {
+	if nodes := uu.mutation.RemovedRegisterIDs(); len(nodes) > 0 && !uu.mutation.RegisterCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.RegistersTable,
-			Columns: []string{user.RegistersColumn},
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   user.RegisterTable,
+			Columns: user.RegisterPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -242,12 +242,12 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uu.mutation.RegistersIDs(); len(nodes) > 0 {
+	if nodes := uu.mutation.RegisterIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.RegistersTable,
-			Columns: []string{user.RegistersColumn},
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   user.RegisterTable,
+			Columns: user.RegisterPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -311,14 +311,14 @@ func (uuo *UserUpdateOne) AddRole(i int) *UserUpdateOne {
 	return uuo
 }
 
-// AddRegisterIDs adds the "registers" edge to the Register entity by IDs.
+// AddRegisterIDs adds the "register" edge to the Register entity by IDs.
 func (uuo *UserUpdateOne) AddRegisterIDs(ids ...int) *UserUpdateOne {
 	uuo.mutation.AddRegisterIDs(ids...)
 	return uuo
 }
 
-// AddRegisters adds the "registers" edges to the Register entity.
-func (uuo *UserUpdateOne) AddRegisters(r ...*Register) *UserUpdateOne {
+// AddRegister adds the "register" edges to the Register entity.
+func (uuo *UserUpdateOne) AddRegister(r ...*Register) *UserUpdateOne {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
@@ -331,20 +331,20 @@ func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
 }
 
-// ClearRegisters clears all "registers" edges to the Register entity.
-func (uuo *UserUpdateOne) ClearRegisters() *UserUpdateOne {
-	uuo.mutation.ClearRegisters()
+// ClearRegister clears all "register" edges to the Register entity.
+func (uuo *UserUpdateOne) ClearRegister() *UserUpdateOne {
+	uuo.mutation.ClearRegister()
 	return uuo
 }
 
-// RemoveRegisterIDs removes the "registers" edge to Register entities by IDs.
+// RemoveRegisterIDs removes the "register" edge to Register entities by IDs.
 func (uuo *UserUpdateOne) RemoveRegisterIDs(ids ...int) *UserUpdateOne {
 	uuo.mutation.RemoveRegisterIDs(ids...)
 	return uuo
 }
 
-// RemoveRegisters removes "registers" edges to Register entities.
-func (uuo *UserUpdateOne) RemoveRegisters(r ...*Register) *UserUpdateOne {
+// RemoveRegister removes "register" edges to Register entities.
+func (uuo *UserUpdateOne) RemoveRegister(r ...*Register) *UserUpdateOne {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
@@ -483,12 +483,12 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Column: user.FieldRole,
 		})
 	}
-	if uuo.mutation.RegistersCleared() {
+	if uuo.mutation.RegisterCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.RegistersTable,
-			Columns: []string{user.RegistersColumn},
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   user.RegisterTable,
+			Columns: user.RegisterPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -499,12 +499,12 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uuo.mutation.RemovedRegistersIDs(); len(nodes) > 0 && !uuo.mutation.RegistersCleared() {
+	if nodes := uuo.mutation.RemovedRegisterIDs(); len(nodes) > 0 && !uuo.mutation.RegisterCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.RegistersTable,
-			Columns: []string{user.RegistersColumn},
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   user.RegisterTable,
+			Columns: user.RegisterPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -518,12 +518,12 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uuo.mutation.RegistersIDs(); len(nodes) > 0 {
+	if nodes := uuo.mutation.RegisterIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.RegistersTable,
-			Columns: []string{user.RegistersColumn},
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   user.RegisterTable,
+			Columns: user.RegisterPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{

@@ -90,14 +90,14 @@ func (su *ScholarshipUpdate) AddStatus(i int) *ScholarshipUpdate {
 	return su
 }
 
-// AddRegisterIDs adds the "registers" edge to the Register entity by IDs.
+// AddRegisterIDs adds the "register" edge to the Register entity by IDs.
 func (su *ScholarshipUpdate) AddRegisterIDs(ids ...int) *ScholarshipUpdate {
 	su.mutation.AddRegisterIDs(ids...)
 	return su
 }
 
-// AddRegisters adds the "registers" edges to the Register entity.
-func (su *ScholarshipUpdate) AddRegisters(r ...*Register) *ScholarshipUpdate {
+// AddRegister adds the "register" edges to the Register entity.
+func (su *ScholarshipUpdate) AddRegister(r ...*Register) *ScholarshipUpdate {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
@@ -110,20 +110,20 @@ func (su *ScholarshipUpdate) Mutation() *ScholarshipMutation {
 	return su.mutation
 }
 
-// ClearRegisters clears all "registers" edges to the Register entity.
-func (su *ScholarshipUpdate) ClearRegisters() *ScholarshipUpdate {
-	su.mutation.ClearRegisters()
+// ClearRegister clears all "register" edges to the Register entity.
+func (su *ScholarshipUpdate) ClearRegister() *ScholarshipUpdate {
+	su.mutation.ClearRegister()
 	return su
 }
 
-// RemoveRegisterIDs removes the "registers" edge to Register entities by IDs.
+// RemoveRegisterIDs removes the "register" edge to Register entities by IDs.
 func (su *ScholarshipUpdate) RemoveRegisterIDs(ids ...int) *ScholarshipUpdate {
 	su.mutation.RemoveRegisterIDs(ids...)
 	return su
 }
 
-// RemoveRegisters removes "registers" edges to Register entities.
-func (su *ScholarshipUpdate) RemoveRegisters(r ...*Register) *ScholarshipUpdate {
+// RemoveRegister removes "register" edges to Register entities.
+func (su *ScholarshipUpdate) RemoveRegister(r ...*Register) *ScholarshipUpdate {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
@@ -273,12 +273,12 @@ func (su *ScholarshipUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: scholarship.FieldStatus,
 		})
 	}
-	if su.mutation.RegistersCleared() {
+	if su.mutation.RegisterCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   scholarship.RegistersTable,
-			Columns: []string{scholarship.RegistersColumn},
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   scholarship.RegisterTable,
+			Columns: scholarship.RegisterPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -289,12 +289,12 @@ func (su *ScholarshipUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := su.mutation.RemovedRegistersIDs(); len(nodes) > 0 && !su.mutation.RegistersCleared() {
+	if nodes := su.mutation.RemovedRegisterIDs(); len(nodes) > 0 && !su.mutation.RegisterCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   scholarship.RegistersTable,
-			Columns: []string{scholarship.RegistersColumn},
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   scholarship.RegisterTable,
+			Columns: scholarship.RegisterPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -308,12 +308,12 @@ func (su *ScholarshipUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := su.mutation.RegistersIDs(); len(nodes) > 0 {
+	if nodes := su.mutation.RegisterIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   scholarship.RegistersTable,
-			Columns: []string{scholarship.RegistersColumn},
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   scholarship.RegisterTable,
+			Columns: scholarship.RegisterPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -407,14 +407,14 @@ func (suo *ScholarshipUpdateOne) AddStatus(i int) *ScholarshipUpdateOne {
 	return suo
 }
 
-// AddRegisterIDs adds the "registers" edge to the Register entity by IDs.
+// AddRegisterIDs adds the "register" edge to the Register entity by IDs.
 func (suo *ScholarshipUpdateOne) AddRegisterIDs(ids ...int) *ScholarshipUpdateOne {
 	suo.mutation.AddRegisterIDs(ids...)
 	return suo
 }
 
-// AddRegisters adds the "registers" edges to the Register entity.
-func (suo *ScholarshipUpdateOne) AddRegisters(r ...*Register) *ScholarshipUpdateOne {
+// AddRegister adds the "register" edges to the Register entity.
+func (suo *ScholarshipUpdateOne) AddRegister(r ...*Register) *ScholarshipUpdateOne {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
@@ -427,20 +427,20 @@ func (suo *ScholarshipUpdateOne) Mutation() *ScholarshipMutation {
 	return suo.mutation
 }
 
-// ClearRegisters clears all "registers" edges to the Register entity.
-func (suo *ScholarshipUpdateOne) ClearRegisters() *ScholarshipUpdateOne {
-	suo.mutation.ClearRegisters()
+// ClearRegister clears all "register" edges to the Register entity.
+func (suo *ScholarshipUpdateOne) ClearRegister() *ScholarshipUpdateOne {
+	suo.mutation.ClearRegister()
 	return suo
 }
 
-// RemoveRegisterIDs removes the "registers" edge to Register entities by IDs.
+// RemoveRegisterIDs removes the "register" edge to Register entities by IDs.
 func (suo *ScholarshipUpdateOne) RemoveRegisterIDs(ids ...int) *ScholarshipUpdateOne {
 	suo.mutation.RemoveRegisterIDs(ids...)
 	return suo
 }
 
-// RemoveRegisters removes "registers" edges to Register entities.
-func (suo *ScholarshipUpdateOne) RemoveRegisters(r ...*Register) *ScholarshipUpdateOne {
+// RemoveRegister removes "register" edges to Register entities.
+func (suo *ScholarshipUpdateOne) RemoveRegister(r ...*Register) *ScholarshipUpdateOne {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
@@ -614,12 +614,12 @@ func (suo *ScholarshipUpdateOne) sqlSave(ctx context.Context) (_node *Scholarshi
 			Column: scholarship.FieldStatus,
 		})
 	}
-	if suo.mutation.RegistersCleared() {
+	if suo.mutation.RegisterCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   scholarship.RegistersTable,
-			Columns: []string{scholarship.RegistersColumn},
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   scholarship.RegisterTable,
+			Columns: scholarship.RegisterPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -630,12 +630,12 @@ func (suo *ScholarshipUpdateOne) sqlSave(ctx context.Context) (_node *Scholarshi
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := suo.mutation.RemovedRegistersIDs(); len(nodes) > 0 && !suo.mutation.RegistersCleared() {
+	if nodes := suo.mutation.RemovedRegisterIDs(); len(nodes) > 0 && !suo.mutation.RegisterCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   scholarship.RegistersTable,
-			Columns: []string{scholarship.RegistersColumn},
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   scholarship.RegisterTable,
+			Columns: scholarship.RegisterPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -649,12 +649,12 @@ func (suo *ScholarshipUpdateOne) sqlSave(ctx context.Context) (_node *Scholarshi
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := suo.mutation.RegistersIDs(); len(nodes) > 0 {
+	if nodes := suo.mutation.RegisterIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   scholarship.RegistersTable,
-			Columns: []string{scholarship.RegistersColumn},
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   scholarship.RegisterTable,
+			Columns: scholarship.RegisterPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{

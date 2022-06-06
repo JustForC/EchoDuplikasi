@@ -8,6 +8,19 @@ import (
 	"fmt"
 )
 
+// The AchievementFunc type is an adapter to allow the use of ordinary
+// function as Achievement mutator.
+type AchievementFunc func(context.Context, *ent.AchievementMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AchievementFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.AchievementMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AchievementMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The BiodataFunc type is an adapter to allow the use of ordinary
 // function as Biodata mutator.
 type BiodataFunc func(context.Context, *ent.BiodataMutation) (ent.Value, error)
@@ -17,6 +30,71 @@ func (f BiodataFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, err
 	mv, ok := m.(*ent.BiodataMutation)
 	if !ok {
 		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.BiodataMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The EducationFunc type is an adapter to allow the use of ordinary
+// function as Education mutator.
+type EducationFunc func(context.Context, *ent.EducationMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f EducationFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.EducationMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.EducationMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The FamilyFunc type is an adapter to allow the use of ordinary
+// function as Family mutator.
+type FamilyFunc func(context.Context, *ent.FamilyMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f FamilyFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.FamilyMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.FamilyMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The LanguageFunc type is an adapter to allow the use of ordinary
+// function as Language mutator.
+type LanguageFunc func(context.Context, *ent.LanguageMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f LanguageFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.LanguageMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.LanguageMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The NetworthFunc type is an adapter to allow the use of ordinary
+// function as Networth mutator.
+type NetworthFunc func(context.Context, *ent.NetworthMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f NetworthFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.NetworthMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.NetworthMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The OrganizationFunc type is an adapter to allow the use of ordinary
+// function as Organization mutator.
+type OrganizationFunc func(context.Context, *ent.OrganizationMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f OrganizationFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.OrganizationMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.OrganizationMutation", m)
 	}
 	return f(ctx, mv)
 }
@@ -43,6 +121,45 @@ func (f ScholarshipFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value,
 	mv, ok := m.(*ent.ScholarshipMutation)
 	if !ok {
 		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ScholarshipMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The SocialMediaFunc type is an adapter to allow the use of ordinary
+// function as SocialMedia mutator.
+type SocialMediaFunc func(context.Context, *ent.SocialMediaMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f SocialMediaFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.SocialMediaMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.SocialMediaMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The TalentFunc type is an adapter to allow the use of ordinary
+// function as Talent mutator.
+type TalentFunc func(context.Context, *ent.TalentMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f TalentFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.TalentMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TalentMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The TrainingFunc type is an adapter to allow the use of ordinary
+// function as Training mutator.
+type TrainingFunc func(context.Context, *ent.TrainingMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f TrainingFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.TrainingMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TrainingMutation", m)
 	}
 	return f(ctx, mv)
 }

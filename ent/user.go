@@ -30,20 +30,20 @@ type User struct {
 
 // UserEdges holds the relations/edges for other nodes in the graph.
 type UserEdges struct {
-	// Registers holds the value of the registers edge.
-	Registers []*Register `json:"registers,omitempty"`
+	// Register holds the value of the register edge.
+	Register []*Register `json:"register,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [1]bool
 }
 
-// RegistersOrErr returns the Registers value or an error if the edge
+// RegisterOrErr returns the Register value or an error if the edge
 // was not loaded in eager-loading.
-func (e UserEdges) RegistersOrErr() ([]*Register, error) {
+func (e UserEdges) RegisterOrErr() ([]*Register, error) {
 	if e.loadedTypes[0] {
-		return e.Registers, nil
+		return e.Register, nil
 	}
-	return nil, &NotLoadedError{edge: "registers"}
+	return nil, &NotLoadedError{edge: "register"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -105,9 +105,9 @@ func (u *User) assignValues(columns []string, values []interface{}) error {
 	return nil
 }
 
-// QueryRegisters queries the "registers" edge of the User entity.
-func (u *User) QueryRegisters() *RegisterQuery {
-	return (&UserClient{config: u.config}).QueryRegisters(u)
+// QueryRegister queries the "register" edge of the User entity.
+func (u *User) QueryRegister() *RegisterQuery {
+	return (&UserClient{config: u.config}).QueryRegister(u)
 }
 
 // Update returns a builder for updating this User.

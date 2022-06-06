@@ -2,7 +2,6 @@ package schema
 
 import (
 	"entgo.io/ent"
-	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
@@ -29,9 +28,8 @@ func (Scholarship) Fields() []ent.Field {
 
 // Edges of the Scholarship.
 func (Scholarship) Edges() []ent.Edge {
+	// return nil
 	return []ent.Edge{
-		edge.To("registers", Register.Type).Annotations(entsql.Annotation{
-			OnDelete: entsql.Cascade,
-		}),
+		edge.From("register", Register.Type).Ref("scholarship"),
 	}
 }

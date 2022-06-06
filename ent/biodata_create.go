@@ -5,7 +5,9 @@ package ent
 import (
 	"Kynesia/ent/biodata"
 	"context"
+	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -16,6 +18,144 @@ type BiodataCreate struct {
 	config
 	mutation *BiodataMutation
 	hooks    []Hook
+}
+
+// SetName sets the "name" field.
+func (bc *BiodataCreate) SetName(s string) *BiodataCreate {
+	bc.mutation.SetName(s)
+	return bc
+}
+
+// SetNickname sets the "nickname" field.
+func (bc *BiodataCreate) SetNickname(s string) *BiodataCreate {
+	bc.mutation.SetNickname(s)
+	return bc
+}
+
+// SetGender sets the "gender" field.
+func (bc *BiodataCreate) SetGender(s string) *BiodataCreate {
+	bc.mutation.SetGender(s)
+	return bc
+}
+
+// SetBirthplace sets the "birthplace" field.
+func (bc *BiodataCreate) SetBirthplace(s string) *BiodataCreate {
+	bc.mutation.SetBirthplace(s)
+	return bc
+}
+
+// SetBirthdate sets the "birthdate" field.
+func (bc *BiodataCreate) SetBirthdate(t time.Time) *BiodataCreate {
+	bc.mutation.SetBirthdate(t)
+	return bc
+}
+
+// SetTelephone sets the "telephone" field.
+func (bc *BiodataCreate) SetTelephone(s string) *BiodataCreate {
+	bc.mutation.SetTelephone(s)
+	return bc
+}
+
+// SetEmail sets the "email" field.
+func (bc *BiodataCreate) SetEmail(s string) *BiodataCreate {
+	bc.mutation.SetEmail(s)
+	return bc
+}
+
+// SetIdType sets the "idType" field.
+func (bc *BiodataCreate) SetIdType(s string) *BiodataCreate {
+	bc.mutation.SetIdType(s)
+	return bc
+}
+
+// SetIdNumber sets the "idNumber" field.
+func (bc *BiodataCreate) SetIdNumber(s string) *BiodataCreate {
+	bc.mutation.SetIdNumber(s)
+	return bc
+}
+
+// SetAddressID sets the "addressID" field.
+func (bc *BiodataCreate) SetAddressID(s string) *BiodataCreate {
+	bc.mutation.SetAddressID(s)
+	return bc
+}
+
+// SetPostCodeID sets the "postCodeID" field.
+func (bc *BiodataCreate) SetPostCodeID(s string) *BiodataCreate {
+	bc.mutation.SetPostCodeID(s)
+	return bc
+}
+
+// SetDistrictID sets the "districtID" field.
+func (bc *BiodataCreate) SetDistrictID(s string) *BiodataCreate {
+	bc.mutation.SetDistrictID(s)
+	return bc
+}
+
+// SetCityID sets the "cityID" field.
+func (bc *BiodataCreate) SetCityID(s string) *BiodataCreate {
+	bc.mutation.SetCityID(s)
+	return bc
+}
+
+// SetProvinceID sets the "provinceID" field.
+func (bc *BiodataCreate) SetProvinceID(s string) *BiodataCreate {
+	bc.mutation.SetProvinceID(s)
+	return bc
+}
+
+// SetAddressLiving sets the "addressLiving" field.
+func (bc *BiodataCreate) SetAddressLiving(s string) *BiodataCreate {
+	bc.mutation.SetAddressLiving(s)
+	return bc
+}
+
+// SetPostCodeLiving sets the "postCodeLiving" field.
+func (bc *BiodataCreate) SetPostCodeLiving(s string) *BiodataCreate {
+	bc.mutation.SetPostCodeLiving(s)
+	return bc
+}
+
+// SetDistrictLiving sets the "districtLiving" field.
+func (bc *BiodataCreate) SetDistrictLiving(s string) *BiodataCreate {
+	bc.mutation.SetDistrictLiving(s)
+	return bc
+}
+
+// SetCityLiving sets the "cityLiving" field.
+func (bc *BiodataCreate) SetCityLiving(s string) *BiodataCreate {
+	bc.mutation.SetCityLiving(s)
+	return bc
+}
+
+// SetProvinceLiving sets the "provinceLiving" field.
+func (bc *BiodataCreate) SetProvinceLiving(s string) *BiodataCreate {
+	bc.mutation.SetProvinceLiving(s)
+	return bc
+}
+
+// SetEntrance sets the "entrance" field.
+func (bc *BiodataCreate) SetEntrance(s string) *BiodataCreate {
+	bc.mutation.SetEntrance(s)
+	return bc
+}
+
+// SetEntranceNumber sets the "entranceNumber" field.
+func (bc *BiodataCreate) SetEntranceNumber(s string) *BiodataCreate {
+	bc.mutation.SetEntranceNumber(s)
+	return bc
+}
+
+// SetMajor sets the "major" field.
+func (bc *BiodataCreate) SetMajor(s string) *BiodataCreate {
+	bc.mutation.SetMajor(s)
+	return bc
+}
+
+// SetUniversity sets the "university" field.
+func (bc *BiodataCreate) SetUniversity(s string) *BiodataCreate {
+	bc.mutation.SetUniversity(s)
+	return bc
 }
 
 // Mutation returns the BiodataMutation object of the builder.
@@ -88,6 +228,75 @@ func (bc *BiodataCreate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (bc *BiodataCreate) check() error {
+	if _, ok := bc.mutation.Name(); !ok {
+		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Biodata.name"`)}
+	}
+	if _, ok := bc.mutation.Nickname(); !ok {
+		return &ValidationError{Name: "nickname", err: errors.New(`ent: missing required field "Biodata.nickname"`)}
+	}
+	if _, ok := bc.mutation.Gender(); !ok {
+		return &ValidationError{Name: "gender", err: errors.New(`ent: missing required field "Biodata.gender"`)}
+	}
+	if _, ok := bc.mutation.Birthplace(); !ok {
+		return &ValidationError{Name: "birthplace", err: errors.New(`ent: missing required field "Biodata.birthplace"`)}
+	}
+	if _, ok := bc.mutation.Birthdate(); !ok {
+		return &ValidationError{Name: "birthdate", err: errors.New(`ent: missing required field "Biodata.birthdate"`)}
+	}
+	if _, ok := bc.mutation.Telephone(); !ok {
+		return &ValidationError{Name: "telephone", err: errors.New(`ent: missing required field "Biodata.telephone"`)}
+	}
+	if _, ok := bc.mutation.Email(); !ok {
+		return &ValidationError{Name: "email", err: errors.New(`ent: missing required field "Biodata.email"`)}
+	}
+	if _, ok := bc.mutation.IdType(); !ok {
+		return &ValidationError{Name: "idType", err: errors.New(`ent: missing required field "Biodata.idType"`)}
+	}
+	if _, ok := bc.mutation.IdNumber(); !ok {
+		return &ValidationError{Name: "idNumber", err: errors.New(`ent: missing required field "Biodata.idNumber"`)}
+	}
+	if _, ok := bc.mutation.AddressID(); !ok {
+		return &ValidationError{Name: "addressID", err: errors.New(`ent: missing required field "Biodata.addressID"`)}
+	}
+	if _, ok := bc.mutation.PostCodeID(); !ok {
+		return &ValidationError{Name: "postCodeID", err: errors.New(`ent: missing required field "Biodata.postCodeID"`)}
+	}
+	if _, ok := bc.mutation.DistrictID(); !ok {
+		return &ValidationError{Name: "districtID", err: errors.New(`ent: missing required field "Biodata.districtID"`)}
+	}
+	if _, ok := bc.mutation.CityID(); !ok {
+		return &ValidationError{Name: "cityID", err: errors.New(`ent: missing required field "Biodata.cityID"`)}
+	}
+	if _, ok := bc.mutation.ProvinceID(); !ok {
+		return &ValidationError{Name: "provinceID", err: errors.New(`ent: missing required field "Biodata.provinceID"`)}
+	}
+	if _, ok := bc.mutation.AddressLiving(); !ok {
+		return &ValidationError{Name: "addressLiving", err: errors.New(`ent: missing required field "Biodata.addressLiving"`)}
+	}
+	if _, ok := bc.mutation.PostCodeLiving(); !ok {
+		return &ValidationError{Name: "postCodeLiving", err: errors.New(`ent: missing required field "Biodata.postCodeLiving"`)}
+	}
+	if _, ok := bc.mutation.DistrictLiving(); !ok {
+		return &ValidationError{Name: "districtLiving", err: errors.New(`ent: missing required field "Biodata.districtLiving"`)}
+	}
+	if _, ok := bc.mutation.CityLiving(); !ok {
+		return &ValidationError{Name: "cityLiving", err: errors.New(`ent: missing required field "Biodata.cityLiving"`)}
+	}
+	if _, ok := bc.mutation.ProvinceLiving(); !ok {
+		return &ValidationError{Name: "provinceLiving", err: errors.New(`ent: missing required field "Biodata.provinceLiving"`)}
+	}
+	if _, ok := bc.mutation.Entrance(); !ok {
+		return &ValidationError{Name: "entrance", err: errors.New(`ent: missing required field "Biodata.entrance"`)}
+	}
+	if _, ok := bc.mutation.EntranceNumber(); !ok {
+		return &ValidationError{Name: "entranceNumber", err: errors.New(`ent: missing required field "Biodata.entranceNumber"`)}
+	}
+	if _, ok := bc.mutation.Major(); !ok {
+		return &ValidationError{Name: "major", err: errors.New(`ent: missing required field "Biodata.major"`)}
+	}
+	if _, ok := bc.mutation.University(); !ok {
+		return &ValidationError{Name: "university", err: errors.New(`ent: missing required field "Biodata.university"`)}
+	}
 	return nil
 }
 
@@ -115,6 +324,190 @@ func (bc *BiodataCreate) createSpec() (*Biodata, *sqlgraph.CreateSpec) {
 			},
 		}
 	)
+	if value, ok := bc.mutation.Name(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldName,
+		})
+		_node.Name = value
+	}
+	if value, ok := bc.mutation.Nickname(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldNickname,
+		})
+		_node.Nickname = value
+	}
+	if value, ok := bc.mutation.Gender(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldGender,
+		})
+		_node.Gender = value
+	}
+	if value, ok := bc.mutation.Birthplace(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldBirthplace,
+		})
+		_node.Birthplace = value
+	}
+	if value, ok := bc.mutation.Birthdate(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: biodata.FieldBirthdate,
+		})
+		_node.Birthdate = value
+	}
+	if value, ok := bc.mutation.Telephone(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldTelephone,
+		})
+		_node.Telephone = value
+	}
+	if value, ok := bc.mutation.Email(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldEmail,
+		})
+		_node.Email = value
+	}
+	if value, ok := bc.mutation.IdType(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldIdType,
+		})
+		_node.IdType = value
+	}
+	if value, ok := bc.mutation.IdNumber(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldIdNumber,
+		})
+		_node.IdNumber = value
+	}
+	if value, ok := bc.mutation.AddressID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldAddressID,
+		})
+		_node.AddressID = value
+	}
+	if value, ok := bc.mutation.PostCodeID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldPostCodeID,
+		})
+		_node.PostCodeID = value
+	}
+	if value, ok := bc.mutation.DistrictID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldDistrictID,
+		})
+		_node.DistrictID = value
+	}
+	if value, ok := bc.mutation.CityID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldCityID,
+		})
+		_node.CityID = value
+	}
+	if value, ok := bc.mutation.ProvinceID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldProvinceID,
+		})
+		_node.ProvinceID = value
+	}
+	if value, ok := bc.mutation.AddressLiving(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldAddressLiving,
+		})
+		_node.AddressLiving = value
+	}
+	if value, ok := bc.mutation.PostCodeLiving(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldPostCodeLiving,
+		})
+		_node.PostCodeLiving = value
+	}
+	if value, ok := bc.mutation.DistrictLiving(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldDistrictLiving,
+		})
+		_node.DistrictLiving = value
+	}
+	if value, ok := bc.mutation.CityLiving(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldCityLiving,
+		})
+		_node.CityLiving = value
+	}
+	if value, ok := bc.mutation.ProvinceLiving(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldProvinceLiving,
+		})
+		_node.ProvinceLiving = value
+	}
+	if value, ok := bc.mutation.Entrance(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldEntrance,
+		})
+		_node.Entrance = value
+	}
+	if value, ok := bc.mutation.EntranceNumber(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldEntranceNumber,
+		})
+		_node.EntranceNumber = value
+	}
+	if value, ok := bc.mutation.Major(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldMajor,
+		})
+		_node.Major = value
+	}
+	if value, ok := bc.mutation.University(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: biodata.FieldUniversity,
+		})
+		_node.University = value
+	}
 	return _node, _spec
 }
 

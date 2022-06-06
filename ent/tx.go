@@ -12,12 +12,30 @@ import (
 // Tx is a transactional client that is created by calling Client.Tx().
 type Tx struct {
 	config
+	// Achievement is the client for interacting with the Achievement builders.
+	Achievement *AchievementClient
 	// Biodata is the client for interacting with the Biodata builders.
 	Biodata *BiodataClient
+	// Education is the client for interacting with the Education builders.
+	Education *EducationClient
+	// Family is the client for interacting with the Family builders.
+	Family *FamilyClient
+	// Language is the client for interacting with the Language builders.
+	Language *LanguageClient
+	// Networth is the client for interacting with the Networth builders.
+	Networth *NetworthClient
+	// Organization is the client for interacting with the Organization builders.
+	Organization *OrganizationClient
 	// Register is the client for interacting with the Register builders.
 	Register *RegisterClient
 	// Scholarship is the client for interacting with the Scholarship builders.
 	Scholarship *ScholarshipClient
+	// SocialMedia is the client for interacting with the SocialMedia builders.
+	SocialMedia *SocialMediaClient
+	// Talent is the client for interacting with the Talent builders.
+	Talent *TalentClient
+	// Training is the client for interacting with the Training builders.
+	Training *TrainingClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 
@@ -155,9 +173,18 @@ func (tx *Tx) Client() *Client {
 }
 
 func (tx *Tx) init() {
+	tx.Achievement = NewAchievementClient(tx.config)
 	tx.Biodata = NewBiodataClient(tx.config)
+	tx.Education = NewEducationClient(tx.config)
+	tx.Family = NewFamilyClient(tx.config)
+	tx.Language = NewLanguageClient(tx.config)
+	tx.Networth = NewNetworthClient(tx.config)
+	tx.Organization = NewOrganizationClient(tx.config)
 	tx.Register = NewRegisterClient(tx.config)
 	tx.Scholarship = NewScholarshipClient(tx.config)
+	tx.SocialMedia = NewSocialMediaClient(tx.config)
+	tx.Talent = NewTalentClient(tx.config)
+	tx.Training = NewTrainingClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 }
 
@@ -168,7 +195,7 @@ func (tx *Tx) init() {
 // of them in order to commit or rollback the transaction.
 //
 // If a closed transaction is embedded in one of the generated entities, and the entity
-// applies a query, for example: Biodata.QueryXXX(), the query will be executed
+// applies a query, for example: Achievement.QueryXXX(), the query will be executed
 // through the driver which created this transaction.
 //
 // Note that txDriver is not goroutine safe.

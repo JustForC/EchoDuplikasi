@@ -21,20 +21,16 @@ const (
 	EdgeScholarship = "scholarship"
 	// Table holds the table name of the register in the database.
 	Table = "registers"
-	// UserTable is the table that holds the user relation/edge.
-	UserTable = "registers"
+	// UserTable is the table that holds the user relation/edge. The primary key declared below.
+	UserTable = "register_user"
 	// UserInverseTable is the table name for the User entity.
 	// It exists in this package in order to avoid circular dependency with the "user" package.
 	UserInverseTable = "users"
-	// UserColumn is the table column denoting the user relation/edge.
-	UserColumn = "user_registers"
-	// ScholarshipTable is the table that holds the scholarship relation/edge.
-	ScholarshipTable = "registers"
+	// ScholarshipTable is the table that holds the scholarship relation/edge. The primary key declared below.
+	ScholarshipTable = "register_scholarship"
 	// ScholarshipInverseTable is the table name for the Scholarship entity.
 	// It exists in this package in order to avoid circular dependency with the "scholarship" package.
 	ScholarshipInverseTable = "scholarships"
-	// ScholarshipColumn is the table column denoting the scholarship relation/edge.
-	ScholarshipColumn = "scholarship_registers"
 )
 
 // Columns holds all SQL columns for register fields.
@@ -46,22 +42,19 @@ var Columns = []string{
 	FieldInterviewTime,
 }
 
-// ForeignKeys holds the SQL foreign-keys that are owned by the "registers"
-// table and are not defined as standalone fields in the schema.
-var ForeignKeys = []string{
-	"scholarship_registers",
-	"user_registers",
-}
+var (
+	// UserPrimaryKey and UserColumn2 are the table columns denoting the
+	// primary key for the user relation (M2M).
+	UserPrimaryKey = []string{"register_id", "user_id"}
+	// ScholarshipPrimaryKey and ScholarshipColumn2 are the table columns denoting the
+	// primary key for the scholarship relation (M2M).
+	ScholarshipPrimaryKey = []string{"register_id", "scholarship_id"}
+)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
-			return true
-		}
-	}
-	for i := range ForeignKeys {
-		if column == ForeignKeys[i] {
 			return true
 		}
 	}

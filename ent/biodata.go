@@ -6,15 +6,62 @@ import (
 	"Kynesia/ent/biodata"
 	"fmt"
 	"strings"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 )
 
 // Biodata is the model entity for the Biodata schema.
 type Biodata struct {
-	config
+	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
+	// Name holds the value of the "name" field.
+	Name string `json:"name,omitempty"`
+	// Nickname holds the value of the "nickname" field.
+	Nickname string `json:"nickname,omitempty"`
+	// Gender holds the value of the "gender" field.
+	Gender string `json:"gender,omitempty"`
+	// Birthplace holds the value of the "birthplace" field.
+	Birthplace string `json:"birthplace,omitempty"`
+	// Birthdate holds the value of the "birthdate" field.
+	Birthdate time.Time `json:"birthdate,omitempty"`
+	// Telephone holds the value of the "telephone" field.
+	Telephone string `json:"telephone,omitempty"`
+	// Email holds the value of the "email" field.
+	Email string `json:"email,omitempty"`
+	// IdType holds the value of the "idType" field.
+	IdType string `json:"idType,omitempty"`
+	// IdNumber holds the value of the "idNumber" field.
+	IdNumber string `json:"idNumber,omitempty"`
+	// AddressID holds the value of the "addressID" field.
+	AddressID string `json:"addressID,omitempty"`
+	// PostCodeID holds the value of the "postCodeID" field.
+	PostCodeID string `json:"postCodeID,omitempty"`
+	// DistrictID holds the value of the "districtID" field.
+	DistrictID string `json:"districtID,omitempty"`
+	// CityID holds the value of the "cityID" field.
+	CityID string `json:"cityID,omitempty"`
+	// ProvinceID holds the value of the "provinceID" field.
+	ProvinceID string `json:"provinceID,omitempty"`
+	// AddressLiving holds the value of the "addressLiving" field.
+	AddressLiving string `json:"addressLiving,omitempty"`
+	// PostCodeLiving holds the value of the "postCodeLiving" field.
+	PostCodeLiving string `json:"postCodeLiving,omitempty"`
+	// DistrictLiving holds the value of the "districtLiving" field.
+	DistrictLiving string `json:"districtLiving,omitempty"`
+	// CityLiving holds the value of the "cityLiving" field.
+	CityLiving string `json:"cityLiving,omitempty"`
+	// ProvinceLiving holds the value of the "provinceLiving" field.
+	ProvinceLiving string `json:"provinceLiving,omitempty"`
+	// Entrance holds the value of the "entrance" field.
+	Entrance string `json:"entrance,omitempty"`
+	// EntranceNumber holds the value of the "entranceNumber" field.
+	EntranceNumber string `json:"entranceNumber,omitempty"`
+	// Major holds the value of the "major" field.
+	Major string `json:"major,omitempty"`
+	// University holds the value of the "university" field.
+	University string `json:"university,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -24,6 +71,10 @@ func (*Biodata) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case biodata.FieldID:
 			values[i] = new(sql.NullInt64)
+		case biodata.FieldName, biodata.FieldNickname, biodata.FieldGender, biodata.FieldBirthplace, biodata.FieldTelephone, biodata.FieldEmail, biodata.FieldIdType, biodata.FieldIdNumber, biodata.FieldAddressID, biodata.FieldPostCodeID, biodata.FieldDistrictID, biodata.FieldCityID, biodata.FieldProvinceID, biodata.FieldAddressLiving, biodata.FieldPostCodeLiving, biodata.FieldDistrictLiving, biodata.FieldCityLiving, biodata.FieldProvinceLiving, biodata.FieldEntrance, biodata.FieldEntranceNumber, biodata.FieldMajor, biodata.FieldUniversity:
+			values[i] = new(sql.NullString)
+		case biodata.FieldBirthdate:
+			values[i] = new(sql.NullTime)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Biodata", columns[i])
 		}
@@ -45,6 +96,144 @@ func (b *Biodata) assignValues(columns []string, values []interface{}) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			b.ID = int(value.Int64)
+		case biodata.FieldName:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field name", values[i])
+			} else if value.Valid {
+				b.Name = value.String
+			}
+		case biodata.FieldNickname:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field nickname", values[i])
+			} else if value.Valid {
+				b.Nickname = value.String
+			}
+		case biodata.FieldGender:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field gender", values[i])
+			} else if value.Valid {
+				b.Gender = value.String
+			}
+		case biodata.FieldBirthplace:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field birthplace", values[i])
+			} else if value.Valid {
+				b.Birthplace = value.String
+			}
+		case biodata.FieldBirthdate:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field birthdate", values[i])
+			} else if value.Valid {
+				b.Birthdate = value.Time
+			}
+		case biodata.FieldTelephone:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field telephone", values[i])
+			} else if value.Valid {
+				b.Telephone = value.String
+			}
+		case biodata.FieldEmail:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field email", values[i])
+			} else if value.Valid {
+				b.Email = value.String
+			}
+		case biodata.FieldIdType:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field idType", values[i])
+			} else if value.Valid {
+				b.IdType = value.String
+			}
+		case biodata.FieldIdNumber:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field idNumber", values[i])
+			} else if value.Valid {
+				b.IdNumber = value.String
+			}
+		case biodata.FieldAddressID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field addressID", values[i])
+			} else if value.Valid {
+				b.AddressID = value.String
+			}
+		case biodata.FieldPostCodeID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field postCodeID", values[i])
+			} else if value.Valid {
+				b.PostCodeID = value.String
+			}
+		case biodata.FieldDistrictID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field districtID", values[i])
+			} else if value.Valid {
+				b.DistrictID = value.String
+			}
+		case biodata.FieldCityID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field cityID", values[i])
+			} else if value.Valid {
+				b.CityID = value.String
+			}
+		case biodata.FieldProvinceID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field provinceID", values[i])
+			} else if value.Valid {
+				b.ProvinceID = value.String
+			}
+		case biodata.FieldAddressLiving:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field addressLiving", values[i])
+			} else if value.Valid {
+				b.AddressLiving = value.String
+			}
+		case biodata.FieldPostCodeLiving:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field postCodeLiving", values[i])
+			} else if value.Valid {
+				b.PostCodeLiving = value.String
+			}
+		case biodata.FieldDistrictLiving:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field districtLiving", values[i])
+			} else if value.Valid {
+				b.DistrictLiving = value.String
+			}
+		case biodata.FieldCityLiving:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field cityLiving", values[i])
+			} else if value.Valid {
+				b.CityLiving = value.String
+			}
+		case biodata.FieldProvinceLiving:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field provinceLiving", values[i])
+			} else if value.Valid {
+				b.ProvinceLiving = value.String
+			}
+		case biodata.FieldEntrance:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field entrance", values[i])
+			} else if value.Valid {
+				b.Entrance = value.String
+			}
+		case biodata.FieldEntranceNumber:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field entranceNumber", values[i])
+			} else if value.Valid {
+				b.EntranceNumber = value.String
+			}
+		case biodata.FieldMajor:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field major", values[i])
+			} else if value.Valid {
+				b.Major = value.String
+			}
+		case biodata.FieldUniversity:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field university", values[i])
+			} else if value.Valid {
+				b.University = value.String
+			}
 		}
 	}
 	return nil
@@ -73,6 +262,52 @@ func (b *Biodata) String() string {
 	var builder strings.Builder
 	builder.WriteString("Biodata(")
 	builder.WriteString(fmt.Sprintf("id=%v", b.ID))
+	builder.WriteString(", name=")
+	builder.WriteString(b.Name)
+	builder.WriteString(", nickname=")
+	builder.WriteString(b.Nickname)
+	builder.WriteString(", gender=")
+	builder.WriteString(b.Gender)
+	builder.WriteString(", birthplace=")
+	builder.WriteString(b.Birthplace)
+	builder.WriteString(", birthdate=")
+	builder.WriteString(b.Birthdate.Format(time.ANSIC))
+	builder.WriteString(", telephone=")
+	builder.WriteString(b.Telephone)
+	builder.WriteString(", email=")
+	builder.WriteString(b.Email)
+	builder.WriteString(", idType=")
+	builder.WriteString(b.IdType)
+	builder.WriteString(", idNumber=")
+	builder.WriteString(b.IdNumber)
+	builder.WriteString(", addressID=")
+	builder.WriteString(b.AddressID)
+	builder.WriteString(", postCodeID=")
+	builder.WriteString(b.PostCodeID)
+	builder.WriteString(", districtID=")
+	builder.WriteString(b.DistrictID)
+	builder.WriteString(", cityID=")
+	builder.WriteString(b.CityID)
+	builder.WriteString(", provinceID=")
+	builder.WriteString(b.ProvinceID)
+	builder.WriteString(", addressLiving=")
+	builder.WriteString(b.AddressLiving)
+	builder.WriteString(", postCodeLiving=")
+	builder.WriteString(b.PostCodeLiving)
+	builder.WriteString(", districtLiving=")
+	builder.WriteString(b.DistrictLiving)
+	builder.WriteString(", cityLiving=")
+	builder.WriteString(b.CityLiving)
+	builder.WriteString(", provinceLiving=")
+	builder.WriteString(b.ProvinceLiving)
+	builder.WriteString(", entrance=")
+	builder.WriteString(b.Entrance)
+	builder.WriteString(", entranceNumber=")
+	builder.WriteString(b.EntranceNumber)
+	builder.WriteString(", major=")
+	builder.WriteString(b.Major)
+	builder.WriteString(", university=")
+	builder.WriteString(b.University)
 	builder.WriteByte(')')
 	return builder.String()
 }

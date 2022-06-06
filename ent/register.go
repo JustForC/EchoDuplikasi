@@ -4,8 +4,6 @@ package ent
 
 import (
 	"Kynesia/ent/register"
-	"Kynesia/ent/scholarship"
-	"Kynesia/ent/user"
 	"fmt"
 	"strings"
 	"time"
@@ -28,45 +26,33 @@ type Register struct {
 	InterviewTime *time.Time `json:"interviewTime,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the RegisterQuery when eager-loading is set.
-	Edges                 RegisterEdges `json:"edges"`
-	scholarship_registers *int
-	user_registers        *int
+	Edges RegisterEdges `json:"edges"`
 }
 
 // RegisterEdges holds the relations/edges for other nodes in the graph.
 type RegisterEdges struct {
 	// User holds the value of the user edge.
-	User *User `json:"user,omitempty"`
+	User []*User `json:"user,omitempty"`
 	// Scholarship holds the value of the scholarship edge.
-	Scholarship *Scholarship `json:"scholarship,omitempty"`
+	Scholarship []*Scholarship `json:"scholarship,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [2]bool
 }
 
 // UserOrErr returns the User value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e RegisterEdges) UserOrErr() (*User, error) {
+// was not loaded in eager-loading.
+func (e RegisterEdges) UserOrErr() ([]*User, error) {
 	if e.loadedTypes[0] {
-		if e.User == nil {
-			// The edge user was loaded in eager-loading,
-			// but was not found.
-			return nil, &NotFoundError{label: user.Label}
-		}
 		return e.User, nil
 	}
 	return nil, &NotLoadedError{edge: "user"}
 }
 
 // ScholarshipOrErr returns the Scholarship value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e RegisterEdges) ScholarshipOrErr() (*Scholarship, error) {
+// was not loaded in eager-loading.
+func (e RegisterEdges) ScholarshipOrErr() ([]*Scholarship, error) {
 	if e.loadedTypes[1] {
-		if e.Scholarship == nil {
-			// The edge scholarship was loaded in eager-loading,
-			// but was not found.
-			return nil, &NotFoundError{label: scholarship.Label}
-		}
 		return e.Scholarship, nil
 	}
 	return nil, &NotLoadedError{edge: "scholarship"}
@@ -83,10 +69,6 @@ func (*Register) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullString)
 		case register.FieldInterviewTime:
 			values[i] = new(sql.NullTime)
-		case register.ForeignKeys[0]: // scholarship_registers
-			values[i] = new(sql.NullInt64)
-		case register.ForeignKeys[1]: // user_registers
-			values[i] = new(sql.NullInt64)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Register", columns[i])
 		}
@@ -133,20 +115,6 @@ func (r *Register) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				r.InterviewTime = new(time.Time)
 				*r.InterviewTime = value.Time
-			}
-		case register.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field scholarship_registers", value)
-			} else if value.Valid {
-				r.scholarship_registers = new(int)
-				*r.scholarship_registers = int(value.Int64)
-			}
-		case register.ForeignKeys[1]:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field user_registers", value)
-			} else if value.Valid {
-				r.user_registers = new(int)
-				*r.user_registers = int(value.Int64)
 			}
 		}
 	}

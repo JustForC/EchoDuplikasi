@@ -18,6 +18,7 @@ import (
 type CustomClaim struct {
 	Name string `json:"name"`
 	ID   int    `json:"id"`
+	Role int    `json:"role"`
 	jwt.StandardClaims
 }
 
@@ -103,6 +104,7 @@ func (authController *authenticationController) Login(c echo.Context) error {
 	claims := &CustomClaim{
 		authController.db.User.Query().Where(user.Email(req.Email)).Select(user.FieldName).StringX(ctx),
 		authController.db.User.Query().Where(user.Email(req.Email)).Select(user.FieldID).IntX(ctx),
+		authController.db.User.Query().Where(user.Email(req.Email)).Select(user.FieldRole).IntX(ctx),
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Hour * 72).Unix(),
 		},

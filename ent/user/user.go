@@ -15,17 +15,15 @@ const (
 	FieldPassword = "password"
 	// FieldRole holds the string denoting the role field in the database.
 	FieldRole = "role"
-	// EdgeRegisters holds the string denoting the registers edge name in mutations.
-	EdgeRegisters = "registers"
+	// EdgeRegister holds the string denoting the register edge name in mutations.
+	EdgeRegister = "register"
 	// Table holds the table name of the user in the database.
 	Table = "users"
-	// RegistersTable is the table that holds the registers relation/edge.
-	RegistersTable = "registers"
-	// RegistersInverseTable is the table name for the Register entity.
+	// RegisterTable is the table that holds the register relation/edge. The primary key declared below.
+	RegisterTable = "register_user"
+	// RegisterInverseTable is the table name for the Register entity.
 	// It exists in this package in order to avoid circular dependency with the "register" package.
-	RegistersInverseTable = "registers"
-	// RegistersColumn is the table column denoting the registers relation/edge.
-	RegistersColumn = "user_registers"
+	RegisterInverseTable = "registers"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -36,6 +34,12 @@ var Columns = []string{
 	FieldPassword,
 	FieldRole,
 }
+
+var (
+	// RegisterPrimaryKey and RegisterColumn2 are the table columns denoting the
+	// primary key for the register relation (M2M).
+	RegisterPrimaryKey = []string{"register_id", "user_id"}
+)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {

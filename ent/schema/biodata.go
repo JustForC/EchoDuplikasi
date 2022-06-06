@@ -42,5 +42,7 @@ func (Biodata) Fields() []ent.Field {
 // Edges of the Biodata.
 func (Biodata) Edges() []ent.Edge {
 	return nil
-	// return []ent.Edge{}
+	// return []ent.Edge{
+	// 	edge.From()
+	// }
 }

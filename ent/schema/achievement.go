@@ -22,5 +22,6 @@ func (Achievement) Fields() []ent.Field {
 // Edges of the Achievement.
 func (Achievement) Edges() []ent.Edge {
 	return nil
-	// return []ent.Edge{}
+	// return []ent.Edge{
+	// }
 }

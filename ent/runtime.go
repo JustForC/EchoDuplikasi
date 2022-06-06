@@ -3,6 +3,7 @@
 package ent
 
 import (
+	"Kynesia/ent/family"
 	"Kynesia/ent/register"
 	"Kynesia/ent/schema"
 )
@@ -11,6 +12,12 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	familyFields := schema.Family{}.Fields()
+	_ = familyFields
+	// familyDescJob is the schema descriptor for job field.
+	familyDescJob := familyFields[6].Descriptor()
+	// family.DefaultJob holds the default value on creation for the job field.
+	family.DefaultJob = familyDescJob.Default.(string)
 	registerFields := schema.Register{}.Fields()
 	_ = registerFields
 	// registerDescStatusTwo is the schema descriptor for statusTwo field.

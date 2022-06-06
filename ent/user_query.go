@@ -27,7 +27,7 @@ type UserQuery struct {
 	fields     []string
 	predicates []predicate.User
 	// eager-loading edges.
-	withRegisters *RegisterQuery
+	withRegister *RegisterQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -64,8 +64,8 @@ func (uq *UserQuery) Order(o ...OrderFunc) *UserQuery {
 	return uq
 }
 
-// QueryRegisters chains the current query on the "registers" edge.
-func (uq *UserQuery) QueryRegisters() *RegisterQuery {
+// QueryRegister chains the current query on the "register" edge.
+func (uq *UserQuery) QueryRegister() *RegisterQuery {
 	query := &RegisterQuery{config: uq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := uq.prepareQuery(ctx); err != nil {
@@ -78,7 +78,7 @@ func (uq *UserQuery) QueryRegisters() *RegisterQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(register.Table, register.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.RegistersTable, user.RegistersColumn),
+			sqlgraph.Edge(sqlgraph.M2M, true, user.RegisterTable, user.RegisterPrimaryKey...),
 		)
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
@@ -262,12 +262,12 @@ func (uq *UserQuery) Clone() *UserQuery {
 		return nil
 	}
 	return &UserQuery{
-		config:        uq.config,
-		limit:         uq.limit,
-		offset:        uq.offset,
-		order:         append([]OrderFunc{}, uq.order...),
-		predicates:    append([]predicate.User{}, uq.predicates...),
-		withRegisters: uq.withRegisters.Clone(),
+		config:       uq.config,
+		limit:        uq.limit,
+		offset:       uq.offset,
+		order:        append([]OrderFunc{}, uq.order...),
+		predicates:   append([]predicate.User{}, uq.predicates...),
+		withRegister: uq.withRegister.Clone(),
 		// clone intermediate query.
 		sql:    uq.sql.Clone(),
 		path:   uq.path,
@@ -275,14 +275,14 @@ func (uq *UserQuery) Clone() *UserQuery {
 	}
 }
 
-// WithRegisters tells the query-builder to eager-load the nodes that are connected to
-// the "registers" edge. The optional arguments are used to configure the query builder of the edge.
-func (uq *UserQuery) WithRegisters(opts ...func(*RegisterQuery)) *UserQuery {
+// WithRegister tells the query-builder to eager-load the nodes that are connected to
+// the "register" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithRegister(opts ...func(*RegisterQuery)) *UserQuery {
 	query := &RegisterQuery{config: uq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
-	uq.withRegisters = query
+	uq.withRegister = query
 	return uq
 }
 
@@ -352,7 +352,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context) ([]*User, error) {
 		nodes       = []*User{}
 		_spec       = uq.querySpec()
 		loadedTypes = [1]bool{
-			uq.withRegisters != nil,
+			uq.withRegister != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]interface{}, error) {
@@ -375,32 +375,68 @@ func (uq *UserQuery) sqlAll(ctx context.Context) ([]*User, error) {
 		return nodes, nil
 	}
 
-	if query := uq.withRegisters; query != nil {
+	if query := uq.withRegister; query != nil {
 		fks := make([]driver.Value, 0, len(nodes))
-		nodeids := make(map[int]*User)
-		for i := range nodes {
-			fks = append(fks, nodes[i].ID)
-			nodeids[nodes[i].ID] = nodes[i]
-			nodes[i].Edges.Registers = []*Register{}
+		ids := make(map[int]*User, len(nodes))
+		for _, node := range nodes {
+			ids[node.ID] = node
+			fks = append(fks, node.ID)
+			node.Edges.Register = []*Register{}
 		}
-		query.withFKs = true
-		query.Where(predicate.Register(func(s *sql.Selector) {
-			s.Where(sql.InValues(user.RegistersColumn, fks...))
-		}))
+		var (
+			edgeids []int
+			edges   = make(map[int][]*User)
+		)
+		_spec := &sqlgraph.EdgeQuerySpec{
+			Edge: &sqlgraph.EdgeSpec{
+				Inverse: true,
+				Table:   user.RegisterTable,
+				Columns: user.RegisterPrimaryKey,
+			},
+			Predicate: func(s *sql.Selector) {
+				s.Where(sql.InValues(user.RegisterPrimaryKey[1], fks...))
+			},
+			ScanValues: func() [2]interface{} {
+				return [2]interface{}{new(sql.NullInt64), new(sql.NullInt64)}
+			},
+			Assign: func(out, in interface{}) error {
+				eout, ok := out.(*sql.NullInt64)
+				if !ok || eout == nil {
+					return fmt.Errorf("unexpected id value for edge-out")
+				}
+				ein, ok := in.(*sql.NullInt64)
+				if !ok || ein == nil {
+					return fmt.Errorf("unexpected id value for edge-in")
+				}
+				outValue := int(eout.Int64)
+				inValue := int(ein.Int64)
+				node, ok := ids[outValue]
+				if !ok {
+					return fmt.Errorf("unexpected node id in edges: %v", outValue)
+				}
+				if _, ok := edges[inValue]; !ok {
+					edgeids = append(edgeids, inValue)
+				}
+				edges[inValue] = append(edges[inValue], node)
+				return nil
+			},
+		}
+		if err := sqlgraph.QueryEdges(ctx, uq.driver, _spec); err != nil {
+			return nil, fmt.Errorf(`query edges "register": %w`, err)
+		}
+		query.Where(register.IDIn(edgeids...))
 		neighbors, err := query.All(ctx)
 		if err != nil {
 			return nil, err
 		}
 		for _, n := range neighbors {
-			fk := n.user_registers
-			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "user_registers" is nil for node %v`, n.ID)
-			}
-			node, ok := nodeids[*fk]
+			nodes, ok := edges[n.ID]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "user_registers" returned %v for node %v`, *fk, n.ID)
+				return nil, fmt.Errorf(`unexpected "register" node returned %v`, n.ID)
 			}
-			node.Edges.Registers = append(node.Edges.Registers, n)
+			for i := range nodes {
+				nodes[i].Edges.Register = append(nodes[i].Edges.Register, n)
+			}
 		}
 	}
 

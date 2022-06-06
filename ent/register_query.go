@@ -8,6 +8,7 @@ import (
 	"Kynesia/ent/scholarship"
 	"Kynesia/ent/user"
 	"context"
+	"database/sql/driver"
 	"errors"
 	"fmt"
 	"math"
@@ -29,7 +30,6 @@ type RegisterQuery struct {
 	// eager-loading edges.
 	withUser        *UserQuery
 	withScholarship *ScholarshipQuery
-	withFKs         bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -80,7 +80,7 @@ func (rq *RegisterQuery) QueryUser() *UserQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(register.Table, register.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, register.UserTable, register.UserColumn),
+			sqlgraph.Edge(sqlgraph.M2M, false, register.UserTable, register.UserPrimaryKey...),
 		)
 		fromU = sqlgraph.SetNeighbors(rq.driver.Dialect(), step)
 		return fromU, nil
@@ -102,7 +102,7 @@ func (rq *RegisterQuery) QueryScholarship() *ScholarshipQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(register.Table, register.FieldID, selector),
 			sqlgraph.To(scholarship.Table, scholarship.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, register.ScholarshipTable, register.ScholarshipColumn),
+			sqlgraph.Edge(sqlgraph.M2M, false, register.ScholarshipTable, register.ScholarshipPrimaryKey...),
 		)
 		fromU = sqlgraph.SetNeighbors(rq.driver.Dialect(), step)
 		return fromU, nil
@@ -386,19 +386,12 @@ func (rq *RegisterQuery) prepareQuery(ctx context.Context) error {
 func (rq *RegisterQuery) sqlAll(ctx context.Context) ([]*Register, error) {
 	var (
 		nodes       = []*Register{}
-		withFKs     = rq.withFKs
 		_spec       = rq.querySpec()
 		loadedTypes = [2]bool{
 			rq.withUser != nil,
 			rq.withScholarship != nil,
 		}
 	)
-	if rq.withUser != nil || rq.withScholarship != nil {
-		withFKs = true
-	}
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, register.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]interface{}, error) {
 		node := &Register{config: rq.config}
 		nodes = append(nodes, node)
@@ -420,59 +413,131 @@ func (rq *RegisterQuery) sqlAll(ctx context.Context) ([]*Register, error) {
 	}
 
 	if query := rq.withUser; query != nil {
-		ids := make([]int, 0, len(nodes))
-		nodeids := make(map[int][]*Register)
-		for i := range nodes {
-			if nodes[i].user_registers == nil {
-				continue
-			}
-			fk := *nodes[i].user_registers
-			if _, ok := nodeids[fk]; !ok {
-				ids = append(ids, fk)
-			}
-			nodeids[fk] = append(nodeids[fk], nodes[i])
+		fks := make([]driver.Value, 0, len(nodes))
+		ids := make(map[int]*Register, len(nodes))
+		for _, node := range nodes {
+			ids[node.ID] = node
+			fks = append(fks, node.ID)
+			node.Edges.User = []*User{}
 		}
-		query.Where(user.IDIn(ids...))
+		var (
+			edgeids []int
+			edges   = make(map[int][]*Register)
+		)
+		_spec := &sqlgraph.EdgeQuerySpec{
+			Edge: &sqlgraph.EdgeSpec{
+				Inverse: false,
+				Table:   register.UserTable,
+				Columns: register.UserPrimaryKey,
+			},
+			Predicate: func(s *sql.Selector) {
+				s.Where(sql.InValues(register.UserPrimaryKey[0], fks...))
+			},
+			ScanValues: func() [2]interface{} {
+				return [2]interface{}{new(sql.NullInt64), new(sql.NullInt64)}
+			},
+			Assign: func(out, in interface{}) error {
+				eout, ok := out.(*sql.NullInt64)
+				if !ok || eout == nil {
+					return fmt.Errorf("unexpected id value for edge-out")
+				}
+				ein, ok := in.(*sql.NullInt64)
+				if !ok || ein == nil {
+					return fmt.Errorf("unexpected id value for edge-in")
+				}
+				outValue := int(eout.Int64)
+				inValue := int(ein.Int64)
+				node, ok := ids[outValue]
+				if !ok {
+					return fmt.Errorf("unexpected node id in edges: %v", outValue)
+				}
+				if _, ok := edges[inValue]; !ok {
+					edgeids = append(edgeids, inValue)
+				}
+				edges[inValue] = append(edges[inValue], node)
+				return nil
+			},
+		}
+		if err := sqlgraph.QueryEdges(ctx, rq.driver, _spec); err != nil {
+			return nil, fmt.Errorf(`query edges "user": %w`, err)
+		}
+		query.Where(user.IDIn(edgeids...))
 		neighbors, err := query.All(ctx)
 		if err != nil {
 			return nil, err
 		}
 		for _, n := range neighbors {
-			nodes, ok := nodeids[n.ID]
+			nodes, ok := edges[n.ID]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "user_registers" returned %v`, n.ID)
+				return nil, fmt.Errorf(`unexpected "user" node returned %v`, n.ID)
 			}
 			for i := range nodes {
-				nodes[i].Edges.User = n
+				nodes[i].Edges.User = append(nodes[i].Edges.User, n)
 			}
 		}
 	}
 
 	if query := rq.withScholarship; query != nil {
-		ids := make([]int, 0, len(nodes))
-		nodeids := make(map[int][]*Register)
-		for i := range nodes {
-			if nodes[i].scholarship_registers == nil {
-				continue
-			}
-			fk := *nodes[i].scholarship_registers
-			if _, ok := nodeids[fk]; !ok {
-				ids = append(ids, fk)
-			}
-			nodeids[fk] = append(nodeids[fk], nodes[i])
+		fks := make([]driver.Value, 0, len(nodes))
+		ids := make(map[int]*Register, len(nodes))
+		for _, node := range nodes {
+			ids[node.ID] = node
+			fks = append(fks, node.ID)
+			node.Edges.Scholarship = []*Scholarship{}
 		}
-		query.Where(scholarship.IDIn(ids...))
+		var (
+			edgeids []int
+			edges   = make(map[int][]*Register)
+		)
+		_spec := &sqlgraph.EdgeQuerySpec{
+			Edge: &sqlgraph.EdgeSpec{
+				Inverse: false,
+				Table:   register.ScholarshipTable,
+				Columns: register.ScholarshipPrimaryKey,
+			},
+			Predicate: func(s *sql.Selector) {
+				s.Where(sql.InValues(register.ScholarshipPrimaryKey[0], fks...))
+			},
+			ScanValues: func() [2]interface{} {
+				return [2]interface{}{new(sql.NullInt64), new(sql.NullInt64)}
+			},
+			Assign: func(out, in interface{}) error {
+				eout, ok := out.(*sql.NullInt64)
+				if !ok || eout == nil {
+					return fmt.Errorf("unexpected id value for edge-out")
+				}
+				ein, ok := in.(*sql.NullInt64)
+				if !ok || ein == nil {
+					return fmt.Errorf("unexpected id value for edge-in")
+				}
+				outValue := int(eout.Int64)
+				inValue := int(ein.Int64)
+				node, ok := ids[outValue]
+				if !ok {
+					return fmt.Errorf("unexpected node id in edges: %v", outValue)
+				}
+				if _, ok := edges[inValue]; !ok {
+					edgeids = append(edgeids, inValue)
+				}
+				edges[inValue] = append(edges[inValue], node)
+				return nil
+			},
+		}
+		if err := sqlgraph.QueryEdges(ctx, rq.driver, _spec); err != nil {
+			return nil, fmt.Errorf(`query edges "scholarship": %w`, err)
+		}
+		query.Where(scholarship.IDIn(edgeids...))
 		neighbors, err := query.All(ctx)
 		if err != nil {
 			return nil, err
 		}
 		for _, n := range neighbors {
-			nodes, ok := nodeids[n.ID]
+			nodes, ok := edges[n.ID]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "scholarship_registers" returned %v`, n.ID)
+				return nil, fmt.Errorf(`unexpected "scholarship" node returned %v`, n.ID)
 			}
 			for i := range nodes {
-				nodes[i].Edges.Scholarship = n
+				nodes[i].Edges.Scholarship = append(nodes[i].Edges.Scholarship, n)
 			}
 		}
 	}

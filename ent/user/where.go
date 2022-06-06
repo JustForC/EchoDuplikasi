@@ -529,25 +529,25 @@ func RoleLTE(v int) predicate.User {
 	})
 }
 
-// HasRegisters applies the HasEdge predicate on the "registers" edge.
-func HasRegisters() predicate.User {
+// HasRegister applies the HasEdge predicate on the "register" edge.
+func HasRegister() predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(RegistersTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, RegistersTable, RegistersColumn),
+			sqlgraph.To(RegisterTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, RegisterTable, RegisterPrimaryKey...),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasRegistersWith applies the HasEdge predicate on the "registers" edge with a given conditions (other predicates).
-func HasRegistersWith(preds ...predicate.Register) predicate.User {
+// HasRegisterWith applies the HasEdge predicate on the "register" edge with a given conditions (other predicates).
+func HasRegisterWith(preds ...predicate.Register) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(RegistersInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, RegistersTable, RegistersColumn),
+			sqlgraph.To(RegisterInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, RegisterTable, RegisterPrimaryKey...),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

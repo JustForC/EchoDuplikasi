@@ -3,9 +3,18 @@
 package ent
 
 import (
+	"Kynesia/ent/achievement"
 	"Kynesia/ent/biodata"
+	"Kynesia/ent/education"
+	"Kynesia/ent/family"
+	"Kynesia/ent/language"
+	"Kynesia/ent/networth"
+	"Kynesia/ent/organization"
 	"Kynesia/ent/register"
 	"Kynesia/ent/scholarship"
+	"Kynesia/ent/socialmedia"
+	"Kynesia/ent/talent"
+	"Kynesia/ent/training"
 	"Kynesia/ent/user"
 	"errors"
 	"fmt"
@@ -32,10 +41,19 @@ type OrderFunc func(*sql.Selector)
 // columnChecker returns a function indicates if the column exists in the given column.
 func columnChecker(table string) func(string) error {
 	checks := map[string]func(string) bool{
-		biodata.Table:     biodata.ValidColumn,
-		register.Table:    register.ValidColumn,
-		scholarship.Table: scholarship.ValidColumn,
-		user.Table:        user.ValidColumn,
+		achievement.Table:  achievement.ValidColumn,
+		biodata.Table:      biodata.ValidColumn,
+		education.Table:    education.ValidColumn,
+		family.Table:       family.ValidColumn,
+		language.Table:     language.ValidColumn,
+		networth.Table:     networth.ValidColumn,
+		organization.Table: organization.ValidColumn,
+		register.Table:     register.ValidColumn,
+		scholarship.Table:  scholarship.ValidColumn,
+		socialmedia.Table:  socialmedia.ValidColumn,
+		talent.Table:       talent.ValidColumn,
+		training.Table:     training.ValidColumn,
+		user.Table:         user.ValidColumn,
 	}
 	check, ok := checks[table]
 	if !ok {

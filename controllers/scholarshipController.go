@@ -68,13 +68,50 @@ func (scholarController *scholarshipController) Update(c echo.Context) error {
 
 	id, _ := strconv.Atoi(c.Param("id"))
 
+	req := new(requests.ScholarshipRequest)
+
+	if err := c.Bind(req); err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{
+			"message": err.Error(),
+		})
+	}
+
 	if check := scholarController.db.Scholarship.Query().Where(scholarship.ID(id)).ExistX(ctx); check == false {
 		return c.JSON(http.StatusBadRequest, echo.Map{
 			"message": "Scholarship does not exist!",
 		})
 	}
 
-	return c.JSON(http.StatusOK, "wowow")
+	scholarship := scholarController.db.Scholarship.Query().Where(scholarship.ID(id)).FirstX(ctx)
+
+	if req.Name == "" {
+		req.Name = scholarship.Name
+	}
+	if req.StartStepOne == "" {
+		req.StartStepOne = scholarship.StartStepOne.String()[0:10]
+	}
+	if req.StartStepTwo == "" {
+		req.StartStepTwo = scholarship.StartStepTwo.String()[0:10]
+	}
+	if req.EndStepOne == "" {
+		req.EndStepOne = scholarship.EndStepOne.String()[0:10]
+	}
+	if req.EndStepTwo == "" {
+		req.EndStepTwo = scholarship.EndStepTwo.String()[0:10]
+	}
+	if req.AnnounceStepOne == "" {
+		req.AnnounceStepOne = scholarship.AnnounceStepOne.String()[0:10]
+	}
+	if req.AnnounceStepTwo == "" {
+		req.AnnounceStepTwo = scholarship.AnnounceStepTwo.String()[0:10]
+	}
+	if req.OnlineTest == "" {
+		req.OnlineTest = scholarship.OnlineTest
+	}
+
+	scholarController.db.Scholarship.UpdateOneID(id).SetName(req.Name).SetStartStepOne(helpers.ConvertTime(req.StartStepOne)).SetEndStepOne(helpers.ConvertTime(req.EndStepOne)).SetAnnounceStepOne(helpers.ConvertTime(req.AnnounceStepOne)).SetStartStepTwo(helpers.ConvertTime(req.StartStepTwo)).SetEndStepTwo(helpers.ConvertTime(req.EndStepTwo)).SetAnnounceStepTwo(helpers.ConvertTime(req.AnnounceStepTwo)).SetOnlineTest(req.OnlineTest).SetStatus(0).SaveX(ctx)
+
+	return c.JSON(http.StatusOK, req)
 }
 
 func (scholarController *scholarshipController) Delete(c echo.Context) error {

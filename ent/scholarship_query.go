@@ -27,7 +27,7 @@ type ScholarshipQuery struct {
 	fields     []string
 	predicates []predicate.Scholarship
 	// eager-loading edges.
-	withRegisters *RegisterQuery
+	withRegister *RegisterQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -64,8 +64,8 @@ func (sq *ScholarshipQuery) Order(o ...OrderFunc) *ScholarshipQuery {
 	return sq
 }
 
-// QueryRegisters chains the current query on the "registers" edge.
-func (sq *ScholarshipQuery) QueryRegisters() *RegisterQuery {
+// QueryRegister chains the current query on the "register" edge.
+func (sq *ScholarshipQuery) QueryRegister() *RegisterQuery {
 	query := &RegisterQuery{config: sq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := sq.prepareQuery(ctx); err != nil {
@@ -78,7 +78,7 @@ func (sq *ScholarshipQuery) QueryRegisters() *RegisterQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(scholarship.Table, scholarship.FieldID, selector),
 			sqlgraph.To(register.Table, register.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, scholarship.RegistersTable, scholarship.RegistersColumn),
+			sqlgraph.Edge(sqlgraph.M2M, true, scholarship.RegisterTable, scholarship.RegisterPrimaryKey...),
 		)
 		fromU = sqlgraph.SetNeighbors(sq.driver.Dialect(), step)
 		return fromU, nil
@@ -262,12 +262,12 @@ func (sq *ScholarshipQuery) Clone() *ScholarshipQuery {
 		return nil
 	}
 	return &ScholarshipQuery{
-		config:        sq.config,
-		limit:         sq.limit,
-		offset:        sq.offset,
-		order:         append([]OrderFunc{}, sq.order...),
-		predicates:    append([]predicate.Scholarship{}, sq.predicates...),
-		withRegisters: sq.withRegisters.Clone(),
+		config:       sq.config,
+		limit:        sq.limit,
+		offset:       sq.offset,
+		order:        append([]OrderFunc{}, sq.order...),
+		predicates:   append([]predicate.Scholarship{}, sq.predicates...),
+		withRegister: sq.withRegister.Clone(),
 		// clone intermediate query.
 		sql:    sq.sql.Clone(),
 		path:   sq.path,
@@ -275,14 +275,14 @@ func (sq *ScholarshipQuery) Clone() *ScholarshipQuery {
 	}
 }
 
-// WithRegisters tells the query-builder to eager-load the nodes that are connected to
-// the "registers" edge. The optional arguments are used to configure the query builder of the edge.
-func (sq *ScholarshipQuery) WithRegisters(opts ...func(*RegisterQuery)) *ScholarshipQuery {
+// WithRegister tells the query-builder to eager-load the nodes that are connected to
+// the "register" edge. The optional arguments are used to configure the query builder of the edge.
+func (sq *ScholarshipQuery) WithRegister(opts ...func(*RegisterQuery)) *ScholarshipQuery {
 	query := &RegisterQuery{config: sq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
-	sq.withRegisters = query
+	sq.withRegister = query
 	return sq
 }
 
@@ -352,7 +352,7 @@ func (sq *ScholarshipQuery) sqlAll(ctx context.Context) ([]*Scholarship, error) 
 		nodes       = []*Scholarship{}
 		_spec       = sq.querySpec()
 		loadedTypes = [1]bool{
-			sq.withRegisters != nil,
+			sq.withRegister != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]interface{}, error) {
@@ -375,32 +375,68 @@ func (sq *ScholarshipQuery) sqlAll(ctx context.Context) ([]*Scholarship, error) 
 		return nodes, nil
 	}
 
-	if query := sq.withRegisters; query != nil {
+	if query := sq.withRegister; query != nil {
 		fks := make([]driver.Value, 0, len(nodes))
-		nodeids := make(map[int]*Scholarship)
-		for i := range nodes {
-			fks = append(fks, nodes[i].ID)
-			nodeids[nodes[i].ID] = nodes[i]
-			nodes[i].Edges.Registers = []*Register{}
+		ids := make(map[int]*Scholarship, len(nodes))
+		for _, node := range nodes {
+			ids[node.ID] = node
+			fks = append(fks, node.ID)
+			node.Edges.Register = []*Register{}
 		}
-		query.withFKs = true
-		query.Where(predicate.Register(func(s *sql.Selector) {
-			s.Where(sql.InValues(scholarship.RegistersColumn, fks...))
-		}))
+		var (
+			edgeids []int
+			edges   = make(map[int][]*Scholarship)
+		)
+		_spec := &sqlgraph.EdgeQuerySpec{
+			Edge: &sqlgraph.EdgeSpec{
+				Inverse: true,
+				Table:   scholarship.RegisterTable,
+				Columns: scholarship.RegisterPrimaryKey,
+			},
+			Predicate: func(s *sql.Selector) {
+				s.Where(sql.InValues(scholarship.RegisterPrimaryKey[1], fks...))
+			},
+			ScanValues: func() [2]interface{} {
+				return [2]interface{}{new(sql.NullInt64), new(sql.NullInt64)}
+			},
+			Assign: func(out, in interface{}) error {
+				eout, ok := out.(*sql.NullInt64)
+				if !ok || eout == nil {
+					return fmt.Errorf("unexpected id value for edge-out")
+				}
+				ein, ok := in.(*sql.NullInt64)
+				if !ok || ein == nil {
+					return fmt.Errorf("unexpected id value for edge-in")
+				}
+				outValue := int(eout.Int64)
+				inValue := int(ein.Int64)
+				node, ok := ids[outValue]
+				if !ok {
+					return fmt.Errorf("unexpected node id in edges: %v", outValue)
+				}
+				if _, ok := edges[inValue]; !ok {
+					edgeids = append(edgeids, inValue)
+				}
+				edges[inValue] = append(edges[inValue], node)
+				return nil
+			},
+		}
+		if err := sqlgraph.QueryEdges(ctx, sq.driver, _spec); err != nil {
+			return nil, fmt.Errorf(`query edges "register": %w`, err)
+		}
+		query.Where(register.IDIn(edgeids...))
 		neighbors, err := query.All(ctx)
 		if err != nil {
 			return nil, err
 		}
 		for _, n := range neighbors {
-			fk := n.scholarship_registers
-			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "scholarship_registers" is nil for node %v`, n.ID)
-			}
-			node, ok := nodeids[*fk]
+			nodes, ok := edges[n.ID]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "scholarship_registers" returned %v for node %v`, *fk, n.ID)
+				return nil, fmt.Errorf(`unexpected "register" node returned %v`, n.ID)
 			}
-			node.Edges.Registers = append(node.Edges.Registers, n)
+			for i := range nodes {
+				nodes[i].Edges.Register = append(nodes[i].Edges.Register, n)
+			}
 		}
 	}
 

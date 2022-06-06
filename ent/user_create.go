@@ -44,14 +44,14 @@ func (uc *UserCreate) SetRole(i int) *UserCreate {
 	return uc
 }
 
-// AddRegisterIDs adds the "registers" edge to the Register entity by IDs.
+// AddRegisterIDs adds the "register" edge to the Register entity by IDs.
 func (uc *UserCreate) AddRegisterIDs(ids ...int) *UserCreate {
 	uc.mutation.AddRegisterIDs(ids...)
 	return uc
 }
 
-// AddRegisters adds the "registers" edges to the Register entity.
-func (uc *UserCreate) AddRegisters(r ...*Register) *UserCreate {
+// AddRegister adds the "register" edges to the Register entity.
+func (uc *UserCreate) AddRegister(r ...*Register) *UserCreate {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
@@ -200,12 +200,12 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		})
 		_node.Role = value
 	}
-	if nodes := uc.mutation.RegistersIDs(); len(nodes) > 0 {
+	if nodes := uc.mutation.RegisterIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.RegistersTable,
-			Columns: []string{user.RegistersColumn},
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   user.RegisterTable,
+			Columns: user.RegisterPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{

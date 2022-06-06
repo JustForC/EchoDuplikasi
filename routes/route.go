@@ -26,6 +26,7 @@ func Init() *echo.Echo {
 	// Initiate Controller
 	authCont := controllers.NewAuthenticationController(db)
 	scholarCont := controllers.NewScholarshipController(db)
+	regCont := controllers.NewRegisterController(db)
 
 	// Buat Context kosong
 	ctx := context.Background()
@@ -51,6 +52,10 @@ func Init() *echo.Echo {
 	scholarship.GET("/:id", scholarCont.ReadByID)
 	scholarship.PUT("/:id", scholarCont.Update)
 	scholarship.DELETE("/:id", scholarCont.Delete)
+
+	register := e.Group("/register")
+	register.Use(middleware.JWTWithConfig(controllers.Config()))
+	register.GET("/:scholarshipID", regCont.RegisterScholarship)
 
 	return e
 }

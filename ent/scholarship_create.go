@@ -75,14 +75,14 @@ func (sc *ScholarshipCreate) SetStatus(i int) *ScholarshipCreate {
 	return sc
 }
 
-// AddRegisterIDs adds the "registers" edge to the Register entity by IDs.
+// AddRegisterIDs adds the "register" edge to the Register entity by IDs.
 func (sc *ScholarshipCreate) AddRegisterIDs(ids ...int) *ScholarshipCreate {
 	sc.mutation.AddRegisterIDs(ids...)
 	return sc
 }
 
-// AddRegisters adds the "registers" edges to the Register entity.
-func (sc *ScholarshipCreate) AddRegisters(r ...*Register) *ScholarshipCreate {
+// AddRegister adds the "register" edges to the Register entity.
+func (sc *ScholarshipCreate) AddRegister(r ...*Register) *ScholarshipCreate {
 	ids := make([]int, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
@@ -286,12 +286,12 @@ func (sc *ScholarshipCreate) createSpec() (*Scholarship, *sqlgraph.CreateSpec) {
 		})
 		_node.Status = value
 	}
-	if nodes := sc.mutation.RegistersIDs(); len(nodes) > 0 {
+	if nodes := sc.mutation.RegisterIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   scholarship.RegistersTable,
-			Columns: []string{scholarship.RegistersColumn},
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   scholarship.RegisterTable,
+			Columns: scholarship.RegisterPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
