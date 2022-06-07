@@ -28,6 +28,7 @@ func Init() *echo.Echo {
 	scholarCont := controllers.NewScholarshipController(db)
 	regCont := controllers.NewRegisterController(db)
 	achievCont := controllers.NewAchievementController(db)
+	bioCont := controllers.NewBiodataController(db)
 
 	// Buat Context kosong
 	ctx := context.Background()
@@ -66,6 +67,13 @@ func Init() *echo.Echo {
 	achievement.GET("/:id", achievCont.ReadByID)
 	achievement.PUT("/:id", achievCont.Update)
 	achievement.DELETE("/:id", achievCont.Delete)
+
+	biodata := e.Group("/achievement")
+	biodata.POST("", bioCont.Create)
+	biodata.GET("", bioCont.ReadAll)
+	biodata.GET("/:id", bioCont.ReadByID)
+	biodata.PUT("/:id", bioCont.Update)
+	biodata.DELETE("/:id", bioCont.Delete)
 
 	return e
 }

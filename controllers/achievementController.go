@@ -35,17 +35,26 @@ func (achievController *achievementController) Create(c echo.Context) error {
 		return err
 	}
 
-	scholarship, err := c.Cookie("Scholarship")
+	// Take register cookie for id register scholarship
+	scholarship, err := c.Cookie("Register")
 
+	// Check if register cookie exist or not
 	if err != nil {
 		return c.JSON(http.StatusOK, echo.Map{
 			"message": "Select scholarship first!",
 		})
 	}
 
+	// Convert id register scholarship to int
 	scholarshipID, _ := strconv.Atoi(scholarship.Value)
 
-	achievement := achievController.db.Achievement.Create().SetName(req.Name).SetLevel(req.Level).SetOrganizer(req.Organizer).AddRegisterIDs(scholarshipID).SaveX(ctx)
+	// Creating achievement
+	achievement := achievController.db.Achievement.Create().
+		SetName(req.Name).
+		SetLevel(req.Level).
+		SetOrganizer(req.Organizer).
+		AddRegisterIDs(scholarshipID).
+		SaveX(ctx)
 
 	return c.JSON(http.StatusOK, achievement)
 }
@@ -53,6 +62,7 @@ func (achievController *achievementController) Create(c echo.Context) error {
 func (achievController *achievementController) ReadAll(c echo.Context) error {
 	ctx := context.Background()
 
+	// Taking all achievement
 	achievements := achievController.db.Achievement.Query().AllX(ctx)
 
 	return c.JSON(http.StatusOK, achievements)
@@ -61,14 +71,17 @@ func (achievController *achievementController) ReadAll(c echo.Context) error {
 func (achievController *achievementController) ReadByID(c echo.Context) error {
 	ctx := context.Background()
 
+	// Taking id from url parameter
 	id, _ := strconv.Atoi(c.Param("id"))
 
+	// Check if achievement exist or not
 	if check := achievController.db.Achievement.Query().Where(achievement.ID(id)).ExistX(ctx); check == false {
 		return c.JSON(http.StatusBadRequest, echo.Map{
 			"message": "Achievement does not exist!",
 		})
 	}
 
+	// Taking selected achievement
 	achievement := achievController.db.Achievement.Query().Where(achievement.ID(id)).FirstX(ctx)
 
 	return c.JSON(http.StatusOK, achievement)
@@ -81,14 +94,17 @@ func (achievController *achievementController) Update(c echo.Context) error {
 func (achievController *achievementController) Delete(c echo.Context) error {
 	ctx := context.Background()
 
+	// Taking id from url parameter
 	id, _ := strconv.Atoi(c.Param("id"))
 
+	// Check if achievement exist or not
 	if check := achievController.db.Achievement.Query().Where(achievement.ID(id)).ExistX(ctx); check == false {
 		return c.JSON(http.StatusBadRequest, echo.Map{
 			"message": "Achievement does not exist!",
 		})
 	}
 
+	// Deleting selected achievement
 	achievController.db.Achievement.DeleteOneID(id).ExecX(ctx)
 
 	return c.JSON(http.StatusOK, echo.Map{
