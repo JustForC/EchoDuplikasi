@@ -544,6 +544,62 @@ func HasScholarshipWith(preds ...predicate.Scholarship) predicate.Register {
 	})
 }
 
+// HasAchievement applies the HasEdge predicate on the "achievement" edge.
+func HasAchievement() predicate.Register {
+	return predicate.Register(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(AchievementTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, AchievementTable, AchievementPrimaryKey...),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasAchievementWith applies the HasEdge predicate on the "achievement" edge with a given conditions (other predicates).
+func HasAchievementWith(preds ...predicate.Achievement) predicate.Register {
+	return predicate.Register(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(AchievementInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, AchievementTable, AchievementPrimaryKey...),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasBiodata applies the HasEdge predicate on the "biodata" edge.
+func HasBiodata() predicate.Register {
+	return predicate.Register(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(BiodataTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, BiodataTable, BiodataPrimaryKey...),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasBiodataWith applies the HasEdge predicate on the "biodata" edge with a given conditions (other predicates).
+func HasBiodataWith(preds ...predicate.Biodata) predicate.Register {
+	return predicate.Register(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(BiodataInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, BiodataTable, BiodataPrimaryKey...),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Register) predicate.Register {
 	return predicate.Register(func(s *sql.Selector) {

@@ -84,6 +84,14 @@ func (su *ScholarshipUpdate) SetStatus(i int) *ScholarshipUpdate {
 	return su
 }
 
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (su *ScholarshipUpdate) SetNillableStatus(i *int) *ScholarshipUpdate {
+	if i != nil {
+		su.SetStatus(*i)
+	}
+	return su
+}
+
 // AddStatus adds i to the "status" field.
 func (su *ScholarshipUpdate) AddStatus(i int) *ScholarshipUpdate {
 	su.mutation.AddStatus(i)
@@ -398,6 +406,14 @@ func (suo *ScholarshipUpdateOne) SetOnlineTest(s string) *ScholarshipUpdateOne {
 func (suo *ScholarshipUpdateOne) SetStatus(i int) *ScholarshipUpdateOne {
 	suo.mutation.ResetStatus()
 	suo.mutation.SetStatus(i)
+	return suo
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (suo *ScholarshipUpdateOne) SetNillableStatus(i *int) *ScholarshipUpdateOne {
+	if i != nil {
+		suo.SetStatus(*i)
+	}
 	return suo
 }
 

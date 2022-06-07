@@ -3,6 +3,8 @@
 package ent
 
 import (
+	"Kynesia/ent/achievement"
+	"Kynesia/ent/biodata"
 	"Kynesia/ent/predicate"
 	"Kynesia/ent/register"
 	"Kynesia/ent/scholarship"
@@ -134,6 +136,36 @@ func (ru *RegisterUpdate) AddScholarship(s ...*Scholarship) *RegisterUpdate {
 	return ru.AddScholarshipIDs(ids...)
 }
 
+// AddAchievementIDs adds the "achievement" edge to the Achievement entity by IDs.
+func (ru *RegisterUpdate) AddAchievementIDs(ids ...int) *RegisterUpdate {
+	ru.mutation.AddAchievementIDs(ids...)
+	return ru
+}
+
+// AddAchievement adds the "achievement" edges to the Achievement entity.
+func (ru *RegisterUpdate) AddAchievement(a ...*Achievement) *RegisterUpdate {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return ru.AddAchievementIDs(ids...)
+}
+
+// AddBiodatumIDs adds the "biodata" edge to the Biodata entity by IDs.
+func (ru *RegisterUpdate) AddBiodatumIDs(ids ...int) *RegisterUpdate {
+	ru.mutation.AddBiodatumIDs(ids...)
+	return ru
+}
+
+// AddBiodata adds the "biodata" edges to the Biodata entity.
+func (ru *RegisterUpdate) AddBiodata(b ...*Biodata) *RegisterUpdate {
+	ids := make([]int, len(b))
+	for i := range b {
+		ids[i] = b[i].ID
+	}
+	return ru.AddBiodatumIDs(ids...)
+}
+
 // Mutation returns the RegisterMutation object of the builder.
 func (ru *RegisterUpdate) Mutation() *RegisterMutation {
 	return ru.mutation
@@ -179,6 +211,48 @@ func (ru *RegisterUpdate) RemoveScholarship(s ...*Scholarship) *RegisterUpdate {
 		ids[i] = s[i].ID
 	}
 	return ru.RemoveScholarshipIDs(ids...)
+}
+
+// ClearAchievement clears all "achievement" edges to the Achievement entity.
+func (ru *RegisterUpdate) ClearAchievement() *RegisterUpdate {
+	ru.mutation.ClearAchievement()
+	return ru
+}
+
+// RemoveAchievementIDs removes the "achievement" edge to Achievement entities by IDs.
+func (ru *RegisterUpdate) RemoveAchievementIDs(ids ...int) *RegisterUpdate {
+	ru.mutation.RemoveAchievementIDs(ids...)
+	return ru
+}
+
+// RemoveAchievement removes "achievement" edges to Achievement entities.
+func (ru *RegisterUpdate) RemoveAchievement(a ...*Achievement) *RegisterUpdate {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return ru.RemoveAchievementIDs(ids...)
+}
+
+// ClearBiodata clears all "biodata" edges to the Biodata entity.
+func (ru *RegisterUpdate) ClearBiodata() *RegisterUpdate {
+	ru.mutation.ClearBiodata()
+	return ru
+}
+
+// RemoveBiodatumIDs removes the "biodata" edge to Biodata entities by IDs.
+func (ru *RegisterUpdate) RemoveBiodatumIDs(ids ...int) *RegisterUpdate {
+	ru.mutation.RemoveBiodatumIDs(ids...)
+	return ru
+}
+
+// RemoveBiodata removes "biodata" edges to Biodata entities.
+func (ru *RegisterUpdate) RemoveBiodata(b ...*Biodata) *RegisterUpdate {
+	ids := make([]int, len(b))
+	for i := range b {
+		ids[i] = b[i].ID
+	}
+	return ru.RemoveBiodatumIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -415,6 +489,114 @@ func (ru *RegisterUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if ru.mutation.AchievementCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.AchievementTable,
+			Columns: register.AchievementPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: achievement.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ru.mutation.RemovedAchievementIDs(); len(nodes) > 0 && !ru.mutation.AchievementCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.AchievementTable,
+			Columns: register.AchievementPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: achievement.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ru.mutation.AchievementIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.AchievementTable,
+			Columns: register.AchievementPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: achievement.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ru.mutation.BiodataCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.BiodataTable,
+			Columns: register.BiodataPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: biodata.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ru.mutation.RemovedBiodataIDs(); len(nodes) > 0 && !ru.mutation.BiodataCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.BiodataTable,
+			Columns: register.BiodataPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: biodata.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ru.mutation.BiodataIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.BiodataTable,
+			Columns: register.BiodataPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: biodata.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, ru.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{register.Label}
@@ -538,6 +720,36 @@ func (ruo *RegisterUpdateOne) AddScholarship(s ...*Scholarship) *RegisterUpdateO
 	return ruo.AddScholarshipIDs(ids...)
 }
 
+// AddAchievementIDs adds the "achievement" edge to the Achievement entity by IDs.
+func (ruo *RegisterUpdateOne) AddAchievementIDs(ids ...int) *RegisterUpdateOne {
+	ruo.mutation.AddAchievementIDs(ids...)
+	return ruo
+}
+
+// AddAchievement adds the "achievement" edges to the Achievement entity.
+func (ruo *RegisterUpdateOne) AddAchievement(a ...*Achievement) *RegisterUpdateOne {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return ruo.AddAchievementIDs(ids...)
+}
+
+// AddBiodatumIDs adds the "biodata" edge to the Biodata entity by IDs.
+func (ruo *RegisterUpdateOne) AddBiodatumIDs(ids ...int) *RegisterUpdateOne {
+	ruo.mutation.AddBiodatumIDs(ids...)
+	return ruo
+}
+
+// AddBiodata adds the "biodata" edges to the Biodata entity.
+func (ruo *RegisterUpdateOne) AddBiodata(b ...*Biodata) *RegisterUpdateOne {
+	ids := make([]int, len(b))
+	for i := range b {
+		ids[i] = b[i].ID
+	}
+	return ruo.AddBiodatumIDs(ids...)
+}
+
 // Mutation returns the RegisterMutation object of the builder.
 func (ruo *RegisterUpdateOne) Mutation() *RegisterMutation {
 	return ruo.mutation
@@ -583,6 +795,48 @@ func (ruo *RegisterUpdateOne) RemoveScholarship(s ...*Scholarship) *RegisterUpda
 		ids[i] = s[i].ID
 	}
 	return ruo.RemoveScholarshipIDs(ids...)
+}
+
+// ClearAchievement clears all "achievement" edges to the Achievement entity.
+func (ruo *RegisterUpdateOne) ClearAchievement() *RegisterUpdateOne {
+	ruo.mutation.ClearAchievement()
+	return ruo
+}
+
+// RemoveAchievementIDs removes the "achievement" edge to Achievement entities by IDs.
+func (ruo *RegisterUpdateOne) RemoveAchievementIDs(ids ...int) *RegisterUpdateOne {
+	ruo.mutation.RemoveAchievementIDs(ids...)
+	return ruo
+}
+
+// RemoveAchievement removes "achievement" edges to Achievement entities.
+func (ruo *RegisterUpdateOne) RemoveAchievement(a ...*Achievement) *RegisterUpdateOne {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return ruo.RemoveAchievementIDs(ids...)
+}
+
+// ClearBiodata clears all "biodata" edges to the Biodata entity.
+func (ruo *RegisterUpdateOne) ClearBiodata() *RegisterUpdateOne {
+	ruo.mutation.ClearBiodata()
+	return ruo
+}
+
+// RemoveBiodatumIDs removes the "biodata" edge to Biodata entities by IDs.
+func (ruo *RegisterUpdateOne) RemoveBiodatumIDs(ids ...int) *RegisterUpdateOne {
+	ruo.mutation.RemoveBiodatumIDs(ids...)
+	return ruo
+}
+
+// RemoveBiodata removes "biodata" edges to Biodata entities.
+func (ruo *RegisterUpdateOne) RemoveBiodata(b ...*Biodata) *RegisterUpdateOne {
+	ids := make([]int, len(b))
+	for i := range b {
+		ids[i] = b[i].ID
+	}
+	return ruo.RemoveBiodatumIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -835,6 +1089,114 @@ func (ruo *RegisterUpdateOne) sqlSave(ctx context.Context) (_node *Register, err
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: scholarship.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ruo.mutation.AchievementCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.AchievementTable,
+			Columns: register.AchievementPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: achievement.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ruo.mutation.RemovedAchievementIDs(); len(nodes) > 0 && !ruo.mutation.AchievementCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.AchievementTable,
+			Columns: register.AchievementPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: achievement.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ruo.mutation.AchievementIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.AchievementTable,
+			Columns: register.AchievementPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: achievement.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ruo.mutation.BiodataCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.BiodataTable,
+			Columns: register.BiodataPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: biodata.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ruo.mutation.RemovedBiodataIDs(); len(nodes) > 0 && !ruo.mutation.BiodataCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.BiodataTable,
+			Columns: register.BiodataPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: biodata.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ruo.mutation.BiodataIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.BiodataTable,
+			Columns: register.BiodataPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: biodata.FieldID,
 				},
 			},
 		}

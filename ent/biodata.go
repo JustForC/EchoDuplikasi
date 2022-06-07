@@ -62,6 +62,27 @@ type Biodata struct {
 	Major string `json:"major,omitempty"`
 	// University holds the value of the "university" field.
 	University string `json:"university,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the BiodataQuery when eager-loading is set.
+	Edges BiodataEdges `json:"edges"`
+}
+
+// BiodataEdges holds the relations/edges for other nodes in the graph.
+type BiodataEdges struct {
+	// Register holds the value of the register edge.
+	Register []*Register `json:"register,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [1]bool
+}
+
+// RegisterOrErr returns the Register value or an error if the edge
+// was not loaded in eager-loading.
+func (e BiodataEdges) RegisterOrErr() ([]*Register, error) {
+	if e.loadedTypes[0] {
+		return e.Register, nil
+	}
+	return nil, &NotLoadedError{edge: "register"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -237,6 +258,11 @@ func (b *Biodata) assignValues(columns []string, values []interface{}) error {
 		}
 	}
 	return nil
+}
+
+// QueryRegister queries the "register" edge of the Biodata entity.
+func (b *Biodata) QueryRegister() *RegisterQuery {
+	return (&BiodataClient{config: b.config}).QueryRegister(b)
 }
 
 // Update returns a builder for updating this Biodata.

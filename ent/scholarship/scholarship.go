@@ -65,3 +65,8 @@ func ValidColumn(column string) bool {
 	}
 	return false
 }
+
+var (
+	// DefaultStatus holds the default value on creation for the "status" field.
+	DefaultStatus int
+)

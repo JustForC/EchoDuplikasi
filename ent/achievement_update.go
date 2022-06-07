@@ -5,6 +5,7 @@ package ent
 import (
 	"Kynesia/ent/achievement"
 	"Kynesia/ent/predicate"
+	"Kynesia/ent/register"
 	"context"
 	"errors"
 	"fmt"
@@ -87,9 +88,45 @@ func (au *AchievementUpdate) ClearLevel() *AchievementUpdate {
 	return au
 }
 
+// AddRegisterIDs adds the "register" edge to the Register entity by IDs.
+func (au *AchievementUpdate) AddRegisterIDs(ids ...int) *AchievementUpdate {
+	au.mutation.AddRegisterIDs(ids...)
+	return au
+}
+
+// AddRegister adds the "register" edges to the Register entity.
+func (au *AchievementUpdate) AddRegister(r ...*Register) *AchievementUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return au.AddRegisterIDs(ids...)
+}
+
 // Mutation returns the AchievementMutation object of the builder.
 func (au *AchievementUpdate) Mutation() *AchievementMutation {
 	return au.mutation
+}
+
+// ClearRegister clears all "register" edges to the Register entity.
+func (au *AchievementUpdate) ClearRegister() *AchievementUpdate {
+	au.mutation.ClearRegister()
+	return au
+}
+
+// RemoveRegisterIDs removes the "register" edge to Register entities by IDs.
+func (au *AchievementUpdate) RemoveRegisterIDs(ids ...int) *AchievementUpdate {
+	au.mutation.RemoveRegisterIDs(ids...)
+	return au
+}
+
+// RemoveRegister removes "register" edges to Register entities.
+func (au *AchievementUpdate) RemoveRegister(r ...*Register) *AchievementUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return au.RemoveRegisterIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -203,6 +240,60 @@ func (au *AchievementUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: achievement.FieldLevel,
 		})
 	}
+	if au.mutation.RegisterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   achievement.RegisterTable,
+			Columns: achievement.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := au.mutation.RemovedRegisterIDs(); len(nodes) > 0 && !au.mutation.RegisterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   achievement.RegisterTable,
+			Columns: achievement.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := au.mutation.RegisterIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   achievement.RegisterTable,
+			Columns: achievement.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, au.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{achievement.Label}
@@ -282,9 +373,45 @@ func (auo *AchievementUpdateOne) ClearLevel() *AchievementUpdateOne {
 	return auo
 }
 
+// AddRegisterIDs adds the "register" edge to the Register entity by IDs.
+func (auo *AchievementUpdateOne) AddRegisterIDs(ids ...int) *AchievementUpdateOne {
+	auo.mutation.AddRegisterIDs(ids...)
+	return auo
+}
+
+// AddRegister adds the "register" edges to the Register entity.
+func (auo *AchievementUpdateOne) AddRegister(r ...*Register) *AchievementUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return auo.AddRegisterIDs(ids...)
+}
+
 // Mutation returns the AchievementMutation object of the builder.
 func (auo *AchievementUpdateOne) Mutation() *AchievementMutation {
 	return auo.mutation
+}
+
+// ClearRegister clears all "register" edges to the Register entity.
+func (auo *AchievementUpdateOne) ClearRegister() *AchievementUpdateOne {
+	auo.mutation.ClearRegister()
+	return auo
+}
+
+// RemoveRegisterIDs removes the "register" edge to Register entities by IDs.
+func (auo *AchievementUpdateOne) RemoveRegisterIDs(ids ...int) *AchievementUpdateOne {
+	auo.mutation.RemoveRegisterIDs(ids...)
+	return auo
+}
+
+// RemoveRegister removes "register" edges to Register entities.
+func (auo *AchievementUpdateOne) RemoveRegister(r ...*Register) *AchievementUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return auo.RemoveRegisterIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -421,6 +548,60 @@ func (auo *AchievementUpdateOne) sqlSave(ctx context.Context) (_node *Achievemen
 			Type:   field.TypeString,
 			Column: achievement.FieldLevel,
 		})
+	}
+	if auo.mutation.RegisterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   achievement.RegisterTable,
+			Columns: achievement.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := auo.mutation.RemovedRegisterIDs(); len(nodes) > 0 && !auo.mutation.RegisterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   achievement.RegisterTable,
+			Columns: achievement.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := auo.mutation.RegisterIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   achievement.RegisterTable,
+			Columns: achievement.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &Achievement{config: auo.config}
 	_spec.Assign = _node.assignValues

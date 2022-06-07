@@ -75,6 +75,14 @@ func (sc *ScholarshipCreate) SetStatus(i int) *ScholarshipCreate {
 	return sc
 }
 
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (sc *ScholarshipCreate) SetNillableStatus(i *int) *ScholarshipCreate {
+	if i != nil {
+		sc.SetStatus(*i)
+	}
+	return sc
+}
+
 // AddRegisterIDs adds the "register" edge to the Register entity by IDs.
 func (sc *ScholarshipCreate) AddRegisterIDs(ids ...int) *ScholarshipCreate {
 	sc.mutation.AddRegisterIDs(ids...)
@@ -101,6 +109,7 @@ func (sc *ScholarshipCreate) Save(ctx context.Context) (*Scholarship, error) {
 		err  error
 		node *Scholarship
 	)
+	sc.defaults()
 	if len(sc.hooks) == 0 {
 		if err = sc.check(); err != nil {
 			return nil, err
@@ -155,6 +164,14 @@ func (sc *ScholarshipCreate) Exec(ctx context.Context) error {
 func (sc *ScholarshipCreate) ExecX(ctx context.Context) {
 	if err := sc.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (sc *ScholarshipCreate) defaults() {
+	if _, ok := sc.mutation.Status(); !ok {
+		v := scholarship.DefaultStatus
+		sc.mutation.SetStatus(v)
 	}
 }
 
@@ -322,6 +339,7 @@ func (scb *ScholarshipCreateBulk) Save(ctx context.Context) ([]*Scholarship, err
 	for i := range scb.builders {
 		func(i int, root context.Context) {
 			builder := scb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*ScholarshipMutation)
 				if !ok {

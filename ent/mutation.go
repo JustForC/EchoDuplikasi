@@ -53,16 +53,19 @@ const (
 // AchievementMutation represents an operation that mutates the Achievement nodes in the graph.
 type AchievementMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *int
-	name          *string
-	organizer     *string
-	level         *string
-	clearedFields map[string]struct{}
-	done          bool
-	oldValue      func(context.Context) (*Achievement, error)
-	predicates    []predicate.Achievement
+	op              Op
+	typ             string
+	id              *int
+	name            *string
+	organizer       *string
+	level           *string
+	clearedFields   map[string]struct{}
+	register        map[int]struct{}
+	removedregister map[int]struct{}
+	clearedregister bool
+	done            bool
+	oldValue        func(context.Context) (*Achievement, error)
+	predicates      []predicate.Achievement
 }
 
 var _ ent.Mutation = (*AchievementMutation)(nil)
@@ -310,6 +313,60 @@ func (m *AchievementMutation) ResetLevel() {
 	delete(m.clearedFields, achievement.FieldLevel)
 }
 
+// AddRegisterIDs adds the "register" edge to the Register entity by ids.
+func (m *AchievementMutation) AddRegisterIDs(ids ...int) {
+	if m.register == nil {
+		m.register = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.register[ids[i]] = struct{}{}
+	}
+}
+
+// ClearRegister clears the "register" edge to the Register entity.
+func (m *AchievementMutation) ClearRegister() {
+	m.clearedregister = true
+}
+
+// RegisterCleared reports if the "register" edge to the Register entity was cleared.
+func (m *AchievementMutation) RegisterCleared() bool {
+	return m.clearedregister
+}
+
+// RemoveRegisterIDs removes the "register" edge to the Register entity by IDs.
+func (m *AchievementMutation) RemoveRegisterIDs(ids ...int) {
+	if m.removedregister == nil {
+		m.removedregister = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.register, ids[i])
+		m.removedregister[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedRegister returns the removed IDs of the "register" edge to the Register entity.
+func (m *AchievementMutation) RemovedRegisterIDs() (ids []int) {
+	for id := range m.removedregister {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// RegisterIDs returns the "register" edge IDs in the mutation.
+func (m *AchievementMutation) RegisterIDs() (ids []int) {
+	for id := range m.register {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetRegister resets all changes to the "register" edge.
+func (m *AchievementMutation) ResetRegister() {
+	m.register = nil
+	m.clearedregister = false
+	m.removedregister = nil
+}
+
 // Where appends a list predicates to the AchievementMutation builder.
 func (m *AchievementMutation) Where(ps ...predicate.Achievement) {
 	m.predicates = append(m.predicates, ps...)
@@ -483,85 +540,124 @@ func (m *AchievementMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *AchievementMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.register != nil {
+		edges = append(edges, achievement.EdgeRegister)
+	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
 func (m *AchievementMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case achievement.EdgeRegister:
+		ids := make([]ent.Value, 0, len(m.register))
+		for id := range m.register {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *AchievementMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.removedregister != nil {
+		edges = append(edges, achievement.EdgeRegister)
+	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *AchievementMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case achievement.EdgeRegister:
+		ids := make([]ent.Value, 0, len(m.removedregister))
+		for id := range m.removedregister {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *AchievementMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.clearedregister {
+		edges = append(edges, achievement.EdgeRegister)
+	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
 func (m *AchievementMutation) EdgeCleared(name string) bool {
+	switch name {
+	case achievement.EdgeRegister:
+		return m.clearedregister
+	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *AchievementMutation) ClearEdge(name string) error {
+	switch name {
+	}
 	return fmt.Errorf("unknown Achievement unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *AchievementMutation) ResetEdge(name string) error {
+	switch name {
+	case achievement.EdgeRegister:
+		m.ResetRegister()
+		return nil
+	}
 	return fmt.Errorf("unknown Achievement edge %s", name)
 }
 
 // BiodataMutation represents an operation that mutates the Biodata nodes in the graph.
 type BiodataMutation struct {
 	config
-	op             Op
-	typ            string
-	id             *int
-	name           *string
-	nickname       *string
-	gender         *string
-	birthplace     *string
-	birthdate      *time.Time
-	telephone      *string
-	email          *string
-	idType         *string
-	idNumber       *string
-	addressID      *string
-	postCodeID     *string
-	districtID     *string
-	cityID         *string
-	provinceID     *string
-	addressLiving  *string
-	postCodeLiving *string
-	districtLiving *string
-	cityLiving     *string
-	provinceLiving *string
-	entrance       *string
-	entranceNumber *string
-	major          *string
-	university     *string
-	clearedFields  map[string]struct{}
-	done           bool
-	oldValue       func(context.Context) (*Biodata, error)
-	predicates     []predicate.Biodata
+	op              Op
+	typ             string
+	id              *int
+	name            *string
+	nickname        *string
+	gender          *string
+	birthplace      *string
+	birthdate       *time.Time
+	telephone       *string
+	email           *string
+	idType          *string
+	idNumber        *string
+	addressID       *string
+	postCodeID      *string
+	districtID      *string
+	cityID          *string
+	provinceID      *string
+	addressLiving   *string
+	postCodeLiving  *string
+	districtLiving  *string
+	cityLiving      *string
+	provinceLiving  *string
+	entrance        *string
+	entranceNumber  *string
+	major           *string
+	university      *string
+	clearedFields   map[string]struct{}
+	register        map[int]struct{}
+	removedregister map[int]struct{}
+	clearedregister bool
+	done            bool
+	oldValue        func(context.Context) (*Biodata, error)
+	predicates      []predicate.Biodata
 }
 
 var _ ent.Mutation = (*BiodataMutation)(nil)
@@ -1490,6 +1586,60 @@ func (m *BiodataMutation) ResetUniversity() {
 	m.university = nil
 }
 
+// AddRegisterIDs adds the "register" edge to the Register entity by ids.
+func (m *BiodataMutation) AddRegisterIDs(ids ...int) {
+	if m.register == nil {
+		m.register = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.register[ids[i]] = struct{}{}
+	}
+}
+
+// ClearRegister clears the "register" edge to the Register entity.
+func (m *BiodataMutation) ClearRegister() {
+	m.clearedregister = true
+}
+
+// RegisterCleared reports if the "register" edge to the Register entity was cleared.
+func (m *BiodataMutation) RegisterCleared() bool {
+	return m.clearedregister
+}
+
+// RemoveRegisterIDs removes the "register" edge to the Register entity by IDs.
+func (m *BiodataMutation) RemoveRegisterIDs(ids ...int) {
+	if m.removedregister == nil {
+		m.removedregister = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.register, ids[i])
+		m.removedregister[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedRegister returns the removed IDs of the "register" edge to the Register entity.
+func (m *BiodataMutation) RemovedRegisterIDs() (ids []int) {
+	for id := range m.removedregister {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// RegisterIDs returns the "register" edge IDs in the mutation.
+func (m *BiodataMutation) RegisterIDs() (ids []int) {
+	for id := range m.register {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetRegister resets all changes to the "register" edge.
+func (m *BiodataMutation) ResetRegister() {
+	m.register = nil
+	m.clearedregister = false
+	m.removedregister = nil
+}
+
 // Where appends a list predicates to the BiodataMutation builder.
 func (m *BiodataMutation) Where(ps ...predicate.Biodata) {
 	m.predicates = append(m.predicates, ps...)
@@ -1982,49 +2132,85 @@ func (m *BiodataMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *BiodataMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.register != nil {
+		edges = append(edges, biodata.EdgeRegister)
+	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
 func (m *BiodataMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case biodata.EdgeRegister:
+		ids := make([]ent.Value, 0, len(m.register))
+		for id := range m.register {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *BiodataMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.removedregister != nil {
+		edges = append(edges, biodata.EdgeRegister)
+	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *BiodataMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case biodata.EdgeRegister:
+		ids := make([]ent.Value, 0, len(m.removedregister))
+		for id := range m.removedregister {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *BiodataMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.clearedregister {
+		edges = append(edges, biodata.EdgeRegister)
+	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
 func (m *BiodataMutation) EdgeCleared(name string) bool {
+	switch name {
+	case biodata.EdgeRegister:
+		return m.clearedregister
+	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *BiodataMutation) ClearEdge(name string) error {
+	switch name {
+	}
 	return fmt.Errorf("unknown Biodata unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *BiodataMutation) ResetEdge(name string) error {
+	switch name {
+	case biodata.EdgeRegister:
+		m.ResetRegister()
+		return nil
+	}
 	return fmt.Errorf("unknown Biodata edge %s", name)
 }
 
@@ -4787,6 +4973,12 @@ type RegisterMutation struct {
 	scholarship        map[int]struct{}
 	removedscholarship map[int]struct{}
 	clearedscholarship bool
+	achievement        map[int]struct{}
+	removedachievement map[int]struct{}
+	clearedachievement bool
+	biodata            map[int]struct{}
+	removedbiodata     map[int]struct{}
+	clearedbiodata     bool
 	done               bool
 	oldValue           func(context.Context) (*Register, error)
 	predicates         []predicate.Register
@@ -5208,6 +5400,114 @@ func (m *RegisterMutation) ResetScholarship() {
 	m.removedscholarship = nil
 }
 
+// AddAchievementIDs adds the "achievement" edge to the Achievement entity by ids.
+func (m *RegisterMutation) AddAchievementIDs(ids ...int) {
+	if m.achievement == nil {
+		m.achievement = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.achievement[ids[i]] = struct{}{}
+	}
+}
+
+// ClearAchievement clears the "achievement" edge to the Achievement entity.
+func (m *RegisterMutation) ClearAchievement() {
+	m.clearedachievement = true
+}
+
+// AchievementCleared reports if the "achievement" edge to the Achievement entity was cleared.
+func (m *RegisterMutation) AchievementCleared() bool {
+	return m.clearedachievement
+}
+
+// RemoveAchievementIDs removes the "achievement" edge to the Achievement entity by IDs.
+func (m *RegisterMutation) RemoveAchievementIDs(ids ...int) {
+	if m.removedachievement == nil {
+		m.removedachievement = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.achievement, ids[i])
+		m.removedachievement[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedAchievement returns the removed IDs of the "achievement" edge to the Achievement entity.
+func (m *RegisterMutation) RemovedAchievementIDs() (ids []int) {
+	for id := range m.removedachievement {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// AchievementIDs returns the "achievement" edge IDs in the mutation.
+func (m *RegisterMutation) AchievementIDs() (ids []int) {
+	for id := range m.achievement {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetAchievement resets all changes to the "achievement" edge.
+func (m *RegisterMutation) ResetAchievement() {
+	m.achievement = nil
+	m.clearedachievement = false
+	m.removedachievement = nil
+}
+
+// AddBiodatumIDs adds the "biodata" edge to the Biodata entity by ids.
+func (m *RegisterMutation) AddBiodatumIDs(ids ...int) {
+	if m.biodata == nil {
+		m.biodata = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.biodata[ids[i]] = struct{}{}
+	}
+}
+
+// ClearBiodata clears the "biodata" edge to the Biodata entity.
+func (m *RegisterMutation) ClearBiodata() {
+	m.clearedbiodata = true
+}
+
+// BiodataCleared reports if the "biodata" edge to the Biodata entity was cleared.
+func (m *RegisterMutation) BiodataCleared() bool {
+	return m.clearedbiodata
+}
+
+// RemoveBiodatumIDs removes the "biodata" edge to the Biodata entity by IDs.
+func (m *RegisterMutation) RemoveBiodatumIDs(ids ...int) {
+	if m.removedbiodata == nil {
+		m.removedbiodata = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.biodata, ids[i])
+		m.removedbiodata[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedBiodata returns the removed IDs of the "biodata" edge to the Biodata entity.
+func (m *RegisterMutation) RemovedBiodataIDs() (ids []int) {
+	for id := range m.removedbiodata {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// BiodataIDs returns the "biodata" edge IDs in the mutation.
+func (m *RegisterMutation) BiodataIDs() (ids []int) {
+	for id := range m.biodata {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetBiodata resets all changes to the "biodata" edge.
+func (m *RegisterMutation) ResetBiodata() {
+	m.biodata = nil
+	m.clearedbiodata = false
+	m.removedbiodata = nil
+}
+
 // Where appends a list predicates to the RegisterMutation builder.
 func (m *RegisterMutation) Where(ps ...predicate.Register) {
 	m.predicates = append(m.predicates, ps...)
@@ -5419,12 +5719,18 @@ func (m *RegisterMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *RegisterMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 4)
 	if m.user != nil {
 		edges = append(edges, register.EdgeUser)
 	}
 	if m.scholarship != nil {
 		edges = append(edges, register.EdgeScholarship)
+	}
+	if m.achievement != nil {
+		edges = append(edges, register.EdgeAchievement)
+	}
+	if m.biodata != nil {
+		edges = append(edges, register.EdgeBiodata)
 	}
 	return edges
 }
@@ -5445,18 +5751,36 @@ func (m *RegisterMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case register.EdgeAchievement:
+		ids := make([]ent.Value, 0, len(m.achievement))
+		for id := range m.achievement {
+			ids = append(ids, id)
+		}
+		return ids
+	case register.EdgeBiodata:
+		ids := make([]ent.Value, 0, len(m.biodata))
+		for id := range m.biodata {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *RegisterMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 4)
 	if m.removeduser != nil {
 		edges = append(edges, register.EdgeUser)
 	}
 	if m.removedscholarship != nil {
 		edges = append(edges, register.EdgeScholarship)
+	}
+	if m.removedachievement != nil {
+		edges = append(edges, register.EdgeAchievement)
+	}
+	if m.removedbiodata != nil {
+		edges = append(edges, register.EdgeBiodata)
 	}
 	return edges
 }
@@ -5477,18 +5801,36 @@ func (m *RegisterMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case register.EdgeAchievement:
+		ids := make([]ent.Value, 0, len(m.removedachievement))
+		for id := range m.removedachievement {
+			ids = append(ids, id)
+		}
+		return ids
+	case register.EdgeBiodata:
+		ids := make([]ent.Value, 0, len(m.removedbiodata))
+		for id := range m.removedbiodata {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *RegisterMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 4)
 	if m.cleareduser {
 		edges = append(edges, register.EdgeUser)
 	}
 	if m.clearedscholarship {
 		edges = append(edges, register.EdgeScholarship)
+	}
+	if m.clearedachievement {
+		edges = append(edges, register.EdgeAchievement)
+	}
+	if m.clearedbiodata {
+		edges = append(edges, register.EdgeBiodata)
 	}
 	return edges
 }
@@ -5501,6 +5843,10 @@ func (m *RegisterMutation) EdgeCleared(name string) bool {
 		return m.cleareduser
 	case register.EdgeScholarship:
 		return m.clearedscholarship
+	case register.EdgeAchievement:
+		return m.clearedachievement
+	case register.EdgeBiodata:
+		return m.clearedbiodata
 	}
 	return false
 }
@@ -5522,6 +5868,12 @@ func (m *RegisterMutation) ResetEdge(name string) error {
 		return nil
 	case register.EdgeScholarship:
 		m.ResetScholarship()
+		return nil
+	case register.EdgeAchievement:
+		m.ResetAchievement()
+		return nil
+	case register.EdgeBiodata:
+		m.ResetBiodata()
 		return nil
 	}
 	return fmt.Errorf("unknown Register edge %s", name)

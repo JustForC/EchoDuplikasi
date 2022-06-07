@@ -3,6 +3,8 @@
 package ent
 
 import (
+	"Kynesia/ent/achievement"
+	"Kynesia/ent/biodata"
 	"Kynesia/ent/predicate"
 	"Kynesia/ent/register"
 	"Kynesia/ent/scholarship"
@@ -30,6 +32,8 @@ type RegisterQuery struct {
 	// eager-loading edges.
 	withUser        *UserQuery
 	withScholarship *ScholarshipQuery
+	withAchievement *AchievementQuery
+	withBiodata     *BiodataQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -103,6 +107,50 @@ func (rq *RegisterQuery) QueryScholarship() *ScholarshipQuery {
 			sqlgraph.From(register.Table, register.FieldID, selector),
 			sqlgraph.To(scholarship.Table, scholarship.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, false, register.ScholarshipTable, register.ScholarshipPrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(rq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryAchievement chains the current query on the "achievement" edge.
+func (rq *RegisterQuery) QueryAchievement() *AchievementQuery {
+	query := &AchievementQuery{config: rq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := rq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := rq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(register.Table, register.FieldID, selector),
+			sqlgraph.To(achievement.Table, achievement.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, register.AchievementTable, register.AchievementPrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(rq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryBiodata chains the current query on the "biodata" edge.
+func (rq *RegisterQuery) QueryBiodata() *BiodataQuery {
+	query := &BiodataQuery{config: rq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := rq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := rq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(register.Table, register.FieldID, selector),
+			sqlgraph.To(biodata.Table, biodata.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, register.BiodataTable, register.BiodataPrimaryKey...),
 		)
 		fromU = sqlgraph.SetNeighbors(rq.driver.Dialect(), step)
 		return fromU, nil
@@ -293,6 +341,8 @@ func (rq *RegisterQuery) Clone() *RegisterQuery {
 		predicates:      append([]predicate.Register{}, rq.predicates...),
 		withUser:        rq.withUser.Clone(),
 		withScholarship: rq.withScholarship.Clone(),
+		withAchievement: rq.withAchievement.Clone(),
+		withBiodata:     rq.withBiodata.Clone(),
 		// clone intermediate query.
 		sql:    rq.sql.Clone(),
 		path:   rq.path,
@@ -319,6 +369,28 @@ func (rq *RegisterQuery) WithScholarship(opts ...func(*ScholarshipQuery)) *Regis
 		opt(query)
 	}
 	rq.withScholarship = query
+	return rq
+}
+
+// WithAchievement tells the query-builder to eager-load the nodes that are connected to
+// the "achievement" edge. The optional arguments are used to configure the query builder of the edge.
+func (rq *RegisterQuery) WithAchievement(opts ...func(*AchievementQuery)) *RegisterQuery {
+	query := &AchievementQuery{config: rq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	rq.withAchievement = query
+	return rq
+}
+
+// WithBiodata tells the query-builder to eager-load the nodes that are connected to
+// the "biodata" edge. The optional arguments are used to configure the query builder of the edge.
+func (rq *RegisterQuery) WithBiodata(opts ...func(*BiodataQuery)) *RegisterQuery {
+	query := &BiodataQuery{config: rq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	rq.withBiodata = query
 	return rq
 }
 
@@ -387,9 +459,11 @@ func (rq *RegisterQuery) sqlAll(ctx context.Context) ([]*Register, error) {
 	var (
 		nodes       = []*Register{}
 		_spec       = rq.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [4]bool{
 			rq.withUser != nil,
 			rq.withScholarship != nil,
+			rq.withAchievement != nil,
+			rq.withBiodata != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]interface{}, error) {
@@ -538,6 +612,136 @@ func (rq *RegisterQuery) sqlAll(ctx context.Context) ([]*Register, error) {
 			}
 			for i := range nodes {
 				nodes[i].Edges.Scholarship = append(nodes[i].Edges.Scholarship, n)
+			}
+		}
+	}
+
+	if query := rq.withAchievement; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		ids := make(map[int]*Register, len(nodes))
+		for _, node := range nodes {
+			ids[node.ID] = node
+			fks = append(fks, node.ID)
+			node.Edges.Achievement = []*Achievement{}
+		}
+		var (
+			edgeids []int
+			edges   = make(map[int][]*Register)
+		)
+		_spec := &sqlgraph.EdgeQuerySpec{
+			Edge: &sqlgraph.EdgeSpec{
+				Inverse: true,
+				Table:   register.AchievementTable,
+				Columns: register.AchievementPrimaryKey,
+			},
+			Predicate: func(s *sql.Selector) {
+				s.Where(sql.InValues(register.AchievementPrimaryKey[1], fks...))
+			},
+			ScanValues: func() [2]interface{} {
+				return [2]interface{}{new(sql.NullInt64), new(sql.NullInt64)}
+			},
+			Assign: func(out, in interface{}) error {
+				eout, ok := out.(*sql.NullInt64)
+				if !ok || eout == nil {
+					return fmt.Errorf("unexpected id value for edge-out")
+				}
+				ein, ok := in.(*sql.NullInt64)
+				if !ok || ein == nil {
+					return fmt.Errorf("unexpected id value for edge-in")
+				}
+				outValue := int(eout.Int64)
+				inValue := int(ein.Int64)
+				node, ok := ids[outValue]
+				if !ok {
+					return fmt.Errorf("unexpected node id in edges: %v", outValue)
+				}
+				if _, ok := edges[inValue]; !ok {
+					edgeids = append(edgeids, inValue)
+				}
+				edges[inValue] = append(edges[inValue], node)
+				return nil
+			},
+		}
+		if err := sqlgraph.QueryEdges(ctx, rq.driver, _spec); err != nil {
+			return nil, fmt.Errorf(`query edges "achievement": %w`, err)
+		}
+		query.Where(achievement.IDIn(edgeids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := edges[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected "achievement" node returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.Achievement = append(nodes[i].Edges.Achievement, n)
+			}
+		}
+	}
+
+	if query := rq.withBiodata; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		ids := make(map[int]*Register, len(nodes))
+		for _, node := range nodes {
+			ids[node.ID] = node
+			fks = append(fks, node.ID)
+			node.Edges.Biodata = []*Biodata{}
+		}
+		var (
+			edgeids []int
+			edges   = make(map[int][]*Register)
+		)
+		_spec := &sqlgraph.EdgeQuerySpec{
+			Edge: &sqlgraph.EdgeSpec{
+				Inverse: true,
+				Table:   register.BiodataTable,
+				Columns: register.BiodataPrimaryKey,
+			},
+			Predicate: func(s *sql.Selector) {
+				s.Where(sql.InValues(register.BiodataPrimaryKey[1], fks...))
+			},
+			ScanValues: func() [2]interface{} {
+				return [2]interface{}{new(sql.NullInt64), new(sql.NullInt64)}
+			},
+			Assign: func(out, in interface{}) error {
+				eout, ok := out.(*sql.NullInt64)
+				if !ok || eout == nil {
+					return fmt.Errorf("unexpected id value for edge-out")
+				}
+				ein, ok := in.(*sql.NullInt64)
+				if !ok || ein == nil {
+					return fmt.Errorf("unexpected id value for edge-in")
+				}
+				outValue := int(eout.Int64)
+				inValue := int(ein.Int64)
+				node, ok := ids[outValue]
+				if !ok {
+					return fmt.Errorf("unexpected node id in edges: %v", outValue)
+				}
+				if _, ok := edges[inValue]; !ok {
+					edgeids = append(edgeids, inValue)
+				}
+				edges[inValue] = append(edges[inValue], node)
+				return nil
+			},
+		}
+		if err := sqlgraph.QueryEdges(ctx, rq.driver, _spec); err != nil {
+			return nil, fmt.Errorf(`query edges "biodata": %w`, err)
+		}
+		query.Where(biodata.IDIn(edgeids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := edges[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected "biodata" node returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.Biodata = append(nodes[i].Edges.Biodata, n)
 			}
 		}
 	}

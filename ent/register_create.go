@@ -3,6 +3,8 @@
 package ent
 
 import (
+	"Kynesia/ent/achievement"
+	"Kynesia/ent/biodata"
 	"Kynesia/ent/register"
 	"Kynesia/ent/scholarship"
 	"Kynesia/ent/user"
@@ -98,6 +100,36 @@ func (rc *RegisterCreate) AddScholarship(s ...*Scholarship) *RegisterCreate {
 		ids[i] = s[i].ID
 	}
 	return rc.AddScholarshipIDs(ids...)
+}
+
+// AddAchievementIDs adds the "achievement" edge to the Achievement entity by IDs.
+func (rc *RegisterCreate) AddAchievementIDs(ids ...int) *RegisterCreate {
+	rc.mutation.AddAchievementIDs(ids...)
+	return rc
+}
+
+// AddAchievement adds the "achievement" edges to the Achievement entity.
+func (rc *RegisterCreate) AddAchievement(a ...*Achievement) *RegisterCreate {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return rc.AddAchievementIDs(ids...)
+}
+
+// AddBiodatumIDs adds the "biodata" edge to the Biodata entity by IDs.
+func (rc *RegisterCreate) AddBiodatumIDs(ids ...int) *RegisterCreate {
+	rc.mutation.AddBiodatumIDs(ids...)
+	return rc
+}
+
+// AddBiodata adds the "biodata" edges to the Biodata entity.
+func (rc *RegisterCreate) AddBiodata(b ...*Biodata) *RegisterCreate {
+	ids := make([]int, len(b))
+	for i := range b {
+		ids[i] = b[i].ID
+	}
+	return rc.AddBiodatumIDs(ids...)
 }
 
 // Mutation returns the RegisterMutation object of the builder.
@@ -274,6 +306,44 @@ func (rc *RegisterCreate) createSpec() (*Register, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: scholarship.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := rc.mutation.AchievementIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.AchievementTable,
+			Columns: register.AchievementPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: achievement.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := rc.mutation.BiodataIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.BiodataTable,
+			Columns: register.BiodataPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: biodata.FieldID,
 				},
 			},
 		}

@@ -4,6 +4,7 @@ package ent
 
 import (
 	"Kynesia/ent/biodata"
+	"Kynesia/ent/register"
 	"context"
 	"errors"
 	"fmt"
@@ -156,6 +157,21 @@ func (bc *BiodataCreate) SetMajor(s string) *BiodataCreate {
 func (bc *BiodataCreate) SetUniversity(s string) *BiodataCreate {
 	bc.mutation.SetUniversity(s)
 	return bc
+}
+
+// AddRegisterIDs adds the "register" edge to the Register entity by IDs.
+func (bc *BiodataCreate) AddRegisterIDs(ids ...int) *BiodataCreate {
+	bc.mutation.AddRegisterIDs(ids...)
+	return bc
+}
+
+// AddRegister adds the "register" edges to the Register entity.
+func (bc *BiodataCreate) AddRegister(r ...*Register) *BiodataCreate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return bc.AddRegisterIDs(ids...)
 }
 
 // Mutation returns the BiodataMutation object of the builder.
@@ -507,6 +523,25 @@ func (bc *BiodataCreate) createSpec() (*Biodata, *sqlgraph.CreateSpec) {
 			Column: biodata.FieldUniversity,
 		})
 		_node.University = value
+	}
+	if nodes := bc.mutation.RegisterIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   biodata.RegisterTable,
+			Columns: biodata.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

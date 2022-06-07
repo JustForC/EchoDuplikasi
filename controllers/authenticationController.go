@@ -141,6 +141,13 @@ func (authController *authenticationController) Logout(c echo.Context) error {
 		Expires: time.Unix(0, 0),
 	})
 
+	c.SetCookie(&http.Cookie{
+		Name:    "Register",
+		Value:   "",
+		Path:    "/",
+		Expires: time.Unix(0, 0),
+	})
+
 	return c.JSON(http.StatusOK, echo.Map{
 		"message": "Logout Success!",
 	})

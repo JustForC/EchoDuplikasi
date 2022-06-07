@@ -19,6 +19,10 @@ const (
 	EdgeUser = "user"
 	// EdgeScholarship holds the string denoting the scholarship edge name in mutations.
 	EdgeScholarship = "scholarship"
+	// EdgeAchievement holds the string denoting the achievement edge name in mutations.
+	EdgeAchievement = "achievement"
+	// EdgeBiodata holds the string denoting the biodata edge name in mutations.
+	EdgeBiodata = "biodata"
 	// Table holds the table name of the register in the database.
 	Table = "registers"
 	// UserTable is the table that holds the user relation/edge. The primary key declared below.
@@ -31,6 +35,16 @@ const (
 	// ScholarshipInverseTable is the table name for the Scholarship entity.
 	// It exists in this package in order to avoid circular dependency with the "scholarship" package.
 	ScholarshipInverseTable = "scholarships"
+	// AchievementTable is the table that holds the achievement relation/edge. The primary key declared below.
+	AchievementTable = "achievement_register"
+	// AchievementInverseTable is the table name for the Achievement entity.
+	// It exists in this package in order to avoid circular dependency with the "achievement" package.
+	AchievementInverseTable = "achievements"
+	// BiodataTable is the table that holds the biodata relation/edge. The primary key declared below.
+	BiodataTable = "biodata_register"
+	// BiodataInverseTable is the table name for the Biodata entity.
+	// It exists in this package in order to avoid circular dependency with the "biodata" package.
+	BiodataInverseTable = "biodata"
 )
 
 // Columns holds all SQL columns for register fields.
@@ -49,6 +63,12 @@ var (
 	// ScholarshipPrimaryKey and ScholarshipColumn2 are the table columns denoting the
 	// primary key for the scholarship relation (M2M).
 	ScholarshipPrimaryKey = []string{"register_id", "scholarship_id"}
+	// AchievementPrimaryKey and AchievementColumn2 are the table columns denoting the
+	// primary key for the achievement relation (M2M).
+	AchievementPrimaryKey = []string{"achievement_id", "register_id"}
+	// BiodataPrimaryKey and BiodataColumn2 are the table columns denoting the
+	// primary key for the biodata relation (M2M).
+	BiodataPrimaryKey = []string{"biodata_id", "register_id"}
 )
 
 // ValidColumn reports if the column name is valid (part of the table columns).

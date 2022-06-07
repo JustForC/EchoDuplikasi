@@ -35,9 +35,13 @@ type RegisterEdges struct {
 	User []*User `json:"user,omitempty"`
 	// Scholarship holds the value of the scholarship edge.
 	Scholarship []*Scholarship `json:"scholarship,omitempty"`
+	// Achievement holds the value of the achievement edge.
+	Achievement []*Achievement `json:"achievement,omitempty"`
+	// Biodata holds the value of the biodata edge.
+	Biodata []*Biodata `json:"biodata,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [4]bool
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -56,6 +60,24 @@ func (e RegisterEdges) ScholarshipOrErr() ([]*Scholarship, error) {
 		return e.Scholarship, nil
 	}
 	return nil, &NotLoadedError{edge: "scholarship"}
+}
+
+// AchievementOrErr returns the Achievement value or an error if the edge
+// was not loaded in eager-loading.
+func (e RegisterEdges) AchievementOrErr() ([]*Achievement, error) {
+	if e.loadedTypes[2] {
+		return e.Achievement, nil
+	}
+	return nil, &NotLoadedError{edge: "achievement"}
+}
+
+// BiodataOrErr returns the Biodata value or an error if the edge
+// was not loaded in eager-loading.
+func (e RegisterEdges) BiodataOrErr() ([]*Biodata, error) {
+	if e.loadedTypes[3] {
+		return e.Biodata, nil
+	}
+	return nil, &NotLoadedError{edge: "biodata"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -129,6 +151,16 @@ func (r *Register) QueryUser() *UserQuery {
 // QueryScholarship queries the "scholarship" edge of the Register entity.
 func (r *Register) QueryScholarship() *ScholarshipQuery {
 	return (&RegisterClient{config: r.config}).QueryScholarship(r)
+}
+
+// QueryAchievement queries the "achievement" edge of the Register entity.
+func (r *Register) QueryAchievement() *AchievementQuery {
+	return (&RegisterClient{config: r.config}).QueryAchievement(r)
+}
+
+// QueryBiodata queries the "biodata" edge of the Register entity.
+func (r *Register) QueryBiodata() *BiodataQuery {
+	return (&RegisterClient{config: r.config}).QueryBiodata(r)
 }
 
 // Update returns a builder for updating this Register.

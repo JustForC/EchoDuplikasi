@@ -4,6 +4,7 @@ package ent
 
 import (
 	"Kynesia/ent/achievement"
+	"Kynesia/ent/register"
 	"context"
 	"fmt"
 
@@ -58,6 +59,21 @@ func (ac *AchievementCreate) SetNillableLevel(s *string) *AchievementCreate {
 		ac.SetLevel(*s)
 	}
 	return ac
+}
+
+// AddRegisterIDs adds the "register" edge to the Register entity by IDs.
+func (ac *AchievementCreate) AddRegisterIDs(ids ...int) *AchievementCreate {
+	ac.mutation.AddRegisterIDs(ids...)
+	return ac
+}
+
+// AddRegister adds the "register" edges to the Register entity.
+func (ac *AchievementCreate) AddRegister(r ...*Register) *AchievementCreate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return ac.AddRegisterIDs(ids...)
 }
 
 // Mutation returns the AchievementMutation object of the builder.
@@ -180,6 +196,25 @@ func (ac *AchievementCreate) createSpec() (*Achievement, *sqlgraph.CreateSpec) {
 			Column: achievement.FieldLevel,
 		})
 		_node.Level = &value
+	}
+	if nodes := ac.mutation.RegisterIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   achievement.RegisterTable,
+			Columns: achievement.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

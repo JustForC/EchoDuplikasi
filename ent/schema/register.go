@@ -31,37 +31,7 @@ func (Register) Edges() []ent.Edge {
 		edge.To("scholarship", Scholarship.Type).Annotations(entsql.Annotation{
 			OnDelete: entsql.Cascade,
 		}),
-		// edge.From("user", User.Type).Ref("registers").Unique(),
-		// edge.From("scholarship", Scholarship.Type).Ref("registers").Unique(),
-		// edge.To("biodata", Biodata.Type).Unique().Annotations(entsql.Annotation{
-		// 	OnDelete: entsql.Cascade,
-		// }),
-		// edge.To("networth", Networth.Type).Unique().Annotations(entsql.Annotation{
-		// 	OnDelete: entsql.Cascade,
-		// }),
-		// edge.To("achievement", Achievement.Type).Annotations(entsql.Annotation{
-		// 	OnDelete: entsql.Cascade,
-		// }),
-		// edge.To("education", Education.Type).Annotations(entsql.Annotation{
-		// 	OnDelete: entsql.Cascade,
-		// }),
-		// edge.To("family", Family.Type).Annotations(entsql.Annotation{
-		// 	OnDelete: entsql.Cascade,
-		// }),
-		// edge.To("language", Language.Type).Annotations(entsql.Annotation{
-		// 	OnDelete: entsql.Cascade,
-		// }),
-		// edge.To("organization", Organization.Type).Annotations(entsql.Annotation{
-		// 	OnDelete: entsql.Cascade,
-		// }),
-		// edge.To("socialmedia", SocialMedia.Type).Unique().Annotations(entsql.Annotation{
-		// 	OnDelete: entsql.Cascade,
-		// }),
-		// edge.To("talent", Talent.Type).Annotations(entsql.Annotation{
-		// 	OnDelete: entsql.Cascade,
-		// }),
-		// edge.To("training", Training.Type).Annotations(entsql.Annotation{
-		// 	OnDelete: entsql.Cascade,
-		// }),
+		edge.From("achievement", Achievement.Type).Ref("register"),
+		edge.From("biodata", Biodata.Type).Ref("register"),
 	}
 }

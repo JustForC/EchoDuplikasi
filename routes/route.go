@@ -27,6 +27,7 @@ func Init() *echo.Echo {
 	authCont := controllers.NewAuthenticationController(db)
 	scholarCont := controllers.NewScholarshipController(db)
 	regCont := controllers.NewRegisterController(db)
+	achievCont := controllers.NewAchievementController(db)
 
 	// Buat Context kosong
 	ctx := context.Background()
@@ -52,10 +53,19 @@ func Init() *echo.Echo {
 	scholarship.GET("/:id", scholarCont.ReadByID)
 	scholarship.PUT("/:id", scholarCont.Update)
 	scholarship.DELETE("/:id", scholarCont.Delete)
+	scholarship.PUT("/activate/:id", scholarCont.Activate)
+	scholarship.PUT("/deactivate/:id", scholarCont.Deactivate)
 
 	register := e.Group("/register")
 	register.Use(middleware.JWTWithConfig(controllers.Config()))
 	register.GET("/:scholarshipID", regCont.RegisterScholarship)
+
+	achievement := e.Group("/achievement")
+	achievement.POST("", achievCont.Create)
+	achievement.GET("", achievCont.ReadAll)
+	achievement.GET("/:id", achievCont.ReadByID)
+	achievement.PUT("/:id", achievCont.Update)
+	achievement.DELETE("/:id", achievCont.Delete)
 
 	return e
 }

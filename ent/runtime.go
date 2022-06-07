@@ -6,6 +6,7 @@ import (
 	"Kynesia/ent/family"
 	"Kynesia/ent/register"
 	"Kynesia/ent/schema"
+	"Kynesia/ent/scholarship"
 )
 
 // The init function reads all schema descriptors with runtime code
@@ -24,4 +25,10 @@ func init() {
 	registerDescStatusTwo := registerFields[1].Descriptor()
 	// register.DefaultStatusTwo holds the default value on creation for the statusTwo field.
 	register.DefaultStatusTwo = registerDescStatusTwo.Default.(int)
+	scholarshipFields := schema.Scholarship{}.Fields()
+	_ = scholarshipFields
+	// scholarshipDescStatus is the schema descriptor for status field.
+	scholarshipDescStatus := scholarshipFields[8].Descriptor()
+	// scholarship.DefaultStatus holds the default value on creation for the status field.
+	scholarship.DefaultStatus = scholarshipDescStatus.Default.(int)
 }

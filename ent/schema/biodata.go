@@ -2,6 +2,8 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/dialect/entsql"
+	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
 
@@ -41,8 +43,9 @@ func (Biodata) Fields() []ent.Field {
 
 // Edges of the Biodata.
 func (Biodata) Edges() []ent.Edge {
-	return nil
-	// return []ent.Edge{
-	// 	edge.From()
-	// }
+	return []ent.Edge{
+		edge.To("register", Register.Type).Annotations(entsql.Annotation{
+			OnDelete: entsql.Cascade,
+		}),
+	}
 }

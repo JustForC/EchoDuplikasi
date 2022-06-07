@@ -13,8 +13,15 @@ const (
 	FieldOrganizer = "organizer"
 	// FieldLevel holds the string denoting the level field in the database.
 	FieldLevel = "level"
+	// EdgeRegister holds the string denoting the register edge name in mutations.
+	EdgeRegister = "register"
 	// Table holds the table name of the achievement in the database.
 	Table = "achievements"
+	// RegisterTable is the table that holds the register relation/edge. The primary key declared below.
+	RegisterTable = "achievement_register"
+	// RegisterInverseTable is the table name for the Register entity.
+	// It exists in this package in order to avoid circular dependency with the "register" package.
+	RegisterInverseTable = "registers"
 )
 
 // Columns holds all SQL columns for achievement fields.
@@ -24,6 +31,12 @@ var Columns = []string{
 	FieldOrganizer,
 	FieldLevel,
 }
+
+var (
+	// RegisterPrimaryKey and RegisterColumn2 are the table columns denoting the
+	// primary key for the register relation (M2M).
+	RegisterPrimaryKey = []string{"achievement_id", "register_id"}
+)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {

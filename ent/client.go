@@ -292,6 +292,22 @@ func (c *AchievementClient) GetX(ctx context.Context, id int) *Achievement {
 	return obj
 }
 
+// QueryRegister queries the register edge of a Achievement.
+func (c *AchievementClient) QueryRegister(a *Achievement) *RegisterQuery {
+	query := &RegisterQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := a.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(achievement.Table, achievement.FieldID, id),
+			sqlgraph.To(register.Table, register.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, achievement.RegisterTable, achievement.RegisterPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *AchievementClient) Hooks() []Hook {
 	return c.hooks.Achievement
@@ -380,6 +396,22 @@ func (c *BiodataClient) GetX(ctx context.Context, id int) *Biodata {
 		panic(err)
 	}
 	return obj
+}
+
+// QueryRegister queries the register edge of a Biodata.
+func (c *BiodataClient) QueryRegister(b *Biodata) *RegisterQuery {
+	query := &RegisterQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := b.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(biodata.Table, biodata.FieldID, id),
+			sqlgraph.To(register.Table, register.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, biodata.RegisterTable, biodata.RegisterPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(b.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
 }
 
 // Hooks returns the client hooks.
@@ -947,6 +979,38 @@ func (c *RegisterClient) QueryScholarship(r *Register) *ScholarshipQuery {
 			sqlgraph.From(register.Table, register.FieldID, id),
 			sqlgraph.To(scholarship.Table, scholarship.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, false, register.ScholarshipTable, register.ScholarshipPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(r.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryAchievement queries the achievement edge of a Register.
+func (c *RegisterClient) QueryAchievement(r *Register) *AchievementQuery {
+	query := &AchievementQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := r.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(register.Table, register.FieldID, id),
+			sqlgraph.To(achievement.Table, achievement.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, register.AchievementTable, register.AchievementPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(r.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryBiodata queries the biodata edge of a Register.
+func (c *RegisterClient) QueryBiodata(r *Register) *BiodataQuery {
+	query := &BiodataQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := r.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(register.Table, register.FieldID, id),
+			sqlgraph.To(biodata.Table, biodata.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, register.BiodataTable, register.BiodataPrimaryKey...),
 		)
 		fromV = sqlgraph.Neighbors(r.driver.Dialect(), step)
 		return fromV, nil

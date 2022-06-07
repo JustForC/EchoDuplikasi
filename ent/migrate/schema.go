@@ -152,7 +152,7 @@ var (
 		{Name: "announce_step_one", Type: field.TypeTime},
 		{Name: "announce_step_two", Type: field.TypeTime},
 		{Name: "online_test", Type: field.TypeString},
-		{Name: "status", Type: field.TypeInt},
+		{Name: "status", Type: field.TypeInt, Default: 0},
 	}
 	// ScholarshipsTable holds the schema information for the "scholarships" table.
 	ScholarshipsTable = &schema.Table{
@@ -213,6 +213,56 @@ var (
 		Name:       "users",
 		Columns:    UsersColumns,
 		PrimaryKey: []*schema.Column{UsersColumns[0]},
+	}
+	// AchievementRegisterColumns holds the columns for the "achievement_register" table.
+	AchievementRegisterColumns = []*schema.Column{
+		{Name: "achievement_id", Type: field.TypeInt},
+		{Name: "register_id", Type: field.TypeInt},
+	}
+	// AchievementRegisterTable holds the schema information for the "achievement_register" table.
+	AchievementRegisterTable = &schema.Table{
+		Name:       "achievement_register",
+		Columns:    AchievementRegisterColumns,
+		PrimaryKey: []*schema.Column{AchievementRegisterColumns[0], AchievementRegisterColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "achievement_register_achievement_id",
+				Columns:    []*schema.Column{AchievementRegisterColumns[0]},
+				RefColumns: []*schema.Column{AchievementsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "achievement_register_register_id",
+				Columns:    []*schema.Column{AchievementRegisterColumns[1]},
+				RefColumns: []*schema.Column{RegistersColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// BiodataRegisterColumns holds the columns for the "biodata_register" table.
+	BiodataRegisterColumns = []*schema.Column{
+		{Name: "biodata_id", Type: field.TypeInt},
+		{Name: "register_id", Type: field.TypeInt},
+	}
+	// BiodataRegisterTable holds the schema information for the "biodata_register" table.
+	BiodataRegisterTable = &schema.Table{
+		Name:       "biodata_register",
+		Columns:    BiodataRegisterColumns,
+		PrimaryKey: []*schema.Column{BiodataRegisterColumns[0], BiodataRegisterColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "biodata_register_biodata_id",
+				Columns:    []*schema.Column{BiodataRegisterColumns[0]},
+				RefColumns: []*schema.Column{BiodataColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "biodata_register_register_id",
+				Columns:    []*schema.Column{BiodataRegisterColumns[1]},
+				RefColumns: []*schema.Column{RegistersColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
 	}
 	// RegisterUserColumns holds the columns for the "register_user" table.
 	RegisterUserColumns = []*schema.Column{
@@ -279,12 +329,18 @@ var (
 		TalentsTable,
 		TrainingsTable,
 		UsersTable,
+		AchievementRegisterTable,
+		BiodataRegisterTable,
 		RegisterUserTable,
 		RegisterScholarshipTable,
 	}
 )
 
 func init() {
+	AchievementRegisterTable.ForeignKeys[0].RefTable = AchievementsTable
+	AchievementRegisterTable.ForeignKeys[1].RefTable = RegistersTable
+	BiodataRegisterTable.ForeignKeys[0].RefTable = BiodataTable
+	BiodataRegisterTable.ForeignKeys[1].RefTable = RegistersTable
 	RegisterUserTable.ForeignKeys[0].RefTable = RegistersTable
 	RegisterUserTable.ForeignKeys[1].RefTable = UsersTable
 	RegisterScholarshipTable.ForeignKeys[0].RefTable = RegistersTable

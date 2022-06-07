@@ -22,7 +22,7 @@ func (Scholarship) Fields() []ent.Field {
 		field.Time("announceStepOne"),
 		field.Time("announceStepTwo"),
 		field.String("onlineTest"),
-		field.Int("status"),
+		field.Int("status").Default(0),
 	}
 }
 

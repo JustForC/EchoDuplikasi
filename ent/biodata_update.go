@@ -5,6 +5,7 @@ package ent
 import (
 	"Kynesia/ent/biodata"
 	"Kynesia/ent/predicate"
+	"Kynesia/ent/register"
 	"context"
 	"errors"
 	"fmt"
@@ -166,9 +167,45 @@ func (bu *BiodataUpdate) SetUniversity(s string) *BiodataUpdate {
 	return bu
 }
 
+// AddRegisterIDs adds the "register" edge to the Register entity by IDs.
+func (bu *BiodataUpdate) AddRegisterIDs(ids ...int) *BiodataUpdate {
+	bu.mutation.AddRegisterIDs(ids...)
+	return bu
+}
+
+// AddRegister adds the "register" edges to the Register entity.
+func (bu *BiodataUpdate) AddRegister(r ...*Register) *BiodataUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return bu.AddRegisterIDs(ids...)
+}
+
 // Mutation returns the BiodataMutation object of the builder.
 func (bu *BiodataUpdate) Mutation() *BiodataMutation {
 	return bu.mutation
+}
+
+// ClearRegister clears all "register" edges to the Register entity.
+func (bu *BiodataUpdate) ClearRegister() *BiodataUpdate {
+	bu.mutation.ClearRegister()
+	return bu
+}
+
+// RemoveRegisterIDs removes the "register" edge to Register entities by IDs.
+func (bu *BiodataUpdate) RemoveRegisterIDs(ids ...int) *BiodataUpdate {
+	bu.mutation.RemoveRegisterIDs(ids...)
+	return bu
+}
+
+// RemoveRegister removes "register" edges to Register entities.
+func (bu *BiodataUpdate) RemoveRegister(r ...*Register) *BiodataUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return bu.RemoveRegisterIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -404,6 +441,60 @@ func (bu *BiodataUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: biodata.FieldUniversity,
 		})
 	}
+	if bu.mutation.RegisterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   biodata.RegisterTable,
+			Columns: biodata.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := bu.mutation.RemovedRegisterIDs(); len(nodes) > 0 && !bu.mutation.RegisterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   biodata.RegisterTable,
+			Columns: biodata.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := bu.mutation.RegisterIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   biodata.RegisterTable,
+			Columns: biodata.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, bu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{biodata.Label}
@@ -561,9 +652,45 @@ func (buo *BiodataUpdateOne) SetUniversity(s string) *BiodataUpdateOne {
 	return buo
 }
 
+// AddRegisterIDs adds the "register" edge to the Register entity by IDs.
+func (buo *BiodataUpdateOne) AddRegisterIDs(ids ...int) *BiodataUpdateOne {
+	buo.mutation.AddRegisterIDs(ids...)
+	return buo
+}
+
+// AddRegister adds the "register" edges to the Register entity.
+func (buo *BiodataUpdateOne) AddRegister(r ...*Register) *BiodataUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return buo.AddRegisterIDs(ids...)
+}
+
 // Mutation returns the BiodataMutation object of the builder.
 func (buo *BiodataUpdateOne) Mutation() *BiodataMutation {
 	return buo.mutation
+}
+
+// ClearRegister clears all "register" edges to the Register entity.
+func (buo *BiodataUpdateOne) ClearRegister() *BiodataUpdateOne {
+	buo.mutation.ClearRegister()
+	return buo
+}
+
+// RemoveRegisterIDs removes the "register" edge to Register entities by IDs.
+func (buo *BiodataUpdateOne) RemoveRegisterIDs(ids ...int) *BiodataUpdateOne {
+	buo.mutation.RemoveRegisterIDs(ids...)
+	return buo
+}
+
+// RemoveRegister removes "register" edges to Register entities.
+func (buo *BiodataUpdateOne) RemoveRegister(r ...*Register) *BiodataUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return buo.RemoveRegisterIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -822,6 +949,60 @@ func (buo *BiodataUpdateOne) sqlSave(ctx context.Context) (_node *Biodata, err e
 			Value:  value,
 			Column: biodata.FieldUniversity,
 		})
+	}
+	if buo.mutation.RegisterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   biodata.RegisterTable,
+			Columns: biodata.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := buo.mutation.RemovedRegisterIDs(); len(nodes) > 0 && !buo.mutation.RegisterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   biodata.RegisterTable,
+			Columns: biodata.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := buo.mutation.RegisterIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   biodata.RegisterTable,
+			Columns: biodata.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &Biodata{config: buo.config}
 	_spec.Assign = _node.assignValues
