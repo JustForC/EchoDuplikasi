@@ -7,6 +7,7 @@ import (
 	"Kynesia/ent/biodata"
 	"Kynesia/ent/education"
 	"Kynesia/ent/family"
+	"Kynesia/ent/language"
 	"Kynesia/ent/predicate"
 	"Kynesia/ent/register"
 	"Kynesia/ent/scholarship"
@@ -198,6 +199,21 @@ func (ru *RegisterUpdate) AddFamily(f ...*Family) *RegisterUpdate {
 	return ru.AddFamilyIDs(ids...)
 }
 
+// AddLanguageIDs adds the "language" edge to the Language entity by IDs.
+func (ru *RegisterUpdate) AddLanguageIDs(ids ...int) *RegisterUpdate {
+	ru.mutation.AddLanguageIDs(ids...)
+	return ru
+}
+
+// AddLanguage adds the "language" edges to the Language entity.
+func (ru *RegisterUpdate) AddLanguage(l ...*Language) *RegisterUpdate {
+	ids := make([]int, len(l))
+	for i := range l {
+		ids[i] = l[i].ID
+	}
+	return ru.AddLanguageIDs(ids...)
+}
+
 // Mutation returns the RegisterMutation object of the builder.
 func (ru *RegisterUpdate) Mutation() *RegisterMutation {
 	return ru.mutation
@@ -327,6 +343,27 @@ func (ru *RegisterUpdate) RemoveFamily(f ...*Family) *RegisterUpdate {
 		ids[i] = f[i].ID
 	}
 	return ru.RemoveFamilyIDs(ids...)
+}
+
+// ClearLanguage clears all "language" edges to the Language entity.
+func (ru *RegisterUpdate) ClearLanguage() *RegisterUpdate {
+	ru.mutation.ClearLanguage()
+	return ru
+}
+
+// RemoveLanguageIDs removes the "language" edge to Language entities by IDs.
+func (ru *RegisterUpdate) RemoveLanguageIDs(ids ...int) *RegisterUpdate {
+	ru.mutation.RemoveLanguageIDs(ids...)
+	return ru
+}
+
+// RemoveLanguage removes "language" edges to Language entities.
+func (ru *RegisterUpdate) RemoveLanguage(l ...*Language) *RegisterUpdate {
+	ids := make([]int, len(l))
+	for i := range l {
+		ids[i] = l[i].ID
+	}
+	return ru.RemoveLanguageIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -779,6 +816,60 @@ func (ru *RegisterUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if ru.mutation.LanguageCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.LanguageTable,
+			Columns: register.LanguagePrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: language.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ru.mutation.RemovedLanguageIDs(); len(nodes) > 0 && !ru.mutation.LanguageCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.LanguageTable,
+			Columns: register.LanguagePrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: language.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ru.mutation.LanguageIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.LanguageTable,
+			Columns: register.LanguagePrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: language.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, ru.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{register.Label}
@@ -962,6 +1053,21 @@ func (ruo *RegisterUpdateOne) AddFamily(f ...*Family) *RegisterUpdateOne {
 	return ruo.AddFamilyIDs(ids...)
 }
 
+// AddLanguageIDs adds the "language" edge to the Language entity by IDs.
+func (ruo *RegisterUpdateOne) AddLanguageIDs(ids ...int) *RegisterUpdateOne {
+	ruo.mutation.AddLanguageIDs(ids...)
+	return ruo
+}
+
+// AddLanguage adds the "language" edges to the Language entity.
+func (ruo *RegisterUpdateOne) AddLanguage(l ...*Language) *RegisterUpdateOne {
+	ids := make([]int, len(l))
+	for i := range l {
+		ids[i] = l[i].ID
+	}
+	return ruo.AddLanguageIDs(ids...)
+}
+
 // Mutation returns the RegisterMutation object of the builder.
 func (ruo *RegisterUpdateOne) Mutation() *RegisterMutation {
 	return ruo.mutation
@@ -1091,6 +1197,27 @@ func (ruo *RegisterUpdateOne) RemoveFamily(f ...*Family) *RegisterUpdateOne {
 		ids[i] = f[i].ID
 	}
 	return ruo.RemoveFamilyIDs(ids...)
+}
+
+// ClearLanguage clears all "language" edges to the Language entity.
+func (ruo *RegisterUpdateOne) ClearLanguage() *RegisterUpdateOne {
+	ruo.mutation.ClearLanguage()
+	return ruo
+}
+
+// RemoveLanguageIDs removes the "language" edge to Language entities by IDs.
+func (ruo *RegisterUpdateOne) RemoveLanguageIDs(ids ...int) *RegisterUpdateOne {
+	ruo.mutation.RemoveLanguageIDs(ids...)
+	return ruo
+}
+
+// RemoveLanguage removes "language" edges to Language entities.
+func (ruo *RegisterUpdateOne) RemoveLanguage(l ...*Language) *RegisterUpdateOne {
+	ids := make([]int, len(l))
+	for i := range l {
+		ids[i] = l[i].ID
+	}
+	return ruo.RemoveLanguageIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -1559,6 +1686,60 @@ func (ruo *RegisterUpdateOne) sqlSave(ctx context.Context) (_node *Register, err
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: family.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ruo.mutation.LanguageCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.LanguageTable,
+			Columns: register.LanguagePrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: language.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ruo.mutation.RemovedLanguageIDs(); len(nodes) > 0 && !ruo.mutation.LanguageCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.LanguageTable,
+			Columns: register.LanguagePrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: language.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ruo.mutation.LanguageIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.LanguageTable,
+			Columns: register.LanguagePrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: language.FieldID,
 				},
 			},
 		}

@@ -716,6 +716,22 @@ func (c *LanguageClient) GetX(ctx context.Context, id int) *Language {
 	return obj
 }
 
+// QueryRegister queries the register edge of a Language.
+func (c *LanguageClient) QueryRegister(l *Language) *RegisterQuery {
+	query := &RegisterQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := l.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(language.Table, language.FieldID, id),
+			sqlgraph.To(register.Table, register.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, language.RegisterTable, language.RegisterPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(l.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *LanguageClient) Hooks() []Hook {
 	return c.hooks.Language
@@ -1075,6 +1091,22 @@ func (c *RegisterClient) QueryFamily(r *Register) *FamilyQuery {
 			sqlgraph.From(register.Table, register.FieldID, id),
 			sqlgraph.To(family.Table, family.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, true, register.FamilyTable, register.FamilyPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(r.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryLanguage queries the language edge of a Register.
+func (c *RegisterClient) QueryLanguage(r *Register) *LanguageQuery {
+	query := &LanguageQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := r.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(register.Table, register.FieldID, id),
+			sqlgraph.To(language.Table, language.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, register.LanguageTable, register.LanguagePrimaryKey...),
 		)
 		fromV = sqlgraph.Neighbors(r.driver.Dialect(), step)
 		return fromV, nil

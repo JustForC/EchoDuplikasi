@@ -17,9 +17,12 @@ func Init() *echo.Echo {
 
 	// Mengganti validator bawaan echo dengan custom validator menggunakan playground
 	e.Validator = &validations.CustomValidation{Validator: validator.New()}
+
+	// Custom message if not login
 	middleware.ErrJWTMissing.Message = echo.Map{
 		"message": "Unauthorized!",
 	}
+
 	// Connect dengan database
 	db := configs.Connect()
 
@@ -31,6 +34,7 @@ func Init() *echo.Echo {
 	bioCont := controllers.NewBiodataController(db)
 	eduCont := controllers.NewEducationController(db)
 	famCont := controllers.NewFamilyController(db)
+	langCont := controllers.NewLanguageController(db)
 
 	// Buat Context kosong
 	ctx := context.Background()
@@ -50,7 +54,7 @@ func Init() *echo.Echo {
 
 	// Grouping Route CRUD Scholarship
 	scholarship := e.Group("/scholarship")
-	// e.Use(middleware.JWTWithConfig(controllers.Config()))
+	e.Use(middleware.JWTWithConfig(controllers.Config()))
 	scholarship.POST("", scholarCont.Create)
 	scholarship.GET("", scholarCont.ReadAll)
 	scholarship.GET("/:id", scholarCont.ReadByID)
@@ -90,6 +94,13 @@ func Init() *echo.Echo {
 	family.GET("/:id", famCont.ReadByID)
 	family.PUT("/:id", famCont.Update)
 	family.DELETE("/:id", famCont.Delete)
+
+	language := e.Group("/language")
+	language.POST("", langCont.Create)
+	language.GET("", langCont.ReadAll)
+	language.GET("/:id", langCont.ReadByID)
+	language.PUT("/:id", langCont.Update)
+	language.DELETE("/:id", langCont.Delete)
 
 	return e
 }

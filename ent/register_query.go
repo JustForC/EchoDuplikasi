@@ -7,6 +7,7 @@ import (
 	"Kynesia/ent/biodata"
 	"Kynesia/ent/education"
 	"Kynesia/ent/family"
+	"Kynesia/ent/language"
 	"Kynesia/ent/predicate"
 	"Kynesia/ent/register"
 	"Kynesia/ent/scholarship"
@@ -38,6 +39,7 @@ type RegisterQuery struct {
 	withBiodata     *BiodataQuery
 	withEducation   *EducationQuery
 	withFamily      *FamilyQuery
+	withLanguage    *LanguageQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -199,6 +201,28 @@ func (rq *RegisterQuery) QueryFamily() *FamilyQuery {
 			sqlgraph.From(register.Table, register.FieldID, selector),
 			sqlgraph.To(family.Table, family.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, true, register.FamilyTable, register.FamilyPrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(rq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryLanguage chains the current query on the "language" edge.
+func (rq *RegisterQuery) QueryLanguage() *LanguageQuery {
+	query := &LanguageQuery{config: rq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := rq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := rq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(register.Table, register.FieldID, selector),
+			sqlgraph.To(language.Table, language.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, register.LanguageTable, register.LanguagePrimaryKey...),
 		)
 		fromU = sqlgraph.SetNeighbors(rq.driver.Dialect(), step)
 		return fromU, nil
@@ -393,6 +417,7 @@ func (rq *RegisterQuery) Clone() *RegisterQuery {
 		withBiodata:     rq.withBiodata.Clone(),
 		withEducation:   rq.withEducation.Clone(),
 		withFamily:      rq.withFamily.Clone(),
+		withLanguage:    rq.withLanguage.Clone(),
 		// clone intermediate query.
 		sql:    rq.sql.Clone(),
 		path:   rq.path,
@@ -466,6 +491,17 @@ func (rq *RegisterQuery) WithFamily(opts ...func(*FamilyQuery)) *RegisterQuery {
 	return rq
 }
 
+// WithLanguage tells the query-builder to eager-load the nodes that are connected to
+// the "language" edge. The optional arguments are used to configure the query builder of the edge.
+func (rq *RegisterQuery) WithLanguage(opts ...func(*LanguageQuery)) *RegisterQuery {
+	query := &LanguageQuery{config: rq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	rq.withLanguage = query
+	return rq
+}
+
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -531,13 +567,14 @@ func (rq *RegisterQuery) sqlAll(ctx context.Context) ([]*Register, error) {
 	var (
 		nodes       = []*Register{}
 		_spec       = rq.querySpec()
-		loadedTypes = [6]bool{
+		loadedTypes = [7]bool{
 			rq.withUser != nil,
 			rq.withScholarship != nil,
 			rq.withAchievement != nil,
 			rq.withBiodata != nil,
 			rq.withEducation != nil,
 			rq.withFamily != nil,
+			rq.withLanguage != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]interface{}, error) {
@@ -946,6 +983,71 @@ func (rq *RegisterQuery) sqlAll(ctx context.Context) ([]*Register, error) {
 			}
 			for i := range nodes {
 				nodes[i].Edges.Family = append(nodes[i].Edges.Family, n)
+			}
+		}
+	}
+
+	if query := rq.withLanguage; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		ids := make(map[int]*Register, len(nodes))
+		for _, node := range nodes {
+			ids[node.ID] = node
+			fks = append(fks, node.ID)
+			node.Edges.Language = []*Language{}
+		}
+		var (
+			edgeids []int
+			edges   = make(map[int][]*Register)
+		)
+		_spec := &sqlgraph.EdgeQuerySpec{
+			Edge: &sqlgraph.EdgeSpec{
+				Inverse: true,
+				Table:   register.LanguageTable,
+				Columns: register.LanguagePrimaryKey,
+			},
+			Predicate: func(s *sql.Selector) {
+				s.Where(sql.InValues(register.LanguagePrimaryKey[1], fks...))
+			},
+			ScanValues: func() [2]interface{} {
+				return [2]interface{}{new(sql.NullInt64), new(sql.NullInt64)}
+			},
+			Assign: func(out, in interface{}) error {
+				eout, ok := out.(*sql.NullInt64)
+				if !ok || eout == nil {
+					return fmt.Errorf("unexpected id value for edge-out")
+				}
+				ein, ok := in.(*sql.NullInt64)
+				if !ok || ein == nil {
+					return fmt.Errorf("unexpected id value for edge-in")
+				}
+				outValue := int(eout.Int64)
+				inValue := int(ein.Int64)
+				node, ok := ids[outValue]
+				if !ok {
+					return fmt.Errorf("unexpected node id in edges: %v", outValue)
+				}
+				if _, ok := edges[inValue]; !ok {
+					edgeids = append(edgeids, inValue)
+				}
+				edges[inValue] = append(edges[inValue], node)
+				return nil
+			},
+		}
+		if err := sqlgraph.QueryEdges(ctx, rq.driver, _spec); err != nil {
+			return nil, fmt.Errorf(`query edges "language": %w`, err)
+		}
+		query.Where(language.IDIn(edgeids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := edges[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected "language" node returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.Language = append(nodes[i].Edges.Language, n)
 			}
 		}
 	}

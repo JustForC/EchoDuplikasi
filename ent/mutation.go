@@ -3619,18 +3619,21 @@ func (m *FamilyMutation) ResetEdge(name string) error {
 // LanguageMutation represents an operation that mutates the Language nodes in the graph.
 type LanguageMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *int
-	name          *string
-	talk          *string
-	write         *string
-	read          *string
-	listen        *string
-	clearedFields map[string]struct{}
-	done          bool
-	oldValue      func(context.Context) (*Language, error)
-	predicates    []predicate.Language
+	op              Op
+	typ             string
+	id              *int
+	name            *string
+	talk            *string
+	write           *string
+	read            *string
+	listen          *string
+	clearedFields   map[string]struct{}
+	register        map[int]struct{}
+	removedregister map[int]struct{}
+	clearedregister bool
+	done            bool
+	oldValue        func(context.Context) (*Language, error)
+	predicates      []predicate.Language
 }
 
 var _ ent.Mutation = (*LanguageMutation)(nil)
@@ -3748,7 +3751,7 @@ func (m *LanguageMutation) Name() (r string, exists bool) {
 // OldName returns the old "name" field's value of the Language entity.
 // If the Language object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *LanguageMutation) OldName(ctx context.Context) (v *string, err error) {
+func (m *LanguageMutation) OldName(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldName is only allowed on UpdateOne operations")
 	}
@@ -3762,22 +3765,9 @@ func (m *LanguageMutation) OldName(ctx context.Context) (v *string, err error) {
 	return oldValue.Name, nil
 }
 
-// ClearName clears the value of the "name" field.
-func (m *LanguageMutation) ClearName() {
-	m.name = nil
-	m.clearedFields[language.FieldName] = struct{}{}
-}
-
-// NameCleared returns if the "name" field was cleared in this mutation.
-func (m *LanguageMutation) NameCleared() bool {
-	_, ok := m.clearedFields[language.FieldName]
-	return ok
-}
-
 // ResetName resets all changes to the "name" field.
 func (m *LanguageMutation) ResetName() {
 	m.name = nil
-	delete(m.clearedFields, language.FieldName)
 }
 
 // SetTalk sets the "talk" field.
@@ -3797,7 +3787,7 @@ func (m *LanguageMutation) Talk() (r string, exists bool) {
 // OldTalk returns the old "talk" field's value of the Language entity.
 // If the Language object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *LanguageMutation) OldTalk(ctx context.Context) (v *string, err error) {
+func (m *LanguageMutation) OldTalk(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldTalk is only allowed on UpdateOne operations")
 	}
@@ -3811,22 +3801,9 @@ func (m *LanguageMutation) OldTalk(ctx context.Context) (v *string, err error) {
 	return oldValue.Talk, nil
 }
 
-// ClearTalk clears the value of the "talk" field.
-func (m *LanguageMutation) ClearTalk() {
-	m.talk = nil
-	m.clearedFields[language.FieldTalk] = struct{}{}
-}
-
-// TalkCleared returns if the "talk" field was cleared in this mutation.
-func (m *LanguageMutation) TalkCleared() bool {
-	_, ok := m.clearedFields[language.FieldTalk]
-	return ok
-}
-
 // ResetTalk resets all changes to the "talk" field.
 func (m *LanguageMutation) ResetTalk() {
 	m.talk = nil
-	delete(m.clearedFields, language.FieldTalk)
 }
 
 // SetWrite sets the "write" field.
@@ -3846,7 +3823,7 @@ func (m *LanguageMutation) Write() (r string, exists bool) {
 // OldWrite returns the old "write" field's value of the Language entity.
 // If the Language object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *LanguageMutation) OldWrite(ctx context.Context) (v *string, err error) {
+func (m *LanguageMutation) OldWrite(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldWrite is only allowed on UpdateOne operations")
 	}
@@ -3860,22 +3837,9 @@ func (m *LanguageMutation) OldWrite(ctx context.Context) (v *string, err error) 
 	return oldValue.Write, nil
 }
 
-// ClearWrite clears the value of the "write" field.
-func (m *LanguageMutation) ClearWrite() {
-	m.write = nil
-	m.clearedFields[language.FieldWrite] = struct{}{}
-}
-
-// WriteCleared returns if the "write" field was cleared in this mutation.
-func (m *LanguageMutation) WriteCleared() bool {
-	_, ok := m.clearedFields[language.FieldWrite]
-	return ok
-}
-
 // ResetWrite resets all changes to the "write" field.
 func (m *LanguageMutation) ResetWrite() {
 	m.write = nil
-	delete(m.clearedFields, language.FieldWrite)
 }
 
 // SetRead sets the "read" field.
@@ -3895,7 +3859,7 @@ func (m *LanguageMutation) Read() (r string, exists bool) {
 // OldRead returns the old "read" field's value of the Language entity.
 // If the Language object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *LanguageMutation) OldRead(ctx context.Context) (v *string, err error) {
+func (m *LanguageMutation) OldRead(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldRead is only allowed on UpdateOne operations")
 	}
@@ -3909,22 +3873,9 @@ func (m *LanguageMutation) OldRead(ctx context.Context) (v *string, err error) {
 	return oldValue.Read, nil
 }
 
-// ClearRead clears the value of the "read" field.
-func (m *LanguageMutation) ClearRead() {
-	m.read = nil
-	m.clearedFields[language.FieldRead] = struct{}{}
-}
-
-// ReadCleared returns if the "read" field was cleared in this mutation.
-func (m *LanguageMutation) ReadCleared() bool {
-	_, ok := m.clearedFields[language.FieldRead]
-	return ok
-}
-
 // ResetRead resets all changes to the "read" field.
 func (m *LanguageMutation) ResetRead() {
 	m.read = nil
-	delete(m.clearedFields, language.FieldRead)
 }
 
 // SetListen sets the "listen" field.
@@ -3944,7 +3895,7 @@ func (m *LanguageMutation) Listen() (r string, exists bool) {
 // OldListen returns the old "listen" field's value of the Language entity.
 // If the Language object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *LanguageMutation) OldListen(ctx context.Context) (v *string, err error) {
+func (m *LanguageMutation) OldListen(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldListen is only allowed on UpdateOne operations")
 	}
@@ -3958,22 +3909,63 @@ func (m *LanguageMutation) OldListen(ctx context.Context) (v *string, err error)
 	return oldValue.Listen, nil
 }
 
-// ClearListen clears the value of the "listen" field.
-func (m *LanguageMutation) ClearListen() {
-	m.listen = nil
-	m.clearedFields[language.FieldListen] = struct{}{}
-}
-
-// ListenCleared returns if the "listen" field was cleared in this mutation.
-func (m *LanguageMutation) ListenCleared() bool {
-	_, ok := m.clearedFields[language.FieldListen]
-	return ok
-}
-
 // ResetListen resets all changes to the "listen" field.
 func (m *LanguageMutation) ResetListen() {
 	m.listen = nil
-	delete(m.clearedFields, language.FieldListen)
+}
+
+// AddRegisterIDs adds the "register" edge to the Register entity by ids.
+func (m *LanguageMutation) AddRegisterIDs(ids ...int) {
+	if m.register == nil {
+		m.register = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.register[ids[i]] = struct{}{}
+	}
+}
+
+// ClearRegister clears the "register" edge to the Register entity.
+func (m *LanguageMutation) ClearRegister() {
+	m.clearedregister = true
+}
+
+// RegisterCleared reports if the "register" edge to the Register entity was cleared.
+func (m *LanguageMutation) RegisterCleared() bool {
+	return m.clearedregister
+}
+
+// RemoveRegisterIDs removes the "register" edge to the Register entity by IDs.
+func (m *LanguageMutation) RemoveRegisterIDs(ids ...int) {
+	if m.removedregister == nil {
+		m.removedregister = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.register, ids[i])
+		m.removedregister[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedRegister returns the removed IDs of the "register" edge to the Register entity.
+func (m *LanguageMutation) RemovedRegisterIDs() (ids []int) {
+	for id := range m.removedregister {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// RegisterIDs returns the "register" edge IDs in the mutation.
+func (m *LanguageMutation) RegisterIDs() (ids []int) {
+	for id := range m.register {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetRegister resets all changes to the "register" edge.
+func (m *LanguageMutation) ResetRegister() {
+	m.register = nil
+	m.clearedregister = false
+	m.removedregister = nil
 }
 
 // Where appends a list predicates to the LanguageMutation builder.
@@ -4121,23 +4113,7 @@ func (m *LanguageMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *LanguageMutation) ClearedFields() []string {
-	var fields []string
-	if m.FieldCleared(language.FieldName) {
-		fields = append(fields, language.FieldName)
-	}
-	if m.FieldCleared(language.FieldTalk) {
-		fields = append(fields, language.FieldTalk)
-	}
-	if m.FieldCleared(language.FieldWrite) {
-		fields = append(fields, language.FieldWrite)
-	}
-	if m.FieldCleared(language.FieldRead) {
-		fields = append(fields, language.FieldRead)
-	}
-	if m.FieldCleared(language.FieldListen) {
-		fields = append(fields, language.FieldListen)
-	}
-	return fields
+	return nil
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -4150,23 +4126,6 @@ func (m *LanguageMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *LanguageMutation) ClearField(name string) error {
-	switch name {
-	case language.FieldName:
-		m.ClearName()
-		return nil
-	case language.FieldTalk:
-		m.ClearTalk()
-		return nil
-	case language.FieldWrite:
-		m.ClearWrite()
-		return nil
-	case language.FieldRead:
-		m.ClearRead()
-		return nil
-	case language.FieldListen:
-		m.ClearListen()
-		return nil
-	}
 	return fmt.Errorf("unknown Language nullable field %s", name)
 }
 
@@ -4195,49 +4154,85 @@ func (m *LanguageMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *LanguageMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.register != nil {
+		edges = append(edges, language.EdgeRegister)
+	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
 func (m *LanguageMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case language.EdgeRegister:
+		ids := make([]ent.Value, 0, len(m.register))
+		for id := range m.register {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *LanguageMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.removedregister != nil {
+		edges = append(edges, language.EdgeRegister)
+	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *LanguageMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case language.EdgeRegister:
+		ids := make([]ent.Value, 0, len(m.removedregister))
+		for id := range m.removedregister {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *LanguageMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.clearedregister {
+		edges = append(edges, language.EdgeRegister)
+	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
 func (m *LanguageMutation) EdgeCleared(name string) bool {
+	switch name {
+	case language.EdgeRegister:
+		return m.clearedregister
+	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *LanguageMutation) ClearEdge(name string) error {
+	switch name {
+	}
 	return fmt.Errorf("unknown Language unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *LanguageMutation) ResetEdge(name string) error {
+	switch name {
+	case language.EdgeRegister:
+		m.ResetRegister()
+		return nil
+	}
 	return fmt.Errorf("unknown Language edge %s", name)
 }
 
@@ -5171,6 +5166,9 @@ type RegisterMutation struct {
 	family             map[int]struct{}
 	removedfamily      map[int]struct{}
 	clearedfamily      bool
+	language           map[int]struct{}
+	removedlanguage    map[int]struct{}
+	clearedlanguage    bool
 	done               bool
 	oldValue           func(context.Context) (*Register, error)
 	predicates         []predicate.Register
@@ -5808,6 +5806,60 @@ func (m *RegisterMutation) ResetFamily() {
 	m.removedfamily = nil
 }
 
+// AddLanguageIDs adds the "language" edge to the Language entity by ids.
+func (m *RegisterMutation) AddLanguageIDs(ids ...int) {
+	if m.language == nil {
+		m.language = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.language[ids[i]] = struct{}{}
+	}
+}
+
+// ClearLanguage clears the "language" edge to the Language entity.
+func (m *RegisterMutation) ClearLanguage() {
+	m.clearedlanguage = true
+}
+
+// LanguageCleared reports if the "language" edge to the Language entity was cleared.
+func (m *RegisterMutation) LanguageCleared() bool {
+	return m.clearedlanguage
+}
+
+// RemoveLanguageIDs removes the "language" edge to the Language entity by IDs.
+func (m *RegisterMutation) RemoveLanguageIDs(ids ...int) {
+	if m.removedlanguage == nil {
+		m.removedlanguage = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.language, ids[i])
+		m.removedlanguage[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedLanguage returns the removed IDs of the "language" edge to the Language entity.
+func (m *RegisterMutation) RemovedLanguageIDs() (ids []int) {
+	for id := range m.removedlanguage {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// LanguageIDs returns the "language" edge IDs in the mutation.
+func (m *RegisterMutation) LanguageIDs() (ids []int) {
+	for id := range m.language {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetLanguage resets all changes to the "language" edge.
+func (m *RegisterMutation) ResetLanguage() {
+	m.language = nil
+	m.clearedlanguage = false
+	m.removedlanguage = nil
+}
+
 // Where appends a list predicates to the RegisterMutation builder.
 func (m *RegisterMutation) Where(ps ...predicate.Register) {
 	m.predicates = append(m.predicates, ps...)
@@ -6019,7 +6071,7 @@ func (m *RegisterMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *RegisterMutation) AddedEdges() []string {
-	edges := make([]string, 0, 6)
+	edges := make([]string, 0, 7)
 	if m.user != nil {
 		edges = append(edges, register.EdgeUser)
 	}
@@ -6037,6 +6089,9 @@ func (m *RegisterMutation) AddedEdges() []string {
 	}
 	if m.family != nil {
 		edges = append(edges, register.EdgeFamily)
+	}
+	if m.language != nil {
+		edges = append(edges, register.EdgeLanguage)
 	}
 	return edges
 }
@@ -6081,13 +6136,19 @@ func (m *RegisterMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case register.EdgeLanguage:
+		ids := make([]ent.Value, 0, len(m.language))
+		for id := range m.language {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *RegisterMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 6)
+	edges := make([]string, 0, 7)
 	if m.removeduser != nil {
 		edges = append(edges, register.EdgeUser)
 	}
@@ -6105,6 +6166,9 @@ func (m *RegisterMutation) RemovedEdges() []string {
 	}
 	if m.removedfamily != nil {
 		edges = append(edges, register.EdgeFamily)
+	}
+	if m.removedlanguage != nil {
+		edges = append(edges, register.EdgeLanguage)
 	}
 	return edges
 }
@@ -6149,13 +6213,19 @@ func (m *RegisterMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case register.EdgeLanguage:
+		ids := make([]ent.Value, 0, len(m.removedlanguage))
+		for id := range m.removedlanguage {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *RegisterMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 6)
+	edges := make([]string, 0, 7)
 	if m.cleareduser {
 		edges = append(edges, register.EdgeUser)
 	}
@@ -6173,6 +6243,9 @@ func (m *RegisterMutation) ClearedEdges() []string {
 	}
 	if m.clearedfamily {
 		edges = append(edges, register.EdgeFamily)
+	}
+	if m.clearedlanguage {
+		edges = append(edges, register.EdgeLanguage)
 	}
 	return edges
 }
@@ -6193,6 +6266,8 @@ func (m *RegisterMutation) EdgeCleared(name string) bool {
 		return m.clearededucation
 	case register.EdgeFamily:
 		return m.clearedfamily
+	case register.EdgeLanguage:
+		return m.clearedlanguage
 	}
 	return false
 }
@@ -6226,6 +6301,9 @@ func (m *RegisterMutation) ResetEdge(name string) error {
 		return nil
 	case register.EdgeFamily:
 		m.ResetFamily()
+		return nil
+	case register.EdgeLanguage:
+		m.ResetLanguage()
 		return nil
 	}
 	return fmt.Errorf("unknown Register edge %s", name)

@@ -16,15 +16,36 @@ type Language struct {
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
 	// Name holds the value of the "name" field.
-	Name *string `json:"name,omitempty"`
+	Name string `json:"name,omitempty"`
 	// Talk holds the value of the "talk" field.
-	Talk *string `json:"talk,omitempty"`
+	Talk string `json:"talk,omitempty"`
 	// Write holds the value of the "write" field.
-	Write *string `json:"write,omitempty"`
+	Write string `json:"write,omitempty"`
 	// Read holds the value of the "read" field.
-	Read *string `json:"read,omitempty"`
+	Read string `json:"read,omitempty"`
 	// Listen holds the value of the "listen" field.
-	Listen *string `json:"listen,omitempty"`
+	Listen string `json:"listen,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the LanguageQuery when eager-loading is set.
+	Edges LanguageEdges `json:"edges"`
+}
+
+// LanguageEdges holds the relations/edges for other nodes in the graph.
+type LanguageEdges struct {
+	// Register holds the value of the register edge.
+	Register []*Register `json:"register,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [1]bool
+}
+
+// RegisterOrErr returns the Register value or an error if the edge
+// was not loaded in eager-loading.
+func (e LanguageEdges) RegisterOrErr() ([]*Register, error) {
+	if e.loadedTypes[0] {
+		return e.Register, nil
+	}
+	return nil, &NotLoadedError{edge: "register"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -61,40 +82,40 @@ func (l *Language) assignValues(columns []string, values []interface{}) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
 			} else if value.Valid {
-				l.Name = new(string)
-				*l.Name = value.String
+				l.Name = value.String
 			}
 		case language.FieldTalk:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field talk", values[i])
 			} else if value.Valid {
-				l.Talk = new(string)
-				*l.Talk = value.String
+				l.Talk = value.String
 			}
 		case language.FieldWrite:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field write", values[i])
 			} else if value.Valid {
-				l.Write = new(string)
-				*l.Write = value.String
+				l.Write = value.String
 			}
 		case language.FieldRead:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field read", values[i])
 			} else if value.Valid {
-				l.Read = new(string)
-				*l.Read = value.String
+				l.Read = value.String
 			}
 		case language.FieldListen:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field listen", values[i])
 			} else if value.Valid {
-				l.Listen = new(string)
-				*l.Listen = value.String
+				l.Listen = value.String
 			}
 		}
 	}
 	return nil
+}
+
+// QueryRegister queries the "register" edge of the Language entity.
+func (l *Language) QueryRegister() *RegisterQuery {
+	return (&LanguageClient{config: l.config}).QueryRegister(l)
 }
 
 // Update returns a builder for updating this Language.
@@ -120,26 +141,16 @@ func (l *Language) String() string {
 	var builder strings.Builder
 	builder.WriteString("Language(")
 	builder.WriteString(fmt.Sprintf("id=%v", l.ID))
-	if v := l.Name; v != nil {
-		builder.WriteString(", name=")
-		builder.WriteString(*v)
-	}
-	if v := l.Talk; v != nil {
-		builder.WriteString(", talk=")
-		builder.WriteString(*v)
-	}
-	if v := l.Write; v != nil {
-		builder.WriteString(", write=")
-		builder.WriteString(*v)
-	}
-	if v := l.Read; v != nil {
-		builder.WriteString(", read=")
-		builder.WriteString(*v)
-	}
-	if v := l.Listen; v != nil {
-		builder.WriteString(", listen=")
-		builder.WriteString(*v)
-	}
+	builder.WriteString(", name=")
+	builder.WriteString(l.Name)
+	builder.WriteString(", talk=")
+	builder.WriteString(l.Talk)
+	builder.WriteString(", write=")
+	builder.WriteString(l.Write)
+	builder.WriteString(", read=")
+	builder.WriteString(l.Read)
+	builder.WriteString(", listen=")
+	builder.WriteString(l.Listen)
 	builder.WriteByte(')')
 	return builder.String()
 }

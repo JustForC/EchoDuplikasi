@@ -27,6 +27,8 @@ const (
 	EdgeEducation = "education"
 	// EdgeFamily holds the string denoting the family edge name in mutations.
 	EdgeFamily = "family"
+	// EdgeLanguage holds the string denoting the language edge name in mutations.
+	EdgeLanguage = "language"
 	// Table holds the table name of the register in the database.
 	Table = "registers"
 	// UserTable is the table that holds the user relation/edge. The primary key declared below.
@@ -59,6 +61,11 @@ const (
 	// FamilyInverseTable is the table name for the Family entity.
 	// It exists in this package in order to avoid circular dependency with the "family" package.
 	FamilyInverseTable = "families"
+	// LanguageTable is the table that holds the language relation/edge. The primary key declared below.
+	LanguageTable = "language_register"
+	// LanguageInverseTable is the table name for the Language entity.
+	// It exists in this package in order to avoid circular dependency with the "language" package.
+	LanguageInverseTable = "languages"
 )
 
 // Columns holds all SQL columns for register fields.
@@ -89,6 +96,9 @@ var (
 	// FamilyPrimaryKey and FamilyColumn2 are the table columns denoting the
 	// primary key for the family relation (M2M).
 	FamilyPrimaryKey = []string{"family_id", "register_id"}
+	// LanguagePrimaryKey and LanguageColumn2 are the table columns denoting the
+	// primary key for the language relation (M2M).
+	LanguagePrimaryKey = []string{"language_id", "register_id"}
 )
 
 // ValidColumn reports if the column name is valid (part of the table columns).

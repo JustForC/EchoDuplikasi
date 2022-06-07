@@ -5,6 +5,7 @@ package ent
 import (
 	"Kynesia/ent/language"
 	"Kynesia/ent/predicate"
+	"Kynesia/ent/register"
 	"context"
 	"errors"
 	"fmt"
@@ -33,37 +34,9 @@ func (lu *LanguageUpdate) SetName(s string) *LanguageUpdate {
 	return lu
 }
 
-// SetNillableName sets the "name" field if the given value is not nil.
-func (lu *LanguageUpdate) SetNillableName(s *string) *LanguageUpdate {
-	if s != nil {
-		lu.SetName(*s)
-	}
-	return lu
-}
-
-// ClearName clears the value of the "name" field.
-func (lu *LanguageUpdate) ClearName() *LanguageUpdate {
-	lu.mutation.ClearName()
-	return lu
-}
-
 // SetTalk sets the "talk" field.
 func (lu *LanguageUpdate) SetTalk(s string) *LanguageUpdate {
 	lu.mutation.SetTalk(s)
-	return lu
-}
-
-// SetNillableTalk sets the "talk" field if the given value is not nil.
-func (lu *LanguageUpdate) SetNillableTalk(s *string) *LanguageUpdate {
-	if s != nil {
-		lu.SetTalk(*s)
-	}
-	return lu
-}
-
-// ClearTalk clears the value of the "talk" field.
-func (lu *LanguageUpdate) ClearTalk() *LanguageUpdate {
-	lu.mutation.ClearTalk()
 	return lu
 }
 
@@ -73,37 +46,9 @@ func (lu *LanguageUpdate) SetWrite(s string) *LanguageUpdate {
 	return lu
 }
 
-// SetNillableWrite sets the "write" field if the given value is not nil.
-func (lu *LanguageUpdate) SetNillableWrite(s *string) *LanguageUpdate {
-	if s != nil {
-		lu.SetWrite(*s)
-	}
-	return lu
-}
-
-// ClearWrite clears the value of the "write" field.
-func (lu *LanguageUpdate) ClearWrite() *LanguageUpdate {
-	lu.mutation.ClearWrite()
-	return lu
-}
-
 // SetRead sets the "read" field.
 func (lu *LanguageUpdate) SetRead(s string) *LanguageUpdate {
 	lu.mutation.SetRead(s)
-	return lu
-}
-
-// SetNillableRead sets the "read" field if the given value is not nil.
-func (lu *LanguageUpdate) SetNillableRead(s *string) *LanguageUpdate {
-	if s != nil {
-		lu.SetRead(*s)
-	}
-	return lu
-}
-
-// ClearRead clears the value of the "read" field.
-func (lu *LanguageUpdate) ClearRead() *LanguageUpdate {
-	lu.mutation.ClearRead()
 	return lu
 }
 
@@ -113,23 +58,45 @@ func (lu *LanguageUpdate) SetListen(s string) *LanguageUpdate {
 	return lu
 }
 
-// SetNillableListen sets the "listen" field if the given value is not nil.
-func (lu *LanguageUpdate) SetNillableListen(s *string) *LanguageUpdate {
-	if s != nil {
-		lu.SetListen(*s)
-	}
+// AddRegisterIDs adds the "register" edge to the Register entity by IDs.
+func (lu *LanguageUpdate) AddRegisterIDs(ids ...int) *LanguageUpdate {
+	lu.mutation.AddRegisterIDs(ids...)
 	return lu
 }
 
-// ClearListen clears the value of the "listen" field.
-func (lu *LanguageUpdate) ClearListen() *LanguageUpdate {
-	lu.mutation.ClearListen()
-	return lu
+// AddRegister adds the "register" edges to the Register entity.
+func (lu *LanguageUpdate) AddRegister(r ...*Register) *LanguageUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return lu.AddRegisterIDs(ids...)
 }
 
 // Mutation returns the LanguageMutation object of the builder.
 func (lu *LanguageUpdate) Mutation() *LanguageMutation {
 	return lu.mutation
+}
+
+// ClearRegister clears all "register" edges to the Register entity.
+func (lu *LanguageUpdate) ClearRegister() *LanguageUpdate {
+	lu.mutation.ClearRegister()
+	return lu
+}
+
+// RemoveRegisterIDs removes the "register" edge to Register entities by IDs.
+func (lu *LanguageUpdate) RemoveRegisterIDs(ids ...int) *LanguageUpdate {
+	lu.mutation.RemoveRegisterIDs(ids...)
+	return lu
+}
+
+// RemoveRegister removes "register" edges to Register entities.
+func (lu *LanguageUpdate) RemoveRegister(r ...*Register) *LanguageUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return lu.RemoveRegisterIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -211,22 +178,10 @@ func (lu *LanguageUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: language.FieldName,
 		})
 	}
-	if lu.mutation.NameCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: language.FieldName,
-		})
-	}
 	if value, ok := lu.mutation.Talk(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: language.FieldTalk,
-		})
-	}
-	if lu.mutation.TalkCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
 			Column: language.FieldTalk,
 		})
 	}
@@ -237,22 +192,10 @@ func (lu *LanguageUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: language.FieldWrite,
 		})
 	}
-	if lu.mutation.WriteCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: language.FieldWrite,
-		})
-	}
 	if value, ok := lu.mutation.Read(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: language.FieldRead,
-		})
-	}
-	if lu.mutation.ReadCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
 			Column: language.FieldRead,
 		})
 	}
@@ -263,11 +206,59 @@ func (lu *LanguageUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: language.FieldListen,
 		})
 	}
-	if lu.mutation.ListenCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: language.FieldListen,
-		})
+	if lu.mutation.RegisterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   language.RegisterTable,
+			Columns: language.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := lu.mutation.RemovedRegisterIDs(); len(nodes) > 0 && !lu.mutation.RegisterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   language.RegisterTable,
+			Columns: language.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := lu.mutation.RegisterIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   language.RegisterTable,
+			Columns: language.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, lu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -294,37 +285,9 @@ func (luo *LanguageUpdateOne) SetName(s string) *LanguageUpdateOne {
 	return luo
 }
 
-// SetNillableName sets the "name" field if the given value is not nil.
-func (luo *LanguageUpdateOne) SetNillableName(s *string) *LanguageUpdateOne {
-	if s != nil {
-		luo.SetName(*s)
-	}
-	return luo
-}
-
-// ClearName clears the value of the "name" field.
-func (luo *LanguageUpdateOne) ClearName() *LanguageUpdateOne {
-	luo.mutation.ClearName()
-	return luo
-}
-
 // SetTalk sets the "talk" field.
 func (luo *LanguageUpdateOne) SetTalk(s string) *LanguageUpdateOne {
 	luo.mutation.SetTalk(s)
-	return luo
-}
-
-// SetNillableTalk sets the "talk" field if the given value is not nil.
-func (luo *LanguageUpdateOne) SetNillableTalk(s *string) *LanguageUpdateOne {
-	if s != nil {
-		luo.SetTalk(*s)
-	}
-	return luo
-}
-
-// ClearTalk clears the value of the "talk" field.
-func (luo *LanguageUpdateOne) ClearTalk() *LanguageUpdateOne {
-	luo.mutation.ClearTalk()
 	return luo
 }
 
@@ -334,37 +297,9 @@ func (luo *LanguageUpdateOne) SetWrite(s string) *LanguageUpdateOne {
 	return luo
 }
 
-// SetNillableWrite sets the "write" field if the given value is not nil.
-func (luo *LanguageUpdateOne) SetNillableWrite(s *string) *LanguageUpdateOne {
-	if s != nil {
-		luo.SetWrite(*s)
-	}
-	return luo
-}
-
-// ClearWrite clears the value of the "write" field.
-func (luo *LanguageUpdateOne) ClearWrite() *LanguageUpdateOne {
-	luo.mutation.ClearWrite()
-	return luo
-}
-
 // SetRead sets the "read" field.
 func (luo *LanguageUpdateOne) SetRead(s string) *LanguageUpdateOne {
 	luo.mutation.SetRead(s)
-	return luo
-}
-
-// SetNillableRead sets the "read" field if the given value is not nil.
-func (luo *LanguageUpdateOne) SetNillableRead(s *string) *LanguageUpdateOne {
-	if s != nil {
-		luo.SetRead(*s)
-	}
-	return luo
-}
-
-// ClearRead clears the value of the "read" field.
-func (luo *LanguageUpdateOne) ClearRead() *LanguageUpdateOne {
-	luo.mutation.ClearRead()
 	return luo
 }
 
@@ -374,23 +309,45 @@ func (luo *LanguageUpdateOne) SetListen(s string) *LanguageUpdateOne {
 	return luo
 }
 
-// SetNillableListen sets the "listen" field if the given value is not nil.
-func (luo *LanguageUpdateOne) SetNillableListen(s *string) *LanguageUpdateOne {
-	if s != nil {
-		luo.SetListen(*s)
-	}
+// AddRegisterIDs adds the "register" edge to the Register entity by IDs.
+func (luo *LanguageUpdateOne) AddRegisterIDs(ids ...int) *LanguageUpdateOne {
+	luo.mutation.AddRegisterIDs(ids...)
 	return luo
 }
 
-// ClearListen clears the value of the "listen" field.
-func (luo *LanguageUpdateOne) ClearListen() *LanguageUpdateOne {
-	luo.mutation.ClearListen()
-	return luo
+// AddRegister adds the "register" edges to the Register entity.
+func (luo *LanguageUpdateOne) AddRegister(r ...*Register) *LanguageUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return luo.AddRegisterIDs(ids...)
 }
 
 // Mutation returns the LanguageMutation object of the builder.
 func (luo *LanguageUpdateOne) Mutation() *LanguageMutation {
 	return luo.mutation
+}
+
+// ClearRegister clears all "register" edges to the Register entity.
+func (luo *LanguageUpdateOne) ClearRegister() *LanguageUpdateOne {
+	luo.mutation.ClearRegister()
+	return luo
+}
+
+// RemoveRegisterIDs removes the "register" edge to Register entities by IDs.
+func (luo *LanguageUpdateOne) RemoveRegisterIDs(ids ...int) *LanguageUpdateOne {
+	luo.mutation.RemoveRegisterIDs(ids...)
+	return luo
+}
+
+// RemoveRegister removes "register" edges to Register entities.
+func (luo *LanguageUpdateOne) RemoveRegister(r ...*Register) *LanguageUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return luo.RemoveRegisterIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -496,22 +453,10 @@ func (luo *LanguageUpdateOne) sqlSave(ctx context.Context) (_node *Language, err
 			Column: language.FieldName,
 		})
 	}
-	if luo.mutation.NameCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: language.FieldName,
-		})
-	}
 	if value, ok := luo.mutation.Talk(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: language.FieldTalk,
-		})
-	}
-	if luo.mutation.TalkCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
 			Column: language.FieldTalk,
 		})
 	}
@@ -522,22 +467,10 @@ func (luo *LanguageUpdateOne) sqlSave(ctx context.Context) (_node *Language, err
 			Column: language.FieldWrite,
 		})
 	}
-	if luo.mutation.WriteCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: language.FieldWrite,
-		})
-	}
 	if value, ok := luo.mutation.Read(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: language.FieldRead,
-		})
-	}
-	if luo.mutation.ReadCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
 			Column: language.FieldRead,
 		})
 	}
@@ -548,11 +481,59 @@ func (luo *LanguageUpdateOne) sqlSave(ctx context.Context) (_node *Language, err
 			Column: language.FieldListen,
 		})
 	}
-	if luo.mutation.ListenCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: language.FieldListen,
-		})
+	if luo.mutation.RegisterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   language.RegisterTable,
+			Columns: language.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := luo.mutation.RemovedRegisterIDs(); len(nodes) > 0 && !luo.mutation.RegisterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   language.RegisterTable,
+			Columns: language.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := luo.mutation.RegisterIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   language.RegisterTable,
+			Columns: language.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &Language{config: luo.config}
 	_spec.Assign = _node.assignValues

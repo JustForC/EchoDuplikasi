@@ -6,6 +6,7 @@ import (
 	"Kynesia/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 // ID filters vertices based on their ID field.
@@ -223,20 +224,6 @@ func NameHasSuffix(v string) predicate.Language {
 	})
 }
 
-// NameIsNil applies the IsNil predicate on the "name" field.
-func NameIsNil() predicate.Language {
-	return predicate.Language(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldName)))
-	})
-}
-
-// NameNotNil applies the NotNil predicate on the "name" field.
-func NameNotNil() predicate.Language {
-	return predicate.Language(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldName)))
-	})
-}
-
 // NameEqualFold applies the EqualFold predicate on the "name" field.
 func NameEqualFold(v string) predicate.Language {
 	return predicate.Language(func(s *sql.Selector) {
@@ -345,20 +332,6 @@ func TalkHasPrefix(v string) predicate.Language {
 func TalkHasSuffix(v string) predicate.Language {
 	return predicate.Language(func(s *sql.Selector) {
 		s.Where(sql.HasSuffix(s.C(FieldTalk), v))
-	})
-}
-
-// TalkIsNil applies the IsNil predicate on the "talk" field.
-func TalkIsNil() predicate.Language {
-	return predicate.Language(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldTalk)))
-	})
-}
-
-// TalkNotNil applies the NotNil predicate on the "talk" field.
-func TalkNotNil() predicate.Language {
-	return predicate.Language(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldTalk)))
 	})
 }
 
@@ -473,20 +446,6 @@ func WriteHasSuffix(v string) predicate.Language {
 	})
 }
 
-// WriteIsNil applies the IsNil predicate on the "write" field.
-func WriteIsNil() predicate.Language {
-	return predicate.Language(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldWrite)))
-	})
-}
-
-// WriteNotNil applies the NotNil predicate on the "write" field.
-func WriteNotNil() predicate.Language {
-	return predicate.Language(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldWrite)))
-	})
-}
-
 // WriteEqualFold applies the EqualFold predicate on the "write" field.
 func WriteEqualFold(v string) predicate.Language {
 	return predicate.Language(func(s *sql.Selector) {
@@ -595,20 +554,6 @@ func ReadHasPrefix(v string) predicate.Language {
 func ReadHasSuffix(v string) predicate.Language {
 	return predicate.Language(func(s *sql.Selector) {
 		s.Where(sql.HasSuffix(s.C(FieldRead), v))
-	})
-}
-
-// ReadIsNil applies the IsNil predicate on the "read" field.
-func ReadIsNil() predicate.Language {
-	return predicate.Language(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldRead)))
-	})
-}
-
-// ReadNotNil applies the NotNil predicate on the "read" field.
-func ReadNotNil() predicate.Language {
-	return predicate.Language(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldRead)))
 	})
 }
 
@@ -723,20 +668,6 @@ func ListenHasSuffix(v string) predicate.Language {
 	})
 }
 
-// ListenIsNil applies the IsNil predicate on the "listen" field.
-func ListenIsNil() predicate.Language {
-	return predicate.Language(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldListen)))
-	})
-}
-
-// ListenNotNil applies the NotNil predicate on the "listen" field.
-func ListenNotNil() predicate.Language {
-	return predicate.Language(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldListen)))
-	})
-}
-
 // ListenEqualFold applies the EqualFold predicate on the "listen" field.
 func ListenEqualFold(v string) predicate.Language {
 	return predicate.Language(func(s *sql.Selector) {
@@ -748,6 +679,34 @@ func ListenEqualFold(v string) predicate.Language {
 func ListenContainsFold(v string) predicate.Language {
 	return predicate.Language(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldListen), v))
+	})
+}
+
+// HasRegister applies the HasEdge predicate on the "register" edge.
+func HasRegister() predicate.Language {
+	return predicate.Language(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(RegisterTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, RegisterTable, RegisterPrimaryKey...),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasRegisterWith applies the HasEdge predicate on the "register" edge with a given conditions (other predicates).
+func HasRegisterWith(preds ...predicate.Register) predicate.Language {
+	return predicate.Language(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(RegisterInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, RegisterTable, RegisterPrimaryKey...),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
 	})
 }
 

@@ -4,7 +4,9 @@ package ent
 
 import (
 	"Kynesia/ent/language"
+	"Kynesia/ent/register"
 	"context"
+	"errors"
 	"fmt"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -24,25 +26,9 @@ func (lc *LanguageCreate) SetName(s string) *LanguageCreate {
 	return lc
 }
 
-// SetNillableName sets the "name" field if the given value is not nil.
-func (lc *LanguageCreate) SetNillableName(s *string) *LanguageCreate {
-	if s != nil {
-		lc.SetName(*s)
-	}
-	return lc
-}
-
 // SetTalk sets the "talk" field.
 func (lc *LanguageCreate) SetTalk(s string) *LanguageCreate {
 	lc.mutation.SetTalk(s)
-	return lc
-}
-
-// SetNillableTalk sets the "talk" field if the given value is not nil.
-func (lc *LanguageCreate) SetNillableTalk(s *string) *LanguageCreate {
-	if s != nil {
-		lc.SetTalk(*s)
-	}
 	return lc
 }
 
@@ -52,25 +38,9 @@ func (lc *LanguageCreate) SetWrite(s string) *LanguageCreate {
 	return lc
 }
 
-// SetNillableWrite sets the "write" field if the given value is not nil.
-func (lc *LanguageCreate) SetNillableWrite(s *string) *LanguageCreate {
-	if s != nil {
-		lc.SetWrite(*s)
-	}
-	return lc
-}
-
 // SetRead sets the "read" field.
 func (lc *LanguageCreate) SetRead(s string) *LanguageCreate {
 	lc.mutation.SetRead(s)
-	return lc
-}
-
-// SetNillableRead sets the "read" field if the given value is not nil.
-func (lc *LanguageCreate) SetNillableRead(s *string) *LanguageCreate {
-	if s != nil {
-		lc.SetRead(*s)
-	}
 	return lc
 }
 
@@ -80,12 +50,19 @@ func (lc *LanguageCreate) SetListen(s string) *LanguageCreate {
 	return lc
 }
 
-// SetNillableListen sets the "listen" field if the given value is not nil.
-func (lc *LanguageCreate) SetNillableListen(s *string) *LanguageCreate {
-	if s != nil {
-		lc.SetListen(*s)
-	}
+// AddRegisterIDs adds the "register" edge to the Register entity by IDs.
+func (lc *LanguageCreate) AddRegisterIDs(ids ...int) *LanguageCreate {
+	lc.mutation.AddRegisterIDs(ids...)
 	return lc
+}
+
+// AddRegister adds the "register" edges to the Register entity.
+func (lc *LanguageCreate) AddRegister(r ...*Register) *LanguageCreate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return lc.AddRegisterIDs(ids...)
 }
 
 // Mutation returns the LanguageMutation object of the builder.
@@ -158,6 +135,21 @@ func (lc *LanguageCreate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (lc *LanguageCreate) check() error {
+	if _, ok := lc.mutation.Name(); !ok {
+		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Language.name"`)}
+	}
+	if _, ok := lc.mutation.Talk(); !ok {
+		return &ValidationError{Name: "talk", err: errors.New(`ent: missing required field "Language.talk"`)}
+	}
+	if _, ok := lc.mutation.Write(); !ok {
+		return &ValidationError{Name: "write", err: errors.New(`ent: missing required field "Language.write"`)}
+	}
+	if _, ok := lc.mutation.Read(); !ok {
+		return &ValidationError{Name: "read", err: errors.New(`ent: missing required field "Language.read"`)}
+	}
+	if _, ok := lc.mutation.Listen(); !ok {
+		return &ValidationError{Name: "listen", err: errors.New(`ent: missing required field "Language.listen"`)}
+	}
 	return nil
 }
 
@@ -191,7 +183,7 @@ func (lc *LanguageCreate) createSpec() (*Language, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: language.FieldName,
 		})
-		_node.Name = &value
+		_node.Name = value
 	}
 	if value, ok := lc.mutation.Talk(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -199,7 +191,7 @@ func (lc *LanguageCreate) createSpec() (*Language, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: language.FieldTalk,
 		})
-		_node.Talk = &value
+		_node.Talk = value
 	}
 	if value, ok := lc.mutation.Write(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -207,7 +199,7 @@ func (lc *LanguageCreate) createSpec() (*Language, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: language.FieldWrite,
 		})
-		_node.Write = &value
+		_node.Write = value
 	}
 	if value, ok := lc.mutation.Read(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -215,7 +207,7 @@ func (lc *LanguageCreate) createSpec() (*Language, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: language.FieldRead,
 		})
-		_node.Read = &value
+		_node.Read = value
 	}
 	if value, ok := lc.mutation.Listen(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -223,7 +215,26 @@ func (lc *LanguageCreate) createSpec() (*Language, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: language.FieldListen,
 		})
-		_node.Listen = &value
+		_node.Listen = value
+	}
+	if nodes := lc.mutation.RegisterIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   language.RegisterTable,
+			Columns: language.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

@@ -90,11 +90,11 @@ var (
 	// LanguagesColumns holds the columns for the "languages" table.
 	LanguagesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "name", Type: field.TypeString, Nullable: true},
-		{Name: "talk", Type: field.TypeString, Nullable: true},
-		{Name: "write", Type: field.TypeString, Nullable: true},
-		{Name: "read", Type: field.TypeString, Nullable: true},
-		{Name: "listen", Type: field.TypeString, Nullable: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "talk", Type: field.TypeString},
+		{Name: "write", Type: field.TypeString},
+		{Name: "read", Type: field.TypeString},
+		{Name: "listen", Type: field.TypeString},
 	}
 	// LanguagesTable holds the schema information for the "languages" table.
 	LanguagesTable = &schema.Table{
@@ -314,6 +314,31 @@ var (
 			},
 		},
 	}
+	// LanguageRegisterColumns holds the columns for the "language_register" table.
+	LanguageRegisterColumns = []*schema.Column{
+		{Name: "language_id", Type: field.TypeInt},
+		{Name: "register_id", Type: field.TypeInt},
+	}
+	// LanguageRegisterTable holds the schema information for the "language_register" table.
+	LanguageRegisterTable = &schema.Table{
+		Name:       "language_register",
+		Columns:    LanguageRegisterColumns,
+		PrimaryKey: []*schema.Column{LanguageRegisterColumns[0], LanguageRegisterColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "language_register_language_id",
+				Columns:    []*schema.Column{LanguageRegisterColumns[0]},
+				RefColumns: []*schema.Column{LanguagesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "language_register_register_id",
+				Columns:    []*schema.Column{LanguageRegisterColumns[1]},
+				RefColumns: []*schema.Column{RegistersColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// RegisterUserColumns holds the columns for the "register_user" table.
 	RegisterUserColumns = []*schema.Column{
 		{Name: "register_id", Type: field.TypeInt},
@@ -383,6 +408,7 @@ var (
 		BiodataRegisterTable,
 		EducationRegisterTable,
 		FamilyRegisterTable,
+		LanguageRegisterTable,
 		RegisterUserTable,
 		RegisterScholarshipTable,
 	}
@@ -397,6 +423,8 @@ func init() {
 	EducationRegisterTable.ForeignKeys[1].RefTable = RegistersTable
 	FamilyRegisterTable.ForeignKeys[0].RefTable = FamiliesTable
 	FamilyRegisterTable.ForeignKeys[1].RefTable = RegistersTable
+	LanguageRegisterTable.ForeignKeys[0].RefTable = LanguagesTable
+	LanguageRegisterTable.ForeignKeys[1].RefTable = RegistersTable
 	RegisterUserTable.ForeignKeys[0].RefTable = RegistersTable
 	RegisterUserTable.ForeignKeys[1].RefTable = UsersTable
 	RegisterScholarshipTable.ForeignKeys[0].RefTable = RegistersTable

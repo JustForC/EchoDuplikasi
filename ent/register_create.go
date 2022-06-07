@@ -7,6 +7,7 @@ import (
 	"Kynesia/ent/biodata"
 	"Kynesia/ent/education"
 	"Kynesia/ent/family"
+	"Kynesia/ent/language"
 	"Kynesia/ent/register"
 	"Kynesia/ent/scholarship"
 	"Kynesia/ent/user"
@@ -162,6 +163,21 @@ func (rc *RegisterCreate) AddFamily(f ...*Family) *RegisterCreate {
 		ids[i] = f[i].ID
 	}
 	return rc.AddFamilyIDs(ids...)
+}
+
+// AddLanguageIDs adds the "language" edge to the Language entity by IDs.
+func (rc *RegisterCreate) AddLanguageIDs(ids ...int) *RegisterCreate {
+	rc.mutation.AddLanguageIDs(ids...)
+	return rc
+}
+
+// AddLanguage adds the "language" edges to the Language entity.
+func (rc *RegisterCreate) AddLanguage(l ...*Language) *RegisterCreate {
+	ids := make([]int, len(l))
+	for i := range l {
+		ids[i] = l[i].ID
+	}
+	return rc.AddLanguageIDs(ids...)
 }
 
 // Mutation returns the RegisterMutation object of the builder.
@@ -414,6 +430,25 @@ func (rc *RegisterCreate) createSpec() (*Register, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: family.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := rc.mutation.LanguageIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.LanguageTable,
+			Columns: register.LanguagePrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: language.FieldID,
 				},
 			},
 		}

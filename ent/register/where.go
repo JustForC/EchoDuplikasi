@@ -656,6 +656,34 @@ func HasFamilyWith(preds ...predicate.Family) predicate.Register {
 	})
 }
 
+// HasLanguage applies the HasEdge predicate on the "language" edge.
+func HasLanguage() predicate.Register {
+	return predicate.Register(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(LanguageTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, LanguageTable, LanguagePrimaryKey...),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasLanguageWith applies the HasEdge predicate on the "language" edge with a given conditions (other predicates).
+func HasLanguageWith(preds ...predicate.Language) predicate.Register {
+	return predicate.Register(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(LanguageInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, LanguageTable, LanguagePrimaryKey...),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Register) predicate.Register {
 	return predicate.Register(func(s *sql.Selector) {

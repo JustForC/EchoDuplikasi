@@ -2,6 +2,8 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/dialect/entsql"
+	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
 
@@ -13,16 +15,19 @@ type Language struct {
 // Fields of the Language.
 func (Language) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("name").Optional().Nillable(),
-		field.String("talk").Optional().Nillable(),
-		field.String("write").Optional().Nillable(),
-		field.String("read").Optional().Nillable(),
-		field.String("listen").Optional().Nillable(),
+		field.String("name"),
+		field.String("talk"),
+		field.String("write"),
+		field.String("read"),
+		field.String("listen"),
 	}
 }
 
 // Edges of the Language.
 func (Language) Edges() []ent.Edge {
-	return nil
-	// return []ent.Edge{}
+	return []ent.Edge{
+		edge.To("register", Register.Type).Annotations(entsql.Annotation{
+			OnDelete: entsql.Cascade,
+		}),
+	}
 }
