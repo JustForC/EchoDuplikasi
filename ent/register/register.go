@@ -29,6 +29,8 @@ const (
 	EdgeFamily = "family"
 	// EdgeLanguage holds the string denoting the language edge name in mutations.
 	EdgeLanguage = "language"
+	// EdgeNetworth holds the string denoting the networth edge name in mutations.
+	EdgeNetworth = "networth"
 	// Table holds the table name of the register in the database.
 	Table = "registers"
 	// UserTable is the table that holds the user relation/edge. The primary key declared below.
@@ -66,6 +68,11 @@ const (
 	// LanguageInverseTable is the table name for the Language entity.
 	// It exists in this package in order to avoid circular dependency with the "language" package.
 	LanguageInverseTable = "languages"
+	// NetworthTable is the table that holds the networth relation/edge. The primary key declared below.
+	NetworthTable = "networth_register"
+	// NetworthInverseTable is the table name for the Networth entity.
+	// It exists in this package in order to avoid circular dependency with the "networth" package.
+	NetworthInverseTable = "networths"
 )
 
 // Columns holds all SQL columns for register fields.
@@ -99,6 +106,9 @@ var (
 	// LanguagePrimaryKey and LanguageColumn2 are the table columns denoting the
 	// primary key for the language relation (M2M).
 	LanguagePrimaryKey = []string{"language_id", "register_id"}
+	// NetworthPrimaryKey and NetworthColumn2 are the table columns denoting the
+	// primary key for the networth relation (M2M).
+	NetworthPrimaryKey = []string{"networth_id", "register_id"}
 )
 
 // ValidColumn reports if the column name is valid (part of the table columns).

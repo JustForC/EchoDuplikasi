@@ -339,6 +339,31 @@ var (
 			},
 		},
 	}
+	// NetworthRegisterColumns holds the columns for the "networth_register" table.
+	NetworthRegisterColumns = []*schema.Column{
+		{Name: "networth_id", Type: field.TypeInt},
+		{Name: "register_id", Type: field.TypeInt},
+	}
+	// NetworthRegisterTable holds the schema information for the "networth_register" table.
+	NetworthRegisterTable = &schema.Table{
+		Name:       "networth_register",
+		Columns:    NetworthRegisterColumns,
+		PrimaryKey: []*schema.Column{NetworthRegisterColumns[0], NetworthRegisterColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "networth_register_networth_id",
+				Columns:    []*schema.Column{NetworthRegisterColumns[0]},
+				RefColumns: []*schema.Column{NetworthsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "networth_register_register_id",
+				Columns:    []*schema.Column{NetworthRegisterColumns[1]},
+				RefColumns: []*schema.Column{RegistersColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// RegisterUserColumns holds the columns for the "register_user" table.
 	RegisterUserColumns = []*schema.Column{
 		{Name: "register_id", Type: field.TypeInt},
@@ -409,6 +434,7 @@ var (
 		EducationRegisterTable,
 		FamilyRegisterTable,
 		LanguageRegisterTable,
+		NetworthRegisterTable,
 		RegisterUserTable,
 		RegisterScholarshipTable,
 	}
@@ -425,6 +451,8 @@ func init() {
 	FamilyRegisterTable.ForeignKeys[1].RefTable = RegistersTable
 	LanguageRegisterTable.ForeignKeys[0].RefTable = LanguagesTable
 	LanguageRegisterTable.ForeignKeys[1].RefTable = RegistersTable
+	NetworthRegisterTable.ForeignKeys[0].RefTable = NetworthsTable
+	NetworthRegisterTable.ForeignKeys[1].RefTable = RegistersTable
 	RegisterUserTable.ForeignKeys[0].RefTable = RegistersTable
 	RegisterUserTable.ForeignKeys[1].RefTable = UsersTable
 	RegisterScholarshipTable.ForeignKeys[0].RefTable = RegistersTable

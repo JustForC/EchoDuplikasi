@@ -8,6 +8,7 @@ import (
 	"Kynesia/ent/education"
 	"Kynesia/ent/family"
 	"Kynesia/ent/language"
+	"Kynesia/ent/networth"
 	"Kynesia/ent/predicate"
 	"Kynesia/ent/register"
 	"Kynesia/ent/scholarship"
@@ -214,6 +215,21 @@ func (ru *RegisterUpdate) AddLanguage(l ...*Language) *RegisterUpdate {
 	return ru.AddLanguageIDs(ids...)
 }
 
+// AddNetworthIDs adds the "networth" edge to the Networth entity by IDs.
+func (ru *RegisterUpdate) AddNetworthIDs(ids ...int) *RegisterUpdate {
+	ru.mutation.AddNetworthIDs(ids...)
+	return ru
+}
+
+// AddNetworth adds the "networth" edges to the Networth entity.
+func (ru *RegisterUpdate) AddNetworth(n ...*Networth) *RegisterUpdate {
+	ids := make([]int, len(n))
+	for i := range n {
+		ids[i] = n[i].ID
+	}
+	return ru.AddNetworthIDs(ids...)
+}
+
 // Mutation returns the RegisterMutation object of the builder.
 func (ru *RegisterUpdate) Mutation() *RegisterMutation {
 	return ru.mutation
@@ -364,6 +380,27 @@ func (ru *RegisterUpdate) RemoveLanguage(l ...*Language) *RegisterUpdate {
 		ids[i] = l[i].ID
 	}
 	return ru.RemoveLanguageIDs(ids...)
+}
+
+// ClearNetworth clears all "networth" edges to the Networth entity.
+func (ru *RegisterUpdate) ClearNetworth() *RegisterUpdate {
+	ru.mutation.ClearNetworth()
+	return ru
+}
+
+// RemoveNetworthIDs removes the "networth" edge to Networth entities by IDs.
+func (ru *RegisterUpdate) RemoveNetworthIDs(ids ...int) *RegisterUpdate {
+	ru.mutation.RemoveNetworthIDs(ids...)
+	return ru
+}
+
+// RemoveNetworth removes "networth" edges to Networth entities.
+func (ru *RegisterUpdate) RemoveNetworth(n ...*Networth) *RegisterUpdate {
+	ids := make([]int, len(n))
+	for i := range n {
+		ids[i] = n[i].ID
+	}
+	return ru.RemoveNetworthIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -870,6 +907,60 @@ func (ru *RegisterUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if ru.mutation.NetworthCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.NetworthTable,
+			Columns: register.NetworthPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: networth.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ru.mutation.RemovedNetworthIDs(); len(nodes) > 0 && !ru.mutation.NetworthCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.NetworthTable,
+			Columns: register.NetworthPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: networth.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ru.mutation.NetworthIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.NetworthTable,
+			Columns: register.NetworthPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: networth.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, ru.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{register.Label}
@@ -1068,6 +1159,21 @@ func (ruo *RegisterUpdateOne) AddLanguage(l ...*Language) *RegisterUpdateOne {
 	return ruo.AddLanguageIDs(ids...)
 }
 
+// AddNetworthIDs adds the "networth" edge to the Networth entity by IDs.
+func (ruo *RegisterUpdateOne) AddNetworthIDs(ids ...int) *RegisterUpdateOne {
+	ruo.mutation.AddNetworthIDs(ids...)
+	return ruo
+}
+
+// AddNetworth adds the "networth" edges to the Networth entity.
+func (ruo *RegisterUpdateOne) AddNetworth(n ...*Networth) *RegisterUpdateOne {
+	ids := make([]int, len(n))
+	for i := range n {
+		ids[i] = n[i].ID
+	}
+	return ruo.AddNetworthIDs(ids...)
+}
+
 // Mutation returns the RegisterMutation object of the builder.
 func (ruo *RegisterUpdateOne) Mutation() *RegisterMutation {
 	return ruo.mutation
@@ -1218,6 +1324,27 @@ func (ruo *RegisterUpdateOne) RemoveLanguage(l ...*Language) *RegisterUpdateOne 
 		ids[i] = l[i].ID
 	}
 	return ruo.RemoveLanguageIDs(ids...)
+}
+
+// ClearNetworth clears all "networth" edges to the Networth entity.
+func (ruo *RegisterUpdateOne) ClearNetworth() *RegisterUpdateOne {
+	ruo.mutation.ClearNetworth()
+	return ruo
+}
+
+// RemoveNetworthIDs removes the "networth" edge to Networth entities by IDs.
+func (ruo *RegisterUpdateOne) RemoveNetworthIDs(ids ...int) *RegisterUpdateOne {
+	ruo.mutation.RemoveNetworthIDs(ids...)
+	return ruo
+}
+
+// RemoveNetworth removes "networth" edges to Networth entities.
+func (ruo *RegisterUpdateOne) RemoveNetworth(n ...*Networth) *RegisterUpdateOne {
+	ids := make([]int, len(n))
+	for i := range n {
+		ids[i] = n[i].ID
+	}
+	return ruo.RemoveNetworthIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -1740,6 +1867,60 @@ func (ruo *RegisterUpdateOne) sqlSave(ctx context.Context) (_node *Register, err
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: language.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ruo.mutation.NetworthCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.NetworthTable,
+			Columns: register.NetworthPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: networth.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ruo.mutation.RemovedNetworthIDs(); len(nodes) > 0 && !ruo.mutation.NetworthCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.NetworthTable,
+			Columns: register.NetworthPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: networth.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ruo.mutation.NetworthIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.NetworthTable,
+			Columns: register.NetworthPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: networth.FieldID,
 				},
 			},
 		}

@@ -45,9 +45,11 @@ type RegisterEdges struct {
 	Family []*Family `json:"family,omitempty"`
 	// Language holds the value of the language edge.
 	Language []*Language `json:"language,omitempty"`
+	// Networth holds the value of the networth edge.
+	Networth []*Networth `json:"networth,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [7]bool
+	loadedTypes [8]bool
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -111,6 +113,15 @@ func (e RegisterEdges) LanguageOrErr() ([]*Language, error) {
 		return e.Language, nil
 	}
 	return nil, &NotLoadedError{edge: "language"}
+}
+
+// NetworthOrErr returns the Networth value or an error if the edge
+// was not loaded in eager-loading.
+func (e RegisterEdges) NetworthOrErr() ([]*Networth, error) {
+	if e.loadedTypes[7] {
+		return e.Networth, nil
+	}
+	return nil, &NotLoadedError{edge: "networth"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -209,6 +220,11 @@ func (r *Register) QueryFamily() *FamilyQuery {
 // QueryLanguage queries the "language" edge of the Register entity.
 func (r *Register) QueryLanguage() *LanguageQuery {
 	return (&RegisterClient{config: r.config}).QueryLanguage(r)
+}
+
+// QueryNetworth queries the "networth" edge of the Register entity.
+func (r *Register) QueryNetworth() *NetworthQuery {
+	return (&RegisterClient{config: r.config}).QueryNetworth(r)
 }
 
 // Update returns a builder for updating this Register.

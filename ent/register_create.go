@@ -8,6 +8,7 @@ import (
 	"Kynesia/ent/education"
 	"Kynesia/ent/family"
 	"Kynesia/ent/language"
+	"Kynesia/ent/networth"
 	"Kynesia/ent/register"
 	"Kynesia/ent/scholarship"
 	"Kynesia/ent/user"
@@ -178,6 +179,21 @@ func (rc *RegisterCreate) AddLanguage(l ...*Language) *RegisterCreate {
 		ids[i] = l[i].ID
 	}
 	return rc.AddLanguageIDs(ids...)
+}
+
+// AddNetworthIDs adds the "networth" edge to the Networth entity by IDs.
+func (rc *RegisterCreate) AddNetworthIDs(ids ...int) *RegisterCreate {
+	rc.mutation.AddNetworthIDs(ids...)
+	return rc
+}
+
+// AddNetworth adds the "networth" edges to the Networth entity.
+func (rc *RegisterCreate) AddNetworth(n ...*Networth) *RegisterCreate {
+	ids := make([]int, len(n))
+	for i := range n {
+		ids[i] = n[i].ID
+	}
+	return rc.AddNetworthIDs(ids...)
 }
 
 // Mutation returns the RegisterMutation object of the builder.
@@ -449,6 +465,25 @@ func (rc *RegisterCreate) createSpec() (*Register, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: language.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := rc.mutation.NetworthIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.NetworthTable,
+			Columns: register.NetworthPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: networth.FieldID,
 				},
 			},
 		}

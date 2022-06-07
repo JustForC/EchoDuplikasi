@@ -822,6 +822,22 @@ func (c *NetworthClient) GetX(ctx context.Context, id int) *Networth {
 	return obj
 }
 
+// QueryRegister queries the register edge of a Networth.
+func (c *NetworthClient) QueryRegister(n *Networth) *RegisterQuery {
+	query := &RegisterQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := n.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(networth.Table, networth.FieldID, id),
+			sqlgraph.To(register.Table, register.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, networth.RegisterTable, networth.RegisterPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(n.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *NetworthClient) Hooks() []Hook {
 	return c.hooks.Networth
@@ -1107,6 +1123,22 @@ func (c *RegisterClient) QueryLanguage(r *Register) *LanguageQuery {
 			sqlgraph.From(register.Table, register.FieldID, id),
 			sqlgraph.To(language.Table, language.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, true, register.LanguageTable, register.LanguagePrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(r.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryNetworth queries the networth edge of a Register.
+func (c *RegisterClient) QueryNetworth(r *Register) *NetworthQuery {
+	query := &NetworthQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := r.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(register.Table, register.FieldID, id),
+			sqlgraph.To(networth.Table, networth.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, register.NetworthTable, register.NetworthPrimaryKey...),
 		)
 		fromV = sqlgraph.Neighbors(r.driver.Dialect(), step)
 		return fromV, nil

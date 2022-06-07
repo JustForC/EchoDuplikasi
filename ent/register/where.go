@@ -684,6 +684,34 @@ func HasLanguageWith(preds ...predicate.Language) predicate.Register {
 	})
 }
 
+// HasNetworth applies the HasEdge predicate on the "networth" edge.
+func HasNetworth() predicate.Register {
+	return predicate.Register(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(NetworthTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, NetworthTable, NetworthPrimaryKey...),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasNetworthWith applies the HasEdge predicate on the "networth" edge with a given conditions (other predicates).
+func HasNetworthWith(preds ...predicate.Networth) predicate.Register {
+	return predicate.Register(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(NetworthInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, NetworthTable, NetworthPrimaryKey...),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Register) predicate.Register {
 	return predicate.Register(func(s *sql.Selector) {

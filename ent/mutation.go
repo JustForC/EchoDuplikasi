@@ -4239,15 +4239,18 @@ func (m *LanguageMutation) ResetEdge(name string) error {
 // NetworthMutation represents an operation that mutates the Networth nodes in the graph.
 type NetworthMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *int
-	value         *int64
-	addvalue      *int64
-	clearedFields map[string]struct{}
-	done          bool
-	oldValue      func(context.Context) (*Networth, error)
-	predicates    []predicate.Networth
+	op              Op
+	typ             string
+	id              *int
+	value           *int64
+	addvalue        *int64
+	clearedFields   map[string]struct{}
+	register        map[int]struct{}
+	removedregister map[int]struct{}
+	clearedregister bool
+	done            bool
+	oldValue        func(context.Context) (*Networth, error)
+	predicates      []predicate.Networth
 }
 
 var _ ent.Mutation = (*NetworthMutation)(nil)
@@ -4404,6 +4407,60 @@ func (m *NetworthMutation) ResetValue() {
 	m.addvalue = nil
 }
 
+// AddRegisterIDs adds the "register" edge to the Register entity by ids.
+func (m *NetworthMutation) AddRegisterIDs(ids ...int) {
+	if m.register == nil {
+		m.register = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.register[ids[i]] = struct{}{}
+	}
+}
+
+// ClearRegister clears the "register" edge to the Register entity.
+func (m *NetworthMutation) ClearRegister() {
+	m.clearedregister = true
+}
+
+// RegisterCleared reports if the "register" edge to the Register entity was cleared.
+func (m *NetworthMutation) RegisterCleared() bool {
+	return m.clearedregister
+}
+
+// RemoveRegisterIDs removes the "register" edge to the Register entity by IDs.
+func (m *NetworthMutation) RemoveRegisterIDs(ids ...int) {
+	if m.removedregister == nil {
+		m.removedregister = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.register, ids[i])
+		m.removedregister[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedRegister returns the removed IDs of the "register" edge to the Register entity.
+func (m *NetworthMutation) RemovedRegisterIDs() (ids []int) {
+	for id := range m.removedregister {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// RegisterIDs returns the "register" edge IDs in the mutation.
+func (m *NetworthMutation) RegisterIDs() (ids []int) {
+	for id := range m.register {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetRegister resets all changes to the "register" edge.
+func (m *NetworthMutation) ResetRegister() {
+	m.register = nil
+	m.clearedregister = false
+	m.removedregister = nil
+}
+
 // Where appends a list predicates to the NetworthMutation builder.
 func (m *NetworthMutation) Where(ps ...predicate.Networth) {
 	m.predicates = append(m.predicates, ps...)
@@ -4537,49 +4594,85 @@ func (m *NetworthMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *NetworthMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.register != nil {
+		edges = append(edges, networth.EdgeRegister)
+	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
 func (m *NetworthMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case networth.EdgeRegister:
+		ids := make([]ent.Value, 0, len(m.register))
+		for id := range m.register {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *NetworthMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.removedregister != nil {
+		edges = append(edges, networth.EdgeRegister)
+	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *NetworthMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case networth.EdgeRegister:
+		ids := make([]ent.Value, 0, len(m.removedregister))
+		for id := range m.removedregister {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *NetworthMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.clearedregister {
+		edges = append(edges, networth.EdgeRegister)
+	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
 func (m *NetworthMutation) EdgeCleared(name string) bool {
+	switch name {
+	case networth.EdgeRegister:
+		return m.clearedregister
+	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *NetworthMutation) ClearEdge(name string) error {
+	switch name {
+	}
 	return fmt.Errorf("unknown Networth unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *NetworthMutation) ResetEdge(name string) error {
+	switch name {
+	case networth.EdgeRegister:
+		m.ResetRegister()
+		return nil
+	}
 	return fmt.Errorf("unknown Networth edge %s", name)
 }
 
@@ -5169,6 +5262,9 @@ type RegisterMutation struct {
 	language           map[int]struct{}
 	removedlanguage    map[int]struct{}
 	clearedlanguage    bool
+	networth           map[int]struct{}
+	removednetworth    map[int]struct{}
+	clearednetworth    bool
 	done               bool
 	oldValue           func(context.Context) (*Register, error)
 	predicates         []predicate.Register
@@ -5860,6 +5956,60 @@ func (m *RegisterMutation) ResetLanguage() {
 	m.removedlanguage = nil
 }
 
+// AddNetworthIDs adds the "networth" edge to the Networth entity by ids.
+func (m *RegisterMutation) AddNetworthIDs(ids ...int) {
+	if m.networth == nil {
+		m.networth = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.networth[ids[i]] = struct{}{}
+	}
+}
+
+// ClearNetworth clears the "networth" edge to the Networth entity.
+func (m *RegisterMutation) ClearNetworth() {
+	m.clearednetworth = true
+}
+
+// NetworthCleared reports if the "networth" edge to the Networth entity was cleared.
+func (m *RegisterMutation) NetworthCleared() bool {
+	return m.clearednetworth
+}
+
+// RemoveNetworthIDs removes the "networth" edge to the Networth entity by IDs.
+func (m *RegisterMutation) RemoveNetworthIDs(ids ...int) {
+	if m.removednetworth == nil {
+		m.removednetworth = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.networth, ids[i])
+		m.removednetworth[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedNetworth returns the removed IDs of the "networth" edge to the Networth entity.
+func (m *RegisterMutation) RemovedNetworthIDs() (ids []int) {
+	for id := range m.removednetworth {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// NetworthIDs returns the "networth" edge IDs in the mutation.
+func (m *RegisterMutation) NetworthIDs() (ids []int) {
+	for id := range m.networth {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetNetworth resets all changes to the "networth" edge.
+func (m *RegisterMutation) ResetNetworth() {
+	m.networth = nil
+	m.clearednetworth = false
+	m.removednetworth = nil
+}
+
 // Where appends a list predicates to the RegisterMutation builder.
 func (m *RegisterMutation) Where(ps ...predicate.Register) {
 	m.predicates = append(m.predicates, ps...)
@@ -6071,7 +6221,7 @@ func (m *RegisterMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *RegisterMutation) AddedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 8)
 	if m.user != nil {
 		edges = append(edges, register.EdgeUser)
 	}
@@ -6092,6 +6242,9 @@ func (m *RegisterMutation) AddedEdges() []string {
 	}
 	if m.language != nil {
 		edges = append(edges, register.EdgeLanguage)
+	}
+	if m.networth != nil {
+		edges = append(edges, register.EdgeNetworth)
 	}
 	return edges
 }
@@ -6142,13 +6295,19 @@ func (m *RegisterMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case register.EdgeNetworth:
+		ids := make([]ent.Value, 0, len(m.networth))
+		for id := range m.networth {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *RegisterMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 8)
 	if m.removeduser != nil {
 		edges = append(edges, register.EdgeUser)
 	}
@@ -6169,6 +6328,9 @@ func (m *RegisterMutation) RemovedEdges() []string {
 	}
 	if m.removedlanguage != nil {
 		edges = append(edges, register.EdgeLanguage)
+	}
+	if m.removednetworth != nil {
+		edges = append(edges, register.EdgeNetworth)
 	}
 	return edges
 }
@@ -6219,13 +6381,19 @@ func (m *RegisterMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case register.EdgeNetworth:
+		ids := make([]ent.Value, 0, len(m.removednetworth))
+		for id := range m.removednetworth {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *RegisterMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 8)
 	if m.cleareduser {
 		edges = append(edges, register.EdgeUser)
 	}
@@ -6246,6 +6414,9 @@ func (m *RegisterMutation) ClearedEdges() []string {
 	}
 	if m.clearedlanguage {
 		edges = append(edges, register.EdgeLanguage)
+	}
+	if m.clearednetworth {
+		edges = append(edges, register.EdgeNetworth)
 	}
 	return edges
 }
@@ -6268,6 +6439,8 @@ func (m *RegisterMutation) EdgeCleared(name string) bool {
 		return m.clearedfamily
 	case register.EdgeLanguage:
 		return m.clearedlanguage
+	case register.EdgeNetworth:
+		return m.clearednetworth
 	}
 	return false
 }
@@ -6304,6 +6477,9 @@ func (m *RegisterMutation) ResetEdge(name string) error {
 		return nil
 	case register.EdgeLanguage:
 		m.ResetLanguage()
+		return nil
+	case register.EdgeNetworth:
+		m.ResetNetworth()
 		return nil
 	}
 	return fmt.Errorf("unknown Register edge %s", name)

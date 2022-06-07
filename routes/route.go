@@ -35,6 +35,7 @@ func Init() *echo.Echo {
 	eduCont := controllers.NewEducationController(db)
 	famCont := controllers.NewFamilyController(db)
 	langCont := controllers.NewLanguageController(db)
+	netCont := controllers.NewNetworthController(db)
 
 	// Buat Context kosong
 	ctx := context.Background()
@@ -101,6 +102,13 @@ func Init() *echo.Echo {
 	language.GET("/:id", langCont.ReadByID)
 	language.PUT("/:id", langCont.Update)
 	language.DELETE("/:id", langCont.Delete)
+
+	networth := e.Group("/networth")
+	networth.POST("", netCont.Create)
+	networth.GET("", netCont.ReadAll)
+	networth.GET("/:id", netCont.ReadByID)
+	networth.PUT("/:id", netCont.Update)
+	networth.DELETE("/:id", netCont.Delete)
 
 	return e
 }

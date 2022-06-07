@@ -5,6 +5,7 @@ package ent
 import (
 	"Kynesia/ent/networth"
 	"Kynesia/ent/predicate"
+	"Kynesia/ent/register"
 	"context"
 	"errors"
 	"fmt"
@@ -40,9 +41,45 @@ func (nu *NetworthUpdate) AddValue(i int64) *NetworthUpdate {
 	return nu
 }
 
+// AddRegisterIDs adds the "register" edge to the Register entity by IDs.
+func (nu *NetworthUpdate) AddRegisterIDs(ids ...int) *NetworthUpdate {
+	nu.mutation.AddRegisterIDs(ids...)
+	return nu
+}
+
+// AddRegister adds the "register" edges to the Register entity.
+func (nu *NetworthUpdate) AddRegister(r ...*Register) *NetworthUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return nu.AddRegisterIDs(ids...)
+}
+
 // Mutation returns the NetworthMutation object of the builder.
 func (nu *NetworthUpdate) Mutation() *NetworthMutation {
 	return nu.mutation
+}
+
+// ClearRegister clears all "register" edges to the Register entity.
+func (nu *NetworthUpdate) ClearRegister() *NetworthUpdate {
+	nu.mutation.ClearRegister()
+	return nu
+}
+
+// RemoveRegisterIDs removes the "register" edge to Register entities by IDs.
+func (nu *NetworthUpdate) RemoveRegisterIDs(ids ...int) *NetworthUpdate {
+	nu.mutation.RemoveRegisterIDs(ids...)
+	return nu
+}
+
+// RemoveRegister removes "register" edges to Register entities.
+func (nu *NetworthUpdate) RemoveRegister(r ...*Register) *NetworthUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return nu.RemoveRegisterIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -131,6 +168,60 @@ func (nu *NetworthUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: networth.FieldValue,
 		})
 	}
+	if nu.mutation.RegisterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   networth.RegisterTable,
+			Columns: networth.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := nu.mutation.RemovedRegisterIDs(); len(nodes) > 0 && !nu.mutation.RegisterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   networth.RegisterTable,
+			Columns: networth.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := nu.mutation.RegisterIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   networth.RegisterTable,
+			Columns: networth.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, nu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{networth.Label}
@@ -163,9 +254,45 @@ func (nuo *NetworthUpdateOne) AddValue(i int64) *NetworthUpdateOne {
 	return nuo
 }
 
+// AddRegisterIDs adds the "register" edge to the Register entity by IDs.
+func (nuo *NetworthUpdateOne) AddRegisterIDs(ids ...int) *NetworthUpdateOne {
+	nuo.mutation.AddRegisterIDs(ids...)
+	return nuo
+}
+
+// AddRegister adds the "register" edges to the Register entity.
+func (nuo *NetworthUpdateOne) AddRegister(r ...*Register) *NetworthUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return nuo.AddRegisterIDs(ids...)
+}
+
 // Mutation returns the NetworthMutation object of the builder.
 func (nuo *NetworthUpdateOne) Mutation() *NetworthMutation {
 	return nuo.mutation
+}
+
+// ClearRegister clears all "register" edges to the Register entity.
+func (nuo *NetworthUpdateOne) ClearRegister() *NetworthUpdateOne {
+	nuo.mutation.ClearRegister()
+	return nuo
+}
+
+// RemoveRegisterIDs removes the "register" edge to Register entities by IDs.
+func (nuo *NetworthUpdateOne) RemoveRegisterIDs(ids ...int) *NetworthUpdateOne {
+	nuo.mutation.RemoveRegisterIDs(ids...)
+	return nuo
+}
+
+// RemoveRegister removes "register" edges to Register entities.
+func (nuo *NetworthUpdateOne) RemoveRegister(r ...*Register) *NetworthUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return nuo.RemoveRegisterIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -277,6 +404,60 @@ func (nuo *NetworthUpdateOne) sqlSave(ctx context.Context) (_node *Networth, err
 			Value:  value,
 			Column: networth.FieldValue,
 		})
+	}
+	if nuo.mutation.RegisterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   networth.RegisterTable,
+			Columns: networth.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := nuo.mutation.RemovedRegisterIDs(); len(nodes) > 0 && !nuo.mutation.RegisterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   networth.RegisterTable,
+			Columns: networth.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := nuo.mutation.RegisterIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   networth.RegisterTable,
+			Columns: networth.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &Networth{config: nuo.config}
 	_spec.Assign = _node.assignValues

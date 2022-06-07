@@ -4,6 +4,7 @@ package ent
 
 import (
 	"Kynesia/ent/networth"
+	"Kynesia/ent/register"
 	"context"
 	"errors"
 	"fmt"
@@ -23,6 +24,21 @@ type NetworthCreate struct {
 func (nc *NetworthCreate) SetValue(i int64) *NetworthCreate {
 	nc.mutation.SetValue(i)
 	return nc
+}
+
+// AddRegisterIDs adds the "register" edge to the Register entity by IDs.
+func (nc *NetworthCreate) AddRegisterIDs(ids ...int) *NetworthCreate {
+	nc.mutation.AddRegisterIDs(ids...)
+	return nc
+}
+
+// AddRegister adds the "register" edges to the Register entity.
+func (nc *NetworthCreate) AddRegister(r ...*Register) *NetworthCreate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return nc.AddRegisterIDs(ids...)
 }
 
 // Mutation returns the NetworthMutation object of the builder.
@@ -132,6 +148,25 @@ func (nc *NetworthCreate) createSpec() (*Networth, *sqlgraph.CreateSpec) {
 			Column: networth.FieldValue,
 		})
 		_node.Value = value
+	}
+	if nodes := nc.mutation.RegisterIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   networth.RegisterTable,
+			Columns: networth.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }
