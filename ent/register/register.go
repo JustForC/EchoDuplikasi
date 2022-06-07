@@ -25,6 +25,8 @@ const (
 	EdgeBiodata = "biodata"
 	// EdgeEducation holds the string denoting the education edge name in mutations.
 	EdgeEducation = "education"
+	// EdgeFamily holds the string denoting the family edge name in mutations.
+	EdgeFamily = "family"
 	// Table holds the table name of the register in the database.
 	Table = "registers"
 	// UserTable is the table that holds the user relation/edge. The primary key declared below.
@@ -52,6 +54,11 @@ const (
 	// EducationInverseTable is the table name for the Education entity.
 	// It exists in this package in order to avoid circular dependency with the "education" package.
 	EducationInverseTable = "educations"
+	// FamilyTable is the table that holds the family relation/edge. The primary key declared below.
+	FamilyTable = "family_register"
+	// FamilyInverseTable is the table name for the Family entity.
+	// It exists in this package in order to avoid circular dependency with the "family" package.
+	FamilyInverseTable = "families"
 )
 
 // Columns holds all SQL columns for register fields.
@@ -79,6 +86,9 @@ var (
 	// EducationPrimaryKey and EducationColumn2 are the table columns denoting the
 	// primary key for the education relation (M2M).
 	EducationPrimaryKey = []string{"education_id", "register_id"}
+	// FamilyPrimaryKey and FamilyColumn2 are the table columns denoting the
+	// primary key for the family relation (M2M).
+	FamilyPrimaryKey = []string{"family_id", "register_id"}
 )
 
 // ValidColumn reports if the column name is valid (part of the table columns).

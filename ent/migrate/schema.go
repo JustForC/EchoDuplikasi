@@ -79,7 +79,7 @@ var (
 		{Name: "birthplace", Type: field.TypeString},
 		{Name: "birthdate", Type: field.TypeTime},
 		{Name: "education", Type: field.TypeString},
-		{Name: "job", Type: field.TypeString, Default: "-"},
+		{Name: "job", Type: field.TypeString},
 	}
 	// FamiliesTable holds the schema information for the "families" table.
 	FamiliesTable = &schema.Table{
@@ -289,6 +289,31 @@ var (
 			},
 		},
 	}
+	// FamilyRegisterColumns holds the columns for the "family_register" table.
+	FamilyRegisterColumns = []*schema.Column{
+		{Name: "family_id", Type: field.TypeInt},
+		{Name: "register_id", Type: field.TypeInt},
+	}
+	// FamilyRegisterTable holds the schema information for the "family_register" table.
+	FamilyRegisterTable = &schema.Table{
+		Name:       "family_register",
+		Columns:    FamilyRegisterColumns,
+		PrimaryKey: []*schema.Column{FamilyRegisterColumns[0], FamilyRegisterColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "family_register_family_id",
+				Columns:    []*schema.Column{FamilyRegisterColumns[0]},
+				RefColumns: []*schema.Column{FamiliesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "family_register_register_id",
+				Columns:    []*schema.Column{FamilyRegisterColumns[1]},
+				RefColumns: []*schema.Column{RegistersColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// RegisterUserColumns holds the columns for the "register_user" table.
 	RegisterUserColumns = []*schema.Column{
 		{Name: "register_id", Type: field.TypeInt},
@@ -357,6 +382,7 @@ var (
 		AchievementRegisterTable,
 		BiodataRegisterTable,
 		EducationRegisterTable,
+		FamilyRegisterTable,
 		RegisterUserTable,
 		RegisterScholarshipTable,
 	}
@@ -369,6 +395,8 @@ func init() {
 	BiodataRegisterTable.ForeignKeys[1].RefTable = RegistersTable
 	EducationRegisterTable.ForeignKeys[0].RefTable = EducationsTable
 	EducationRegisterTable.ForeignKeys[1].RefTable = RegistersTable
+	FamilyRegisterTable.ForeignKeys[0].RefTable = FamiliesTable
+	FamilyRegisterTable.ForeignKeys[1].RefTable = RegistersTable
 	RegisterUserTable.ForeignKeys[0].RefTable = RegistersTable
 	RegisterUserTable.ForeignKeys[1].RefTable = UsersTable
 	RegisterScholarshipTable.ForeignKeys[0].RefTable = RegistersTable

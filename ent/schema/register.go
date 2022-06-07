@@ -34,5 +34,6 @@ func (Register) Edges() []ent.Edge {
 		edge.From("achievement", Achievement.Type).Ref("register"),
 		edge.From("biodata", Biodata.Type).Ref("register"),
 		edge.From("education", Education.Type).Ref("register"),
+		edge.From("family", Family.Type).Ref("register"),
 	}
 }

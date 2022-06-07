@@ -5,6 +5,7 @@ package ent
 import (
 	"Kynesia/ent/family"
 	"Kynesia/ent/predicate"
+	"Kynesia/ent/register"
 	"context"
 	"errors"
 	"fmt"
@@ -70,17 +71,45 @@ func (fu *FamilyUpdate) SetJob(s string) *FamilyUpdate {
 	return fu
 }
 
-// SetNillableJob sets the "job" field if the given value is not nil.
-func (fu *FamilyUpdate) SetNillableJob(s *string) *FamilyUpdate {
-	if s != nil {
-		fu.SetJob(*s)
-	}
+// AddRegisterIDs adds the "register" edge to the Register entity by IDs.
+func (fu *FamilyUpdate) AddRegisterIDs(ids ...int) *FamilyUpdate {
+	fu.mutation.AddRegisterIDs(ids...)
 	return fu
+}
+
+// AddRegister adds the "register" edges to the Register entity.
+func (fu *FamilyUpdate) AddRegister(r ...*Register) *FamilyUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return fu.AddRegisterIDs(ids...)
 }
 
 // Mutation returns the FamilyMutation object of the builder.
 func (fu *FamilyUpdate) Mutation() *FamilyMutation {
 	return fu.mutation
+}
+
+// ClearRegister clears all "register" edges to the Register entity.
+func (fu *FamilyUpdate) ClearRegister() *FamilyUpdate {
+	fu.mutation.ClearRegister()
+	return fu
+}
+
+// RemoveRegisterIDs removes the "register" edge to Register entities by IDs.
+func (fu *FamilyUpdate) RemoveRegisterIDs(ids ...int) *FamilyUpdate {
+	fu.mutation.RemoveRegisterIDs(ids...)
+	return fu
+}
+
+// RemoveRegister removes "register" edges to Register entities.
+func (fu *FamilyUpdate) RemoveRegister(r ...*Register) *FamilyUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return fu.RemoveRegisterIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -204,6 +233,60 @@ func (fu *FamilyUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: family.FieldJob,
 		})
 	}
+	if fu.mutation.RegisterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   family.RegisterTable,
+			Columns: family.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := fu.mutation.RemovedRegisterIDs(); len(nodes) > 0 && !fu.mutation.RegisterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   family.RegisterTable,
+			Columns: family.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := fu.mutation.RegisterIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   family.RegisterTable,
+			Columns: family.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, fu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{family.Label}
@@ -265,17 +348,45 @@ func (fuo *FamilyUpdateOne) SetJob(s string) *FamilyUpdateOne {
 	return fuo
 }
 
-// SetNillableJob sets the "job" field if the given value is not nil.
-func (fuo *FamilyUpdateOne) SetNillableJob(s *string) *FamilyUpdateOne {
-	if s != nil {
-		fuo.SetJob(*s)
-	}
+// AddRegisterIDs adds the "register" edge to the Register entity by IDs.
+func (fuo *FamilyUpdateOne) AddRegisterIDs(ids ...int) *FamilyUpdateOne {
+	fuo.mutation.AddRegisterIDs(ids...)
 	return fuo
+}
+
+// AddRegister adds the "register" edges to the Register entity.
+func (fuo *FamilyUpdateOne) AddRegister(r ...*Register) *FamilyUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return fuo.AddRegisterIDs(ids...)
 }
 
 // Mutation returns the FamilyMutation object of the builder.
 func (fuo *FamilyUpdateOne) Mutation() *FamilyMutation {
 	return fuo.mutation
+}
+
+// ClearRegister clears all "register" edges to the Register entity.
+func (fuo *FamilyUpdateOne) ClearRegister() *FamilyUpdateOne {
+	fuo.mutation.ClearRegister()
+	return fuo
+}
+
+// RemoveRegisterIDs removes the "register" edge to Register entities by IDs.
+func (fuo *FamilyUpdateOne) RemoveRegisterIDs(ids ...int) *FamilyUpdateOne {
+	fuo.mutation.RemoveRegisterIDs(ids...)
+	return fuo
+}
+
+// RemoveRegister removes "register" edges to Register entities.
+func (fuo *FamilyUpdateOne) RemoveRegister(r ...*Register) *FamilyUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return fuo.RemoveRegisterIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -422,6 +533,60 @@ func (fuo *FamilyUpdateOne) sqlSave(ctx context.Context) (_node *Family, err err
 			Value:  value,
 			Column: family.FieldJob,
 		})
+	}
+	if fuo.mutation.RegisterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   family.RegisterTable,
+			Columns: family.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := fuo.mutation.RemovedRegisterIDs(); len(nodes) > 0 && !fuo.mutation.RegisterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   family.RegisterTable,
+			Columns: family.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := fuo.mutation.RegisterIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   family.RegisterTable,
+			Columns: family.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &Family{config: fuo.config}
 	_spec.Assign = _node.assignValues

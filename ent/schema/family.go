@@ -2,6 +2,8 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/dialect/entsql"
+	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
 
@@ -19,12 +21,15 @@ func (Family) Fields() []ent.Field {
 		field.String("birthplace"),
 		field.Time("birthdate"),
 		field.String("education"),
-		field.String("job").Default("-"),
+		field.String("job"),
 	}
 }
 
 // Edges of the Family.
 func (Family) Edges() []ent.Edge {
-	return nil
-	// return []ent.Edge{}
+	return []ent.Edge{
+		edge.To("register", Register.Type).Annotations(entsql.Annotation{
+			OnDelete: entsql.Cascade,
+		}),
+	}
 }

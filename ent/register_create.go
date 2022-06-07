@@ -6,6 +6,7 @@ import (
 	"Kynesia/ent/achievement"
 	"Kynesia/ent/biodata"
 	"Kynesia/ent/education"
+	"Kynesia/ent/family"
 	"Kynesia/ent/register"
 	"Kynesia/ent/scholarship"
 	"Kynesia/ent/user"
@@ -146,6 +147,21 @@ func (rc *RegisterCreate) AddEducation(e ...*Education) *RegisterCreate {
 		ids[i] = e[i].ID
 	}
 	return rc.AddEducationIDs(ids...)
+}
+
+// AddFamilyIDs adds the "family" edge to the Family entity by IDs.
+func (rc *RegisterCreate) AddFamilyIDs(ids ...int) *RegisterCreate {
+	rc.mutation.AddFamilyIDs(ids...)
+	return rc
+}
+
+// AddFamily adds the "family" edges to the Family entity.
+func (rc *RegisterCreate) AddFamily(f ...*Family) *RegisterCreate {
+	ids := make([]int, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return rc.AddFamilyIDs(ids...)
 }
 
 // Mutation returns the RegisterMutation object of the builder.
@@ -379,6 +395,25 @@ func (rc *RegisterCreate) createSpec() (*Register, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: education.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := rc.mutation.FamilyIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.FamilyTable,
+			Columns: register.FamilyPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: family.FieldID,
 				},
 			},
 		}

@@ -41,9 +41,11 @@ type RegisterEdges struct {
 	Biodata []*Biodata `json:"biodata,omitempty"`
 	// Education holds the value of the education edge.
 	Education []*Education `json:"education,omitempty"`
+	// Family holds the value of the family edge.
+	Family []*Family `json:"family,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [5]bool
+	loadedTypes [6]bool
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -89,6 +91,15 @@ func (e RegisterEdges) EducationOrErr() ([]*Education, error) {
 		return e.Education, nil
 	}
 	return nil, &NotLoadedError{edge: "education"}
+}
+
+// FamilyOrErr returns the Family value or an error if the edge
+// was not loaded in eager-loading.
+func (e RegisterEdges) FamilyOrErr() ([]*Family, error) {
+	if e.loadedTypes[5] {
+		return e.Family, nil
+	}
+	return nil, &NotLoadedError{edge: "family"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -177,6 +188,11 @@ func (r *Register) QueryBiodata() *BiodataQuery {
 // QueryEducation queries the "education" edge of the Register entity.
 func (r *Register) QueryEducation() *EducationQuery {
 	return (&RegisterClient{config: r.config}).QueryEducation(r)
+}
+
+// QueryFamily queries the "family" edge of the Register entity.
+func (r *Register) QueryFamily() *FamilyQuery {
+	return (&RegisterClient{config: r.config}).QueryFamily(r)
 }
 
 // Update returns a builder for updating this Register.

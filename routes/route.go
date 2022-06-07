@@ -30,6 +30,7 @@ func Init() *echo.Echo {
 	achievCont := controllers.NewAchievementController(db)
 	bioCont := controllers.NewBiodataController(db)
 	eduCont := controllers.NewEducationController(db)
+	famCont := controllers.NewFamilyController(db)
 
 	// Buat Context kosong
 	ctx := context.Background()
@@ -69,7 +70,7 @@ func Init() *echo.Echo {
 	achievement.PUT("/:id", achievCont.Update)
 	achievement.DELETE("/:id", achievCont.Delete)
 
-	biodata := e.Group("/achievement")
+	biodata := e.Group("/biodata")
 	biodata.POST("", bioCont.Create)
 	biodata.GET("", bioCont.ReadAll)
 	biodata.GET("/:id", bioCont.ReadByID)
@@ -82,6 +83,13 @@ func Init() *echo.Echo {
 	education.GET("/:id", eduCont.ReadByID)
 	education.PUT("/:id", eduCont.Update)
 	education.DELETE(":/id", eduCont.Delete)
+
+	family := e.Group("/family")
+	family.POST("", famCont.Create)
+	family.GET("", famCont.ReadAll)
+	family.GET("/:id", famCont.ReadByID)
+	family.PUT("/:id", famCont.Update)
+	family.DELETE("/:id", famCont.Delete)
 
 	return e
 }

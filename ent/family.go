@@ -30,6 +30,27 @@ type Family struct {
 	Education string `json:"education,omitempty"`
 	// Job holds the value of the "job" field.
 	Job string `json:"job,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the FamilyQuery when eager-loading is set.
+	Edges FamilyEdges `json:"edges"`
+}
+
+// FamilyEdges holds the relations/edges for other nodes in the graph.
+type FamilyEdges struct {
+	// Register holds the value of the register edge.
+	Register []*Register `json:"register,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [1]bool
+}
+
+// RegisterOrErr returns the Register value or an error if the edge
+// was not loaded in eager-loading.
+func (e FamilyEdges) RegisterOrErr() ([]*Register, error) {
+	if e.loadedTypes[0] {
+		return e.Register, nil
+	}
+	return nil, &NotLoadedError{edge: "register"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -109,6 +130,11 @@ func (f *Family) assignValues(columns []string, values []interface{}) error {
 		}
 	}
 	return nil
+}
+
+// QueryRegister queries the "register" edge of the Family entity.
+func (f *Family) QueryRegister() *RegisterQuery {
+	return (&FamilyClient{config: f.config}).QueryRegister(f)
 }
 
 // Update returns a builder for updating this Family.

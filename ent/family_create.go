@@ -4,6 +4,7 @@ package ent
 
 import (
 	"Kynesia/ent/family"
+	"Kynesia/ent/register"
 	"context"
 	"errors"
 	"fmt"
@@ -62,12 +63,19 @@ func (fc *FamilyCreate) SetJob(s string) *FamilyCreate {
 	return fc
 }
 
-// SetNillableJob sets the "job" field if the given value is not nil.
-func (fc *FamilyCreate) SetNillableJob(s *string) *FamilyCreate {
-	if s != nil {
-		fc.SetJob(*s)
-	}
+// AddRegisterIDs adds the "register" edge to the Register entity by IDs.
+func (fc *FamilyCreate) AddRegisterIDs(ids ...int) *FamilyCreate {
+	fc.mutation.AddRegisterIDs(ids...)
 	return fc
+}
+
+// AddRegister adds the "register" edges to the Register entity.
+func (fc *FamilyCreate) AddRegister(r ...*Register) *FamilyCreate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return fc.AddRegisterIDs(ids...)
 }
 
 // Mutation returns the FamilyMutation object of the builder.
@@ -81,7 +89,6 @@ func (fc *FamilyCreate) Save(ctx context.Context) (*Family, error) {
 		err  error
 		node *Family
 	)
-	fc.defaults()
 	if len(fc.hooks) == 0 {
 		if err = fc.check(); err != nil {
 			return nil, err
@@ -136,14 +143,6 @@ func (fc *FamilyCreate) Exec(ctx context.Context) error {
 func (fc *FamilyCreate) ExecX(ctx context.Context) {
 	if err := fc.Exec(ctx); err != nil {
 		panic(err)
-	}
-}
-
-// defaults sets the default values of the builder before save.
-func (fc *FamilyCreate) defaults() {
-	if _, ok := fc.mutation.Job(); !ok {
-		v := family.DefaultJob
-		fc.mutation.SetJob(v)
 	}
 }
 
@@ -253,6 +252,25 @@ func (fc *FamilyCreate) createSpec() (*Family, *sqlgraph.CreateSpec) {
 		})
 		_node.Job = value
 	}
+	if nodes := fc.mutation.RegisterIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   family.RegisterTable,
+			Columns: family.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
 	return _node, _spec
 }
 
@@ -270,7 +288,6 @@ func (fcb *FamilyCreateBulk) Save(ctx context.Context) ([]*Family, error) {
 	for i := range fcb.builders {
 		func(i int, root context.Context) {
 			builder := fcb.builders[i]
-			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*FamilyMutation)
 				if !ok {

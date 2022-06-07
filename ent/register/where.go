@@ -628,6 +628,34 @@ func HasEducationWith(preds ...predicate.Education) predicate.Register {
 	})
 }
 
+// HasFamily applies the HasEdge predicate on the "family" edge.
+func HasFamily() predicate.Register {
+	return predicate.Register(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(FamilyTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, FamilyTable, FamilyPrimaryKey...),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasFamilyWith applies the HasEdge predicate on the "family" edge with a given conditions (other predicates).
+func HasFamilyWith(preds ...predicate.Family) predicate.Register {
+	return predicate.Register(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(FamilyInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, FamilyTable, FamilyPrimaryKey...),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Register) predicate.Register {
 	return predicate.Register(func(s *sql.Selector) {

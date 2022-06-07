@@ -610,6 +610,22 @@ func (c *FamilyClient) GetX(ctx context.Context, id int) *Family {
 	return obj
 }
 
+// QueryRegister queries the register edge of a Family.
+func (c *FamilyClient) QueryRegister(f *Family) *RegisterQuery {
+	query := &RegisterQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := f.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(family.Table, family.FieldID, id),
+			sqlgraph.To(register.Table, register.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, family.RegisterTable, family.RegisterPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(f.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *FamilyClient) Hooks() []Hook {
 	return c.hooks.Family
@@ -1043,6 +1059,22 @@ func (c *RegisterClient) QueryEducation(r *Register) *EducationQuery {
 			sqlgraph.From(register.Table, register.FieldID, id),
 			sqlgraph.To(education.Table, education.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, true, register.EducationTable, register.EducationPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(r.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryFamily queries the family edge of a Register.
+func (c *RegisterClient) QueryFamily(r *Register) *FamilyQuery {
+	query := &FamilyQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := r.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(register.Table, register.FieldID, id),
+			sqlgraph.To(family.Table, family.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, register.FamilyTable, register.FamilyPrimaryKey...),
 		)
 		fromV = sqlgraph.Neighbors(r.driver.Dialect(), step)
 		return fromV, nil

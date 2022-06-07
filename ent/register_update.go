@@ -6,6 +6,7 @@ import (
 	"Kynesia/ent/achievement"
 	"Kynesia/ent/biodata"
 	"Kynesia/ent/education"
+	"Kynesia/ent/family"
 	"Kynesia/ent/predicate"
 	"Kynesia/ent/register"
 	"Kynesia/ent/scholarship"
@@ -182,6 +183,21 @@ func (ru *RegisterUpdate) AddEducation(e ...*Education) *RegisterUpdate {
 	return ru.AddEducationIDs(ids...)
 }
 
+// AddFamilyIDs adds the "family" edge to the Family entity by IDs.
+func (ru *RegisterUpdate) AddFamilyIDs(ids ...int) *RegisterUpdate {
+	ru.mutation.AddFamilyIDs(ids...)
+	return ru
+}
+
+// AddFamily adds the "family" edges to the Family entity.
+func (ru *RegisterUpdate) AddFamily(f ...*Family) *RegisterUpdate {
+	ids := make([]int, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return ru.AddFamilyIDs(ids...)
+}
+
 // Mutation returns the RegisterMutation object of the builder.
 func (ru *RegisterUpdate) Mutation() *RegisterMutation {
 	return ru.mutation
@@ -290,6 +306,27 @@ func (ru *RegisterUpdate) RemoveEducation(e ...*Education) *RegisterUpdate {
 		ids[i] = e[i].ID
 	}
 	return ru.RemoveEducationIDs(ids...)
+}
+
+// ClearFamily clears all "family" edges to the Family entity.
+func (ru *RegisterUpdate) ClearFamily() *RegisterUpdate {
+	ru.mutation.ClearFamily()
+	return ru
+}
+
+// RemoveFamilyIDs removes the "family" edge to Family entities by IDs.
+func (ru *RegisterUpdate) RemoveFamilyIDs(ids ...int) *RegisterUpdate {
+	ru.mutation.RemoveFamilyIDs(ids...)
+	return ru
+}
+
+// RemoveFamily removes "family" edges to Family entities.
+func (ru *RegisterUpdate) RemoveFamily(f ...*Family) *RegisterUpdate {
+	ids := make([]int, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return ru.RemoveFamilyIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -688,6 +725,60 @@ func (ru *RegisterUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if ru.mutation.FamilyCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.FamilyTable,
+			Columns: register.FamilyPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: family.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ru.mutation.RemovedFamilyIDs(); len(nodes) > 0 && !ru.mutation.FamilyCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.FamilyTable,
+			Columns: register.FamilyPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: family.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ru.mutation.FamilyIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.FamilyTable,
+			Columns: register.FamilyPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: family.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, ru.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{register.Label}
@@ -856,6 +947,21 @@ func (ruo *RegisterUpdateOne) AddEducation(e ...*Education) *RegisterUpdateOne {
 	return ruo.AddEducationIDs(ids...)
 }
 
+// AddFamilyIDs adds the "family" edge to the Family entity by IDs.
+func (ruo *RegisterUpdateOne) AddFamilyIDs(ids ...int) *RegisterUpdateOne {
+	ruo.mutation.AddFamilyIDs(ids...)
+	return ruo
+}
+
+// AddFamily adds the "family" edges to the Family entity.
+func (ruo *RegisterUpdateOne) AddFamily(f ...*Family) *RegisterUpdateOne {
+	ids := make([]int, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return ruo.AddFamilyIDs(ids...)
+}
+
 // Mutation returns the RegisterMutation object of the builder.
 func (ruo *RegisterUpdateOne) Mutation() *RegisterMutation {
 	return ruo.mutation
@@ -964,6 +1070,27 @@ func (ruo *RegisterUpdateOne) RemoveEducation(e ...*Education) *RegisterUpdateOn
 		ids[i] = e[i].ID
 	}
 	return ruo.RemoveEducationIDs(ids...)
+}
+
+// ClearFamily clears all "family" edges to the Family entity.
+func (ruo *RegisterUpdateOne) ClearFamily() *RegisterUpdateOne {
+	ruo.mutation.ClearFamily()
+	return ruo
+}
+
+// RemoveFamilyIDs removes the "family" edge to Family entities by IDs.
+func (ruo *RegisterUpdateOne) RemoveFamilyIDs(ids ...int) *RegisterUpdateOne {
+	ruo.mutation.RemoveFamilyIDs(ids...)
+	return ruo
+}
+
+// RemoveFamily removes "family" edges to Family entities.
+func (ruo *RegisterUpdateOne) RemoveFamily(f ...*Family) *RegisterUpdateOne {
+	ids := make([]int, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return ruo.RemoveFamilyIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -1378,6 +1505,60 @@ func (ruo *RegisterUpdateOne) sqlSave(ctx context.Context) (_node *Register, err
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: education.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ruo.mutation.FamilyCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.FamilyTable,
+			Columns: register.FamilyPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: family.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ruo.mutation.RemovedFamilyIDs(); len(nodes) > 0 && !ruo.mutation.FamilyCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.FamilyTable,
+			Columns: register.FamilyPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: family.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ruo.mutation.FamilyIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.FamilyTable,
+			Columns: register.FamilyPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: family.FieldID,
 				},
 			},
 		}
