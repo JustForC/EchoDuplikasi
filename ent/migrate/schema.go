@@ -264,6 +264,31 @@ var (
 			},
 		},
 	}
+	// EducationRegisterColumns holds the columns for the "education_register" table.
+	EducationRegisterColumns = []*schema.Column{
+		{Name: "education_id", Type: field.TypeInt},
+		{Name: "register_id", Type: field.TypeInt},
+	}
+	// EducationRegisterTable holds the schema information for the "education_register" table.
+	EducationRegisterTable = &schema.Table{
+		Name:       "education_register",
+		Columns:    EducationRegisterColumns,
+		PrimaryKey: []*schema.Column{EducationRegisterColumns[0], EducationRegisterColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "education_register_education_id",
+				Columns:    []*schema.Column{EducationRegisterColumns[0]},
+				RefColumns: []*schema.Column{EducationsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "education_register_register_id",
+				Columns:    []*schema.Column{EducationRegisterColumns[1]},
+				RefColumns: []*schema.Column{RegistersColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// RegisterUserColumns holds the columns for the "register_user" table.
 	RegisterUserColumns = []*schema.Column{
 		{Name: "register_id", Type: field.TypeInt},
@@ -331,6 +356,7 @@ var (
 		UsersTable,
 		AchievementRegisterTable,
 		BiodataRegisterTable,
+		EducationRegisterTable,
 		RegisterUserTable,
 		RegisterScholarshipTable,
 	}
@@ -341,6 +367,8 @@ func init() {
 	AchievementRegisterTable.ForeignKeys[1].RefTable = RegistersTable
 	BiodataRegisterTable.ForeignKeys[0].RefTable = BiodataTable
 	BiodataRegisterTable.ForeignKeys[1].RefTable = RegistersTable
+	EducationRegisterTable.ForeignKeys[0].RefTable = EducationsTable
+	EducationRegisterTable.ForeignKeys[1].RefTable = RegistersTable
 	RegisterUserTable.ForeignKeys[0].RefTable = RegistersTable
 	RegisterUserTable.ForeignKeys[1].RefTable = UsersTable
 	RegisterScholarshipTable.ForeignKeys[0].RefTable = RegistersTable

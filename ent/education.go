@@ -27,6 +27,27 @@ type Education struct {
 	Enter string `json:"enter,omitempty"`
 	// Graduate holds the value of the "graduate" field.
 	Graduate string `json:"graduate,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the EducationQuery when eager-loading is set.
+	Edges EducationEdges `json:"edges"`
+}
+
+// EducationEdges holds the relations/edges for other nodes in the graph.
+type EducationEdges struct {
+	// Register holds the value of the register edge.
+	Register []*Register `json:"register,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [1]bool
+}
+
+// RegisterOrErr returns the Register value or an error if the edge
+// was not loaded in eager-loading.
+func (e EducationEdges) RegisterOrErr() ([]*Register, error) {
+	if e.loadedTypes[0] {
+		return e.Register, nil
+	}
+	return nil, &NotLoadedError{edge: "register"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -98,6 +119,11 @@ func (e *Education) assignValues(columns []string, values []interface{}) error {
 		}
 	}
 	return nil
+}
+
+// QueryRegister queries the "register" edge of the Education entity.
+func (e *Education) QueryRegister() *RegisterQuery {
+	return (&EducationClient{config: e.config}).QueryRegister(e)
 }
 
 // Update returns a builder for updating this Education.

@@ -5,6 +5,7 @@ package ent
 import (
 	"Kynesia/ent/education"
 	"Kynesia/ent/predicate"
+	"Kynesia/ent/register"
 	"context"
 	"errors"
 	"fmt"
@@ -63,9 +64,45 @@ func (eu *EducationUpdate) SetGraduate(s string) *EducationUpdate {
 	return eu
 }
 
+// AddRegisterIDs adds the "register" edge to the Register entity by IDs.
+func (eu *EducationUpdate) AddRegisterIDs(ids ...int) *EducationUpdate {
+	eu.mutation.AddRegisterIDs(ids...)
+	return eu
+}
+
+// AddRegister adds the "register" edges to the Register entity.
+func (eu *EducationUpdate) AddRegister(r ...*Register) *EducationUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return eu.AddRegisterIDs(ids...)
+}
+
 // Mutation returns the EducationMutation object of the builder.
 func (eu *EducationUpdate) Mutation() *EducationMutation {
 	return eu.mutation
+}
+
+// ClearRegister clears all "register" edges to the Register entity.
+func (eu *EducationUpdate) ClearRegister() *EducationUpdate {
+	eu.mutation.ClearRegister()
+	return eu
+}
+
+// RemoveRegisterIDs removes the "register" edge to Register entities by IDs.
+func (eu *EducationUpdate) RemoveRegisterIDs(ids ...int) *EducationUpdate {
+	eu.mutation.RemoveRegisterIDs(ids...)
+	return eu
+}
+
+// RemoveRegister removes "register" edges to Register entities.
+func (eu *EducationUpdate) RemoveRegister(r ...*Register) *EducationUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return eu.RemoveRegisterIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -182,6 +219,60 @@ func (eu *EducationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: education.FieldGraduate,
 		})
 	}
+	if eu.mutation.RegisterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   education.RegisterTable,
+			Columns: education.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := eu.mutation.RemovedRegisterIDs(); len(nodes) > 0 && !eu.mutation.RegisterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   education.RegisterTable,
+			Columns: education.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := eu.mutation.RegisterIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   education.RegisterTable,
+			Columns: education.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, eu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{education.Label}
@@ -237,9 +328,45 @@ func (euo *EducationUpdateOne) SetGraduate(s string) *EducationUpdateOne {
 	return euo
 }
 
+// AddRegisterIDs adds the "register" edge to the Register entity by IDs.
+func (euo *EducationUpdateOne) AddRegisterIDs(ids ...int) *EducationUpdateOne {
+	euo.mutation.AddRegisterIDs(ids...)
+	return euo
+}
+
+// AddRegister adds the "register" edges to the Register entity.
+func (euo *EducationUpdateOne) AddRegister(r ...*Register) *EducationUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return euo.AddRegisterIDs(ids...)
+}
+
 // Mutation returns the EducationMutation object of the builder.
 func (euo *EducationUpdateOne) Mutation() *EducationMutation {
 	return euo.mutation
+}
+
+// ClearRegister clears all "register" edges to the Register entity.
+func (euo *EducationUpdateOne) ClearRegister() *EducationUpdateOne {
+	euo.mutation.ClearRegister()
+	return euo
+}
+
+// RemoveRegisterIDs removes the "register" edge to Register entities by IDs.
+func (euo *EducationUpdateOne) RemoveRegisterIDs(ids ...int) *EducationUpdateOne {
+	euo.mutation.RemoveRegisterIDs(ids...)
+	return euo
+}
+
+// RemoveRegister removes "register" edges to Register entities.
+func (euo *EducationUpdateOne) RemoveRegister(r ...*Register) *EducationUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return euo.RemoveRegisterIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -379,6 +506,60 @@ func (euo *EducationUpdateOne) sqlSave(ctx context.Context) (_node *Education, e
 			Value:  value,
 			Column: education.FieldGraduate,
 		})
+	}
+	if euo.mutation.RegisterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   education.RegisterTable,
+			Columns: education.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := euo.mutation.RemovedRegisterIDs(); len(nodes) > 0 && !euo.mutation.RegisterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   education.RegisterTable,
+			Columns: education.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := euo.mutation.RegisterIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   education.RegisterTable,
+			Columns: education.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &Education{config: euo.config}
 	_spec.Assign = _node.assignValues

@@ -5,7 +5,9 @@ package ent
 import (
 	"Kynesia/ent/education"
 	"Kynesia/ent/predicate"
+	"Kynesia/ent/register"
 	"context"
+	"database/sql/driver"
 	"errors"
 	"fmt"
 	"math"
@@ -24,6 +26,8 @@ type EducationQuery struct {
 	order      []OrderFunc
 	fields     []string
 	predicates []predicate.Education
+	// eager-loading edges.
+	withRegister *RegisterQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -58,6 +62,28 @@ func (eq *EducationQuery) Unique(unique bool) *EducationQuery {
 func (eq *EducationQuery) Order(o ...OrderFunc) *EducationQuery {
 	eq.order = append(eq.order, o...)
 	return eq
+}
+
+// QueryRegister chains the current query on the "register" edge.
+func (eq *EducationQuery) QueryRegister() *RegisterQuery {
+	query := &RegisterQuery{config: eq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := eq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := eq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(education.Table, education.FieldID, selector),
+			sqlgraph.To(register.Table, register.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, education.RegisterTable, education.RegisterPrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(eq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
 }
 
 // First returns the first Education entity from the query.
@@ -236,16 +262,28 @@ func (eq *EducationQuery) Clone() *EducationQuery {
 		return nil
 	}
 	return &EducationQuery{
-		config:     eq.config,
-		limit:      eq.limit,
-		offset:     eq.offset,
-		order:      append([]OrderFunc{}, eq.order...),
-		predicates: append([]predicate.Education{}, eq.predicates...),
+		config:       eq.config,
+		limit:        eq.limit,
+		offset:       eq.offset,
+		order:        append([]OrderFunc{}, eq.order...),
+		predicates:   append([]predicate.Education{}, eq.predicates...),
+		withRegister: eq.withRegister.Clone(),
 		// clone intermediate query.
 		sql:    eq.sql.Clone(),
 		path:   eq.path,
 		unique: eq.unique,
 	}
+}
+
+// WithRegister tells the query-builder to eager-load the nodes that are connected to
+// the "register" edge. The optional arguments are used to configure the query builder of the edge.
+func (eq *EducationQuery) WithRegister(opts ...func(*RegisterQuery)) *EducationQuery {
+	query := &RegisterQuery{config: eq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	eq.withRegister = query
+	return eq
 }
 
 // GroupBy is used to group vertices by one or more fields/columns.
@@ -311,8 +349,11 @@ func (eq *EducationQuery) prepareQuery(ctx context.Context) error {
 
 func (eq *EducationQuery) sqlAll(ctx context.Context) ([]*Education, error) {
 	var (
-		nodes = []*Education{}
-		_spec = eq.querySpec()
+		nodes       = []*Education{}
+		_spec       = eq.querySpec()
+		loadedTypes = [1]bool{
+			eq.withRegister != nil,
+		}
 	)
 	_spec.ScanValues = func(columns []string) ([]interface{}, error) {
 		node := &Education{config: eq.config}
@@ -324,6 +365,7 @@ func (eq *EducationQuery) sqlAll(ctx context.Context) ([]*Education, error) {
 			return fmt.Errorf("ent: Assign called without calling ScanValues")
 		}
 		node := nodes[len(nodes)-1]
+		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
 	if err := sqlgraph.QueryNodes(ctx, eq.driver, _spec); err != nil {
@@ -332,6 +374,72 @@ func (eq *EducationQuery) sqlAll(ctx context.Context) ([]*Education, error) {
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+
+	if query := eq.withRegister; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		ids := make(map[int]*Education, len(nodes))
+		for _, node := range nodes {
+			ids[node.ID] = node
+			fks = append(fks, node.ID)
+			node.Edges.Register = []*Register{}
+		}
+		var (
+			edgeids []int
+			edges   = make(map[int][]*Education)
+		)
+		_spec := &sqlgraph.EdgeQuerySpec{
+			Edge: &sqlgraph.EdgeSpec{
+				Inverse: false,
+				Table:   education.RegisterTable,
+				Columns: education.RegisterPrimaryKey,
+			},
+			Predicate: func(s *sql.Selector) {
+				s.Where(sql.InValues(education.RegisterPrimaryKey[0], fks...))
+			},
+			ScanValues: func() [2]interface{} {
+				return [2]interface{}{new(sql.NullInt64), new(sql.NullInt64)}
+			},
+			Assign: func(out, in interface{}) error {
+				eout, ok := out.(*sql.NullInt64)
+				if !ok || eout == nil {
+					return fmt.Errorf("unexpected id value for edge-out")
+				}
+				ein, ok := in.(*sql.NullInt64)
+				if !ok || ein == nil {
+					return fmt.Errorf("unexpected id value for edge-in")
+				}
+				outValue := int(eout.Int64)
+				inValue := int(ein.Int64)
+				node, ok := ids[outValue]
+				if !ok {
+					return fmt.Errorf("unexpected node id in edges: %v", outValue)
+				}
+				if _, ok := edges[inValue]; !ok {
+					edgeids = append(edgeids, inValue)
+				}
+				edges[inValue] = append(edges[inValue], node)
+				return nil
+			},
+		}
+		if err := sqlgraph.QueryEdges(ctx, eq.driver, _spec); err != nil {
+			return nil, fmt.Errorf(`query edges "register": %w`, err)
+		}
+		query.Where(register.IDIn(edgeids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := edges[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected "register" node returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.Register = append(nodes[i].Edges.Register, n)
+			}
+		}
+	}
+
 	return nodes, nil
 }
 

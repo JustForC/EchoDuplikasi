@@ -5,6 +5,7 @@ package ent
 import (
 	"Kynesia/ent/achievement"
 	"Kynesia/ent/biodata"
+	"Kynesia/ent/education"
 	"Kynesia/ent/predicate"
 	"Kynesia/ent/register"
 	"Kynesia/ent/scholarship"
@@ -34,6 +35,7 @@ type RegisterQuery struct {
 	withScholarship *ScholarshipQuery
 	withAchievement *AchievementQuery
 	withBiodata     *BiodataQuery
+	withEducation   *EducationQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -151,6 +153,28 @@ func (rq *RegisterQuery) QueryBiodata() *BiodataQuery {
 			sqlgraph.From(register.Table, register.FieldID, selector),
 			sqlgraph.To(biodata.Table, biodata.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, true, register.BiodataTable, register.BiodataPrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(rq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryEducation chains the current query on the "education" edge.
+func (rq *RegisterQuery) QueryEducation() *EducationQuery {
+	query := &EducationQuery{config: rq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := rq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := rq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(register.Table, register.FieldID, selector),
+			sqlgraph.To(education.Table, education.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, register.EducationTable, register.EducationPrimaryKey...),
 		)
 		fromU = sqlgraph.SetNeighbors(rq.driver.Dialect(), step)
 		return fromU, nil
@@ -343,6 +367,7 @@ func (rq *RegisterQuery) Clone() *RegisterQuery {
 		withScholarship: rq.withScholarship.Clone(),
 		withAchievement: rq.withAchievement.Clone(),
 		withBiodata:     rq.withBiodata.Clone(),
+		withEducation:   rq.withEducation.Clone(),
 		// clone intermediate query.
 		sql:    rq.sql.Clone(),
 		path:   rq.path,
@@ -391,6 +416,17 @@ func (rq *RegisterQuery) WithBiodata(opts ...func(*BiodataQuery)) *RegisterQuery
 		opt(query)
 	}
 	rq.withBiodata = query
+	return rq
+}
+
+// WithEducation tells the query-builder to eager-load the nodes that are connected to
+// the "education" edge. The optional arguments are used to configure the query builder of the edge.
+func (rq *RegisterQuery) WithEducation(opts ...func(*EducationQuery)) *RegisterQuery {
+	query := &EducationQuery{config: rq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	rq.withEducation = query
 	return rq
 }
 
@@ -459,11 +495,12 @@ func (rq *RegisterQuery) sqlAll(ctx context.Context) ([]*Register, error) {
 	var (
 		nodes       = []*Register{}
 		_spec       = rq.querySpec()
-		loadedTypes = [4]bool{
+		loadedTypes = [5]bool{
 			rq.withUser != nil,
 			rq.withScholarship != nil,
 			rq.withAchievement != nil,
 			rq.withBiodata != nil,
+			rq.withEducation != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]interface{}, error) {
@@ -742,6 +779,71 @@ func (rq *RegisterQuery) sqlAll(ctx context.Context) ([]*Register, error) {
 			}
 			for i := range nodes {
 				nodes[i].Edges.Biodata = append(nodes[i].Edges.Biodata, n)
+			}
+		}
+	}
+
+	if query := rq.withEducation; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		ids := make(map[int]*Register, len(nodes))
+		for _, node := range nodes {
+			ids[node.ID] = node
+			fks = append(fks, node.ID)
+			node.Edges.Education = []*Education{}
+		}
+		var (
+			edgeids []int
+			edges   = make(map[int][]*Register)
+		)
+		_spec := &sqlgraph.EdgeQuerySpec{
+			Edge: &sqlgraph.EdgeSpec{
+				Inverse: true,
+				Table:   register.EducationTable,
+				Columns: register.EducationPrimaryKey,
+			},
+			Predicate: func(s *sql.Selector) {
+				s.Where(sql.InValues(register.EducationPrimaryKey[1], fks...))
+			},
+			ScanValues: func() [2]interface{} {
+				return [2]interface{}{new(sql.NullInt64), new(sql.NullInt64)}
+			},
+			Assign: func(out, in interface{}) error {
+				eout, ok := out.(*sql.NullInt64)
+				if !ok || eout == nil {
+					return fmt.Errorf("unexpected id value for edge-out")
+				}
+				ein, ok := in.(*sql.NullInt64)
+				if !ok || ein == nil {
+					return fmt.Errorf("unexpected id value for edge-in")
+				}
+				outValue := int(eout.Int64)
+				inValue := int(ein.Int64)
+				node, ok := ids[outValue]
+				if !ok {
+					return fmt.Errorf("unexpected node id in edges: %v", outValue)
+				}
+				if _, ok := edges[inValue]; !ok {
+					edgeids = append(edgeids, inValue)
+				}
+				edges[inValue] = append(edges[inValue], node)
+				return nil
+			},
+		}
+		if err := sqlgraph.QueryEdges(ctx, rq.driver, _spec); err != nil {
+			return nil, fmt.Errorf(`query edges "education": %w`, err)
+		}
+		query.Where(education.IDIn(edgeids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := edges[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected "education" node returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.Education = append(nodes[i].Edges.Education, n)
 			}
 		}
 	}

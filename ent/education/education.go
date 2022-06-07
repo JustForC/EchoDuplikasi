@@ -19,8 +19,15 @@ const (
 	FieldEnter = "enter"
 	// FieldGraduate holds the string denoting the graduate field in the database.
 	FieldGraduate = "graduate"
+	// EdgeRegister holds the string denoting the register edge name in mutations.
+	EdgeRegister = "register"
 	// Table holds the table name of the education in the database.
 	Table = "educations"
+	// RegisterTable is the table that holds the register relation/edge. The primary key declared below.
+	RegisterTable = "education_register"
+	// RegisterInverseTable is the table name for the Register entity.
+	// It exists in this package in order to avoid circular dependency with the "register" package.
+	RegisterInverseTable = "registers"
 )
 
 // Columns holds all SQL columns for education fields.
@@ -33,6 +40,12 @@ var Columns = []string{
 	FieldEnter,
 	FieldGraduate,
 }
+
+var (
+	// RegisterPrimaryKey and RegisterColumn2 are the table columns denoting the
+	// primary key for the register relation (M2M).
+	RegisterPrimaryKey = []string{"education_id", "register_id"}
+)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {

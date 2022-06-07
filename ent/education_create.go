@@ -4,6 +4,7 @@ package ent
 
 import (
 	"Kynesia/ent/education"
+	"Kynesia/ent/register"
 	"context"
 	"errors"
 	"fmt"
@@ -53,6 +54,21 @@ func (ec *EducationCreate) SetEnter(s string) *EducationCreate {
 func (ec *EducationCreate) SetGraduate(s string) *EducationCreate {
 	ec.mutation.SetGraduate(s)
 	return ec
+}
+
+// AddRegisterIDs adds the "register" edge to the Register entity by IDs.
+func (ec *EducationCreate) AddRegisterIDs(ids ...int) *EducationCreate {
+	ec.mutation.AddRegisterIDs(ids...)
+	return ec
+}
+
+// AddRegister adds the "register" edges to the Register entity.
+func (ec *EducationCreate) AddRegister(r ...*Register) *EducationCreate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return ec.AddRegisterIDs(ids...)
 }
 
 // Mutation returns the EducationMutation object of the builder.
@@ -217,6 +233,25 @@ func (ec *EducationCreate) createSpec() (*Education, *sqlgraph.CreateSpec) {
 			Column: education.FieldGraduate,
 		})
 		_node.Graduate = value
+	}
+	if nodes := ec.mutation.RegisterIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   education.RegisterTable,
+			Columns: education.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

@@ -504,6 +504,22 @@ func (c *EducationClient) GetX(ctx context.Context, id int) *Education {
 	return obj
 }
 
+// QueryRegister queries the register edge of a Education.
+func (c *EducationClient) QueryRegister(e *Education) *RegisterQuery {
+	query := &RegisterQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := e.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(education.Table, education.FieldID, id),
+			sqlgraph.To(register.Table, register.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, education.RegisterTable, education.RegisterPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(e.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *EducationClient) Hooks() []Hook {
 	return c.hooks.Education
@@ -1011,6 +1027,22 @@ func (c *RegisterClient) QueryBiodata(r *Register) *BiodataQuery {
 			sqlgraph.From(register.Table, register.FieldID, id),
 			sqlgraph.To(biodata.Table, biodata.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, true, register.BiodataTable, register.BiodataPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(r.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryEducation queries the education edge of a Register.
+func (c *RegisterClient) QueryEducation(r *Register) *EducationQuery {
+	query := &EducationQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := r.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(register.Table, register.FieldID, id),
+			sqlgraph.To(education.Table, education.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, register.EducationTable, register.EducationPrimaryKey...),
 		)
 		fromV = sqlgraph.Neighbors(r.driver.Dialect(), step)
 		return fromV, nil

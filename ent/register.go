@@ -39,9 +39,11 @@ type RegisterEdges struct {
 	Achievement []*Achievement `json:"achievement,omitempty"`
 	// Biodata holds the value of the biodata edge.
 	Biodata []*Biodata `json:"biodata,omitempty"`
+	// Education holds the value of the education edge.
+	Education []*Education `json:"education,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [4]bool
+	loadedTypes [5]bool
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -78,6 +80,15 @@ func (e RegisterEdges) BiodataOrErr() ([]*Biodata, error) {
 		return e.Biodata, nil
 	}
 	return nil, &NotLoadedError{edge: "biodata"}
+}
+
+// EducationOrErr returns the Education value or an error if the edge
+// was not loaded in eager-loading.
+func (e RegisterEdges) EducationOrErr() ([]*Education, error) {
+	if e.loadedTypes[4] {
+		return e.Education, nil
+	}
+	return nil, &NotLoadedError{edge: "education"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -161,6 +172,11 @@ func (r *Register) QueryAchievement() *AchievementQuery {
 // QueryBiodata queries the "biodata" edge of the Register entity.
 func (r *Register) QueryBiodata() *BiodataQuery {
 	return (&RegisterClient{config: r.config}).QueryBiodata(r)
+}
+
+// QueryEducation queries the "education" edge of the Register entity.
+func (r *Register) QueryEducation() *EducationQuery {
+	return (&RegisterClient{config: r.config}).QueryEducation(r)
 }
 
 // Update returns a builder for updating this Register.

@@ -5,6 +5,7 @@ package ent
 import (
 	"Kynesia/ent/achievement"
 	"Kynesia/ent/biodata"
+	"Kynesia/ent/education"
 	"Kynesia/ent/predicate"
 	"Kynesia/ent/register"
 	"Kynesia/ent/scholarship"
@@ -166,6 +167,21 @@ func (ru *RegisterUpdate) AddBiodata(b ...*Biodata) *RegisterUpdate {
 	return ru.AddBiodatumIDs(ids...)
 }
 
+// AddEducationIDs adds the "education" edge to the Education entity by IDs.
+func (ru *RegisterUpdate) AddEducationIDs(ids ...int) *RegisterUpdate {
+	ru.mutation.AddEducationIDs(ids...)
+	return ru
+}
+
+// AddEducation adds the "education" edges to the Education entity.
+func (ru *RegisterUpdate) AddEducation(e ...*Education) *RegisterUpdate {
+	ids := make([]int, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return ru.AddEducationIDs(ids...)
+}
+
 // Mutation returns the RegisterMutation object of the builder.
 func (ru *RegisterUpdate) Mutation() *RegisterMutation {
 	return ru.mutation
@@ -253,6 +269,27 @@ func (ru *RegisterUpdate) RemoveBiodata(b ...*Biodata) *RegisterUpdate {
 		ids[i] = b[i].ID
 	}
 	return ru.RemoveBiodatumIDs(ids...)
+}
+
+// ClearEducation clears all "education" edges to the Education entity.
+func (ru *RegisterUpdate) ClearEducation() *RegisterUpdate {
+	ru.mutation.ClearEducation()
+	return ru
+}
+
+// RemoveEducationIDs removes the "education" edge to Education entities by IDs.
+func (ru *RegisterUpdate) RemoveEducationIDs(ids ...int) *RegisterUpdate {
+	ru.mutation.RemoveEducationIDs(ids...)
+	return ru
+}
+
+// RemoveEducation removes "education" edges to Education entities.
+func (ru *RegisterUpdate) RemoveEducation(e ...*Education) *RegisterUpdate {
+	ids := make([]int, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return ru.RemoveEducationIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -597,6 +634,60 @@ func (ru *RegisterUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if ru.mutation.EducationCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.EducationTable,
+			Columns: register.EducationPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: education.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ru.mutation.RemovedEducationIDs(); len(nodes) > 0 && !ru.mutation.EducationCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.EducationTable,
+			Columns: register.EducationPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: education.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ru.mutation.EducationIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.EducationTable,
+			Columns: register.EducationPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: education.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, ru.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{register.Label}
@@ -750,6 +841,21 @@ func (ruo *RegisterUpdateOne) AddBiodata(b ...*Biodata) *RegisterUpdateOne {
 	return ruo.AddBiodatumIDs(ids...)
 }
 
+// AddEducationIDs adds the "education" edge to the Education entity by IDs.
+func (ruo *RegisterUpdateOne) AddEducationIDs(ids ...int) *RegisterUpdateOne {
+	ruo.mutation.AddEducationIDs(ids...)
+	return ruo
+}
+
+// AddEducation adds the "education" edges to the Education entity.
+func (ruo *RegisterUpdateOne) AddEducation(e ...*Education) *RegisterUpdateOne {
+	ids := make([]int, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return ruo.AddEducationIDs(ids...)
+}
+
 // Mutation returns the RegisterMutation object of the builder.
 func (ruo *RegisterUpdateOne) Mutation() *RegisterMutation {
 	return ruo.mutation
@@ -837,6 +943,27 @@ func (ruo *RegisterUpdateOne) RemoveBiodata(b ...*Biodata) *RegisterUpdateOne {
 		ids[i] = b[i].ID
 	}
 	return ruo.RemoveBiodatumIDs(ids...)
+}
+
+// ClearEducation clears all "education" edges to the Education entity.
+func (ruo *RegisterUpdateOne) ClearEducation() *RegisterUpdateOne {
+	ruo.mutation.ClearEducation()
+	return ruo
+}
+
+// RemoveEducationIDs removes the "education" edge to Education entities by IDs.
+func (ruo *RegisterUpdateOne) RemoveEducationIDs(ids ...int) *RegisterUpdateOne {
+	ruo.mutation.RemoveEducationIDs(ids...)
+	return ruo
+}
+
+// RemoveEducation removes "education" edges to Education entities.
+func (ruo *RegisterUpdateOne) RemoveEducation(e ...*Education) *RegisterUpdateOne {
+	ids := make([]int, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return ruo.RemoveEducationIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -1197,6 +1324,60 @@ func (ruo *RegisterUpdateOne) sqlSave(ctx context.Context) (_node *Register, err
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: biodata.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ruo.mutation.EducationCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.EducationTable,
+			Columns: register.EducationPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: education.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ruo.mutation.RemovedEducationIDs(); len(nodes) > 0 && !ruo.mutation.EducationCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.EducationTable,
+			Columns: register.EducationPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: education.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ruo.mutation.EducationIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.EducationTable,
+			Columns: register.EducationPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: education.FieldID,
 				},
 			},
 		}
