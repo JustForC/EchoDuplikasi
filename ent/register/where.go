@@ -712,6 +712,118 @@ func HasNetworthWith(preds ...predicate.Networth) predicate.Register {
 	})
 }
 
+// HasOrganization applies the HasEdge predicate on the "organization" edge.
+func HasOrganization() predicate.Register {
+	return predicate.Register(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(OrganizationTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, OrganizationTable, OrganizationPrimaryKey...),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasOrganizationWith applies the HasEdge predicate on the "organization" edge with a given conditions (other predicates).
+func HasOrganizationWith(preds ...predicate.Organization) predicate.Register {
+	return predicate.Register(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(OrganizationInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, OrganizationTable, OrganizationPrimaryKey...),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasSocialmedia applies the HasEdge predicate on the "socialmedia" edge.
+func HasSocialmedia() predicate.Register {
+	return predicate.Register(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(SocialmediaTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, SocialmediaTable, SocialmediaPrimaryKey...),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasSocialmediaWith applies the HasEdge predicate on the "socialmedia" edge with a given conditions (other predicates).
+func HasSocialmediaWith(preds ...predicate.SocialMedia) predicate.Register {
+	return predicate.Register(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(SocialmediaInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, SocialmediaTable, SocialmediaPrimaryKey...),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasTalent applies the HasEdge predicate on the "talent" edge.
+func HasTalent() predicate.Register {
+	return predicate.Register(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(TalentTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, TalentTable, TalentPrimaryKey...),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasTalentWith applies the HasEdge predicate on the "talent" edge with a given conditions (other predicates).
+func HasTalentWith(preds ...predicate.Talent) predicate.Register {
+	return predicate.Register(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(TalentInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, TalentTable, TalentPrimaryKey...),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasTraining applies the HasEdge predicate on the "training" edge.
+func HasTraining() predicate.Register {
+	return predicate.Register(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(TrainingTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, TrainingTable, TrainingPrimaryKey...),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasTrainingWith applies the HasEdge predicate on the "training" edge with a given conditions (other predicates).
+func HasTrainingWith(preds ...predicate.Training) predicate.Register {
+	return predicate.Register(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(TrainingInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, TrainingTable, TrainingPrimaryKey...),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Register) predicate.Register {
 	return predicate.Register(func(s *sql.Selector) {

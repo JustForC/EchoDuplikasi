@@ -6,6 +6,7 @@ import (
 	"Kynesia/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 // ID filters vertices based on their ID field.
@@ -223,20 +224,6 @@ func NameHasSuffix(v string) predicate.Training {
 	})
 }
 
-// NameIsNil applies the IsNil predicate on the "name" field.
-func NameIsNil() predicate.Training {
-	return predicate.Training(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldName)))
-	})
-}
-
-// NameNotNil applies the NotNil predicate on the "name" field.
-func NameNotNil() predicate.Training {
-	return predicate.Training(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldName)))
-	})
-}
-
 // NameEqualFold applies the EqualFold predicate on the "name" field.
 func NameEqualFold(v string) predicate.Training {
 	return predicate.Training(func(s *sql.Selector) {
@@ -345,20 +332,6 @@ func PeriodHasPrefix(v string) predicate.Training {
 func PeriodHasSuffix(v string) predicate.Training {
 	return predicate.Training(func(s *sql.Selector) {
 		s.Where(sql.HasSuffix(s.C(FieldPeriod), v))
-	})
-}
-
-// PeriodIsNil applies the IsNil predicate on the "period" field.
-func PeriodIsNil() predicate.Training {
-	return predicate.Training(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldPeriod)))
-	})
-}
-
-// PeriodNotNil applies the NotNil predicate on the "period" field.
-func PeriodNotNil() predicate.Training {
-	return predicate.Training(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldPeriod)))
 	})
 }
 
@@ -473,20 +446,6 @@ func YearHasSuffix(v string) predicate.Training {
 	})
 }
 
-// YearIsNil applies the IsNil predicate on the "year" field.
-func YearIsNil() predicate.Training {
-	return predicate.Training(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldYear)))
-	})
-}
-
-// YearNotNil applies the NotNil predicate on the "year" field.
-func YearNotNil() predicate.Training {
-	return predicate.Training(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldYear)))
-	})
-}
-
 // YearEqualFold applies the EqualFold predicate on the "year" field.
 func YearEqualFold(v string) predicate.Training {
 	return predicate.Training(func(s *sql.Selector) {
@@ -595,20 +554,6 @@ func OrganizerHasPrefix(v string) predicate.Training {
 func OrganizerHasSuffix(v string) predicate.Training {
 	return predicate.Training(func(s *sql.Selector) {
 		s.Where(sql.HasSuffix(s.C(FieldOrganizer), v))
-	})
-}
-
-// OrganizerIsNil applies the IsNil predicate on the "organizer" field.
-func OrganizerIsNil() predicate.Training {
-	return predicate.Training(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldOrganizer)))
-	})
-}
-
-// OrganizerNotNil applies the NotNil predicate on the "organizer" field.
-func OrganizerNotNil() predicate.Training {
-	return predicate.Training(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldOrganizer)))
 	})
 }
 
@@ -723,20 +668,6 @@ func CertificateHasSuffix(v string) predicate.Training {
 	})
 }
 
-// CertificateIsNil applies the IsNil predicate on the "certificate" field.
-func CertificateIsNil() predicate.Training {
-	return predicate.Training(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldCertificate)))
-	})
-}
-
-// CertificateNotNil applies the NotNil predicate on the "certificate" field.
-func CertificateNotNil() predicate.Training {
-	return predicate.Training(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldCertificate)))
-	})
-}
-
 // CertificateEqualFold applies the EqualFold predicate on the "certificate" field.
 func CertificateEqualFold(v string) predicate.Training {
 	return predicate.Training(func(s *sql.Selector) {
@@ -748,6 +679,34 @@ func CertificateEqualFold(v string) predicate.Training {
 func CertificateContainsFold(v string) predicate.Training {
 	return predicate.Training(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldCertificate), v))
+	})
+}
+
+// HasRegister applies the HasEdge predicate on the "register" edge.
+func HasRegister() predicate.Training {
+	return predicate.Training(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(RegisterTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, RegisterTable, RegisterPrimaryKey...),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasRegisterWith applies the HasEdge predicate on the "register" edge with a given conditions (other predicates).
+func HasRegisterWith(preds ...predicate.Register) predicate.Training {
+	return predicate.Training(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(RegisterInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, RegisterTable, RegisterPrimaryKey...),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
 	})
 }
 

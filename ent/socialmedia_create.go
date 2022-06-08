@@ -3,8 +3,10 @@
 package ent
 
 import (
+	"Kynesia/ent/register"
 	"Kynesia/ent/socialmedia"
 	"context"
+	"errors"
 	"fmt"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -24,25 +26,9 @@ func (smc *SocialMediaCreate) SetInstagram(s string) *SocialMediaCreate {
 	return smc
 }
 
-// SetNillableInstagram sets the "instagram" field if the given value is not nil.
-func (smc *SocialMediaCreate) SetNillableInstagram(s *string) *SocialMediaCreate {
-	if s != nil {
-		smc.SetInstagram(*s)
-	}
-	return smc
-}
-
 // SetFacebook sets the "facebook" field.
 func (smc *SocialMediaCreate) SetFacebook(s string) *SocialMediaCreate {
 	smc.mutation.SetFacebook(s)
-	return smc
-}
-
-// SetNillableFacebook sets the "facebook" field if the given value is not nil.
-func (smc *SocialMediaCreate) SetNillableFacebook(s *string) *SocialMediaCreate {
-	if s != nil {
-		smc.SetFacebook(*s)
-	}
 	return smc
 }
 
@@ -52,26 +38,25 @@ func (smc *SocialMediaCreate) SetTiktok(s string) *SocialMediaCreate {
 	return smc
 }
 
-// SetNillableTiktok sets the "tiktok" field if the given value is not nil.
-func (smc *SocialMediaCreate) SetNillableTiktok(s *string) *SocialMediaCreate {
-	if s != nil {
-		smc.SetTiktok(*s)
-	}
-	return smc
-}
-
 // SetTwitter sets the "twitter" field.
 func (smc *SocialMediaCreate) SetTwitter(s string) *SocialMediaCreate {
 	smc.mutation.SetTwitter(s)
 	return smc
 }
 
-// SetNillableTwitter sets the "twitter" field if the given value is not nil.
-func (smc *SocialMediaCreate) SetNillableTwitter(s *string) *SocialMediaCreate {
-	if s != nil {
-		smc.SetTwitter(*s)
-	}
+// AddRegisterIDs adds the "register" edge to the Register entity by IDs.
+func (smc *SocialMediaCreate) AddRegisterIDs(ids ...int) *SocialMediaCreate {
+	smc.mutation.AddRegisterIDs(ids...)
 	return smc
+}
+
+// AddRegister adds the "register" edges to the Register entity.
+func (smc *SocialMediaCreate) AddRegister(r ...*Register) *SocialMediaCreate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return smc.AddRegisterIDs(ids...)
 }
 
 // Mutation returns the SocialMediaMutation object of the builder.
@@ -144,6 +129,18 @@ func (smc *SocialMediaCreate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (smc *SocialMediaCreate) check() error {
+	if _, ok := smc.mutation.Instagram(); !ok {
+		return &ValidationError{Name: "instagram", err: errors.New(`ent: missing required field "SocialMedia.instagram"`)}
+	}
+	if _, ok := smc.mutation.Facebook(); !ok {
+		return &ValidationError{Name: "facebook", err: errors.New(`ent: missing required field "SocialMedia.facebook"`)}
+	}
+	if _, ok := smc.mutation.Tiktok(); !ok {
+		return &ValidationError{Name: "tiktok", err: errors.New(`ent: missing required field "SocialMedia.tiktok"`)}
+	}
+	if _, ok := smc.mutation.Twitter(); !ok {
+		return &ValidationError{Name: "twitter", err: errors.New(`ent: missing required field "SocialMedia.twitter"`)}
+	}
 	return nil
 }
 
@@ -177,7 +174,7 @@ func (smc *SocialMediaCreate) createSpec() (*SocialMedia, *sqlgraph.CreateSpec) 
 			Value:  value,
 			Column: socialmedia.FieldInstagram,
 		})
-		_node.Instagram = &value
+		_node.Instagram = value
 	}
 	if value, ok := smc.mutation.Facebook(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -185,7 +182,7 @@ func (smc *SocialMediaCreate) createSpec() (*SocialMedia, *sqlgraph.CreateSpec) 
 			Value:  value,
 			Column: socialmedia.FieldFacebook,
 		})
-		_node.Facebook = &value
+		_node.Facebook = value
 	}
 	if value, ok := smc.mutation.Tiktok(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -193,7 +190,7 @@ func (smc *SocialMediaCreate) createSpec() (*SocialMedia, *sqlgraph.CreateSpec) 
 			Value:  value,
 			Column: socialmedia.FieldTiktok,
 		})
-		_node.Tiktok = &value
+		_node.Tiktok = value
 	}
 	if value, ok := smc.mutation.Twitter(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -201,7 +198,26 @@ func (smc *SocialMediaCreate) createSpec() (*SocialMedia, *sqlgraph.CreateSpec) 
 			Value:  value,
 			Column: socialmedia.FieldTwitter,
 		})
-		_node.Twitter = &value
+		_node.Twitter = value
+	}
+	if nodes := smc.mutation.RegisterIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   socialmedia.RegisterTable,
+			Columns: socialmedia.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

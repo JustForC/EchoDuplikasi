@@ -15,8 +15,15 @@ const (
 	FieldPosition = "position"
 	// FieldDetail holds the string denoting the detail field in the database.
 	FieldDetail = "detail"
+	// EdgeRegister holds the string denoting the register edge name in mutations.
+	EdgeRegister = "register"
 	// Table holds the table name of the organization in the database.
 	Table = "organizations"
+	// RegisterTable is the table that holds the register relation/edge. The primary key declared below.
+	RegisterTable = "organization_register"
+	// RegisterInverseTable is the table name for the Register entity.
+	// It exists in this package in order to avoid circular dependency with the "register" package.
+	RegisterInverseTable = "registers"
 )
 
 // Columns holds all SQL columns for organization fields.
@@ -27,6 +34,12 @@ var Columns = []string{
 	FieldPosition,
 	FieldDetail,
 }
+
+var (
+	// RegisterPrimaryKey and RegisterColumn2 are the table columns denoting the
+	// primary key for the register relation (M2M).
+	RegisterPrimaryKey = []string{"organization_id", "register_id"}
+)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {

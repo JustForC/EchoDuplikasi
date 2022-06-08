@@ -31,6 +31,14 @@ const (
 	EdgeLanguage = "language"
 	// EdgeNetworth holds the string denoting the networth edge name in mutations.
 	EdgeNetworth = "networth"
+	// EdgeOrganization holds the string denoting the organization edge name in mutations.
+	EdgeOrganization = "organization"
+	// EdgeSocialmedia holds the string denoting the socialmedia edge name in mutations.
+	EdgeSocialmedia = "socialmedia"
+	// EdgeTalent holds the string denoting the talent edge name in mutations.
+	EdgeTalent = "talent"
+	// EdgeTraining holds the string denoting the training edge name in mutations.
+	EdgeTraining = "training"
 	// Table holds the table name of the register in the database.
 	Table = "registers"
 	// UserTable is the table that holds the user relation/edge. The primary key declared below.
@@ -73,6 +81,26 @@ const (
 	// NetworthInverseTable is the table name for the Networth entity.
 	// It exists in this package in order to avoid circular dependency with the "networth" package.
 	NetworthInverseTable = "networths"
+	// OrganizationTable is the table that holds the organization relation/edge. The primary key declared below.
+	OrganizationTable = "organization_register"
+	// OrganizationInverseTable is the table name for the Organization entity.
+	// It exists in this package in order to avoid circular dependency with the "organization" package.
+	OrganizationInverseTable = "organizations"
+	// SocialmediaTable is the table that holds the socialmedia relation/edge. The primary key declared below.
+	SocialmediaTable = "social_media_register"
+	// SocialmediaInverseTable is the table name for the SocialMedia entity.
+	// It exists in this package in order to avoid circular dependency with the "socialmedia" package.
+	SocialmediaInverseTable = "social_media"
+	// TalentTable is the table that holds the talent relation/edge. The primary key declared below.
+	TalentTable = "talent_register"
+	// TalentInverseTable is the table name for the Talent entity.
+	// It exists in this package in order to avoid circular dependency with the "talent" package.
+	TalentInverseTable = "talents"
+	// TrainingTable is the table that holds the training relation/edge. The primary key declared below.
+	TrainingTable = "training_register"
+	// TrainingInverseTable is the table name for the Training entity.
+	// It exists in this package in order to avoid circular dependency with the "training" package.
+	TrainingInverseTable = "trainings"
 )
 
 // Columns holds all SQL columns for register fields.
@@ -109,6 +137,18 @@ var (
 	// NetworthPrimaryKey and NetworthColumn2 are the table columns denoting the
 	// primary key for the networth relation (M2M).
 	NetworthPrimaryKey = []string{"networth_id", "register_id"}
+	// OrganizationPrimaryKey and OrganizationColumn2 are the table columns denoting the
+	// primary key for the organization relation (M2M).
+	OrganizationPrimaryKey = []string{"organization_id", "register_id"}
+	// SocialmediaPrimaryKey and SocialmediaColumn2 are the table columns denoting the
+	// primary key for the socialmedia relation (M2M).
+	SocialmediaPrimaryKey = []string{"social_media_id", "register_id"}
+	// TalentPrimaryKey and TalentColumn2 are the table columns denoting the
+	// primary key for the talent relation (M2M).
+	TalentPrimaryKey = []string{"talent_id", "register_id"}
+	// TrainingPrimaryKey and TrainingColumn2 are the table columns denoting the
+	// primary key for the training relation (M2M).
+	TrainingPrimaryKey = []string{"training_id", "register_id"}
 )
 
 // ValidColumn reports if the column name is valid (part of the table columns).

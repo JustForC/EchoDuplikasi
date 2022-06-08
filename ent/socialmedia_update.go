@@ -4,6 +4,7 @@ package ent
 
 import (
 	"Kynesia/ent/predicate"
+	"Kynesia/ent/register"
 	"Kynesia/ent/socialmedia"
 	"context"
 	"errors"
@@ -33,37 +34,9 @@ func (smu *SocialMediaUpdate) SetInstagram(s string) *SocialMediaUpdate {
 	return smu
 }
 
-// SetNillableInstagram sets the "instagram" field if the given value is not nil.
-func (smu *SocialMediaUpdate) SetNillableInstagram(s *string) *SocialMediaUpdate {
-	if s != nil {
-		smu.SetInstagram(*s)
-	}
-	return smu
-}
-
-// ClearInstagram clears the value of the "instagram" field.
-func (smu *SocialMediaUpdate) ClearInstagram() *SocialMediaUpdate {
-	smu.mutation.ClearInstagram()
-	return smu
-}
-
 // SetFacebook sets the "facebook" field.
 func (smu *SocialMediaUpdate) SetFacebook(s string) *SocialMediaUpdate {
 	smu.mutation.SetFacebook(s)
-	return smu
-}
-
-// SetNillableFacebook sets the "facebook" field if the given value is not nil.
-func (smu *SocialMediaUpdate) SetNillableFacebook(s *string) *SocialMediaUpdate {
-	if s != nil {
-		smu.SetFacebook(*s)
-	}
-	return smu
-}
-
-// ClearFacebook clears the value of the "facebook" field.
-func (smu *SocialMediaUpdate) ClearFacebook() *SocialMediaUpdate {
-	smu.mutation.ClearFacebook()
 	return smu
 }
 
@@ -73,43 +46,51 @@ func (smu *SocialMediaUpdate) SetTiktok(s string) *SocialMediaUpdate {
 	return smu
 }
 
-// SetNillableTiktok sets the "tiktok" field if the given value is not nil.
-func (smu *SocialMediaUpdate) SetNillableTiktok(s *string) *SocialMediaUpdate {
-	if s != nil {
-		smu.SetTiktok(*s)
-	}
-	return smu
-}
-
-// ClearTiktok clears the value of the "tiktok" field.
-func (smu *SocialMediaUpdate) ClearTiktok() *SocialMediaUpdate {
-	smu.mutation.ClearTiktok()
-	return smu
-}
-
 // SetTwitter sets the "twitter" field.
 func (smu *SocialMediaUpdate) SetTwitter(s string) *SocialMediaUpdate {
 	smu.mutation.SetTwitter(s)
 	return smu
 }
 
-// SetNillableTwitter sets the "twitter" field if the given value is not nil.
-func (smu *SocialMediaUpdate) SetNillableTwitter(s *string) *SocialMediaUpdate {
-	if s != nil {
-		smu.SetTwitter(*s)
-	}
+// AddRegisterIDs adds the "register" edge to the Register entity by IDs.
+func (smu *SocialMediaUpdate) AddRegisterIDs(ids ...int) *SocialMediaUpdate {
+	smu.mutation.AddRegisterIDs(ids...)
 	return smu
 }
 
-// ClearTwitter clears the value of the "twitter" field.
-func (smu *SocialMediaUpdate) ClearTwitter() *SocialMediaUpdate {
-	smu.mutation.ClearTwitter()
-	return smu
+// AddRegister adds the "register" edges to the Register entity.
+func (smu *SocialMediaUpdate) AddRegister(r ...*Register) *SocialMediaUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return smu.AddRegisterIDs(ids...)
 }
 
 // Mutation returns the SocialMediaMutation object of the builder.
 func (smu *SocialMediaUpdate) Mutation() *SocialMediaMutation {
 	return smu.mutation
+}
+
+// ClearRegister clears all "register" edges to the Register entity.
+func (smu *SocialMediaUpdate) ClearRegister() *SocialMediaUpdate {
+	smu.mutation.ClearRegister()
+	return smu
+}
+
+// RemoveRegisterIDs removes the "register" edge to Register entities by IDs.
+func (smu *SocialMediaUpdate) RemoveRegisterIDs(ids ...int) *SocialMediaUpdate {
+	smu.mutation.RemoveRegisterIDs(ids...)
+	return smu
+}
+
+// RemoveRegister removes "register" edges to Register entities.
+func (smu *SocialMediaUpdate) RemoveRegister(r ...*Register) *SocialMediaUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return smu.RemoveRegisterIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -191,22 +172,10 @@ func (smu *SocialMediaUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: socialmedia.FieldInstagram,
 		})
 	}
-	if smu.mutation.InstagramCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: socialmedia.FieldInstagram,
-		})
-	}
 	if value, ok := smu.mutation.Facebook(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: socialmedia.FieldFacebook,
-		})
-	}
-	if smu.mutation.FacebookCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
 			Column: socialmedia.FieldFacebook,
 		})
 	}
@@ -217,12 +186,6 @@ func (smu *SocialMediaUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: socialmedia.FieldTiktok,
 		})
 	}
-	if smu.mutation.TiktokCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: socialmedia.FieldTiktok,
-		})
-	}
 	if value, ok := smu.mutation.Twitter(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -230,11 +193,59 @@ func (smu *SocialMediaUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: socialmedia.FieldTwitter,
 		})
 	}
-	if smu.mutation.TwitterCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: socialmedia.FieldTwitter,
-		})
+	if smu.mutation.RegisterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   socialmedia.RegisterTable,
+			Columns: socialmedia.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := smu.mutation.RemovedRegisterIDs(); len(nodes) > 0 && !smu.mutation.RegisterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   socialmedia.RegisterTable,
+			Columns: socialmedia.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := smu.mutation.RegisterIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   socialmedia.RegisterTable,
+			Columns: socialmedia.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, smu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -261,37 +272,9 @@ func (smuo *SocialMediaUpdateOne) SetInstagram(s string) *SocialMediaUpdateOne {
 	return smuo
 }
 
-// SetNillableInstagram sets the "instagram" field if the given value is not nil.
-func (smuo *SocialMediaUpdateOne) SetNillableInstagram(s *string) *SocialMediaUpdateOne {
-	if s != nil {
-		smuo.SetInstagram(*s)
-	}
-	return smuo
-}
-
-// ClearInstagram clears the value of the "instagram" field.
-func (smuo *SocialMediaUpdateOne) ClearInstagram() *SocialMediaUpdateOne {
-	smuo.mutation.ClearInstagram()
-	return smuo
-}
-
 // SetFacebook sets the "facebook" field.
 func (smuo *SocialMediaUpdateOne) SetFacebook(s string) *SocialMediaUpdateOne {
 	smuo.mutation.SetFacebook(s)
-	return smuo
-}
-
-// SetNillableFacebook sets the "facebook" field if the given value is not nil.
-func (smuo *SocialMediaUpdateOne) SetNillableFacebook(s *string) *SocialMediaUpdateOne {
-	if s != nil {
-		smuo.SetFacebook(*s)
-	}
-	return smuo
-}
-
-// ClearFacebook clears the value of the "facebook" field.
-func (smuo *SocialMediaUpdateOne) ClearFacebook() *SocialMediaUpdateOne {
-	smuo.mutation.ClearFacebook()
 	return smuo
 }
 
@@ -301,43 +284,51 @@ func (smuo *SocialMediaUpdateOne) SetTiktok(s string) *SocialMediaUpdateOne {
 	return smuo
 }
 
-// SetNillableTiktok sets the "tiktok" field if the given value is not nil.
-func (smuo *SocialMediaUpdateOne) SetNillableTiktok(s *string) *SocialMediaUpdateOne {
-	if s != nil {
-		smuo.SetTiktok(*s)
-	}
-	return smuo
-}
-
-// ClearTiktok clears the value of the "tiktok" field.
-func (smuo *SocialMediaUpdateOne) ClearTiktok() *SocialMediaUpdateOne {
-	smuo.mutation.ClearTiktok()
-	return smuo
-}
-
 // SetTwitter sets the "twitter" field.
 func (smuo *SocialMediaUpdateOne) SetTwitter(s string) *SocialMediaUpdateOne {
 	smuo.mutation.SetTwitter(s)
 	return smuo
 }
 
-// SetNillableTwitter sets the "twitter" field if the given value is not nil.
-func (smuo *SocialMediaUpdateOne) SetNillableTwitter(s *string) *SocialMediaUpdateOne {
-	if s != nil {
-		smuo.SetTwitter(*s)
-	}
+// AddRegisterIDs adds the "register" edge to the Register entity by IDs.
+func (smuo *SocialMediaUpdateOne) AddRegisterIDs(ids ...int) *SocialMediaUpdateOne {
+	smuo.mutation.AddRegisterIDs(ids...)
 	return smuo
 }
 
-// ClearTwitter clears the value of the "twitter" field.
-func (smuo *SocialMediaUpdateOne) ClearTwitter() *SocialMediaUpdateOne {
-	smuo.mutation.ClearTwitter()
-	return smuo
+// AddRegister adds the "register" edges to the Register entity.
+func (smuo *SocialMediaUpdateOne) AddRegister(r ...*Register) *SocialMediaUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return smuo.AddRegisterIDs(ids...)
 }
 
 // Mutation returns the SocialMediaMutation object of the builder.
 func (smuo *SocialMediaUpdateOne) Mutation() *SocialMediaMutation {
 	return smuo.mutation
+}
+
+// ClearRegister clears all "register" edges to the Register entity.
+func (smuo *SocialMediaUpdateOne) ClearRegister() *SocialMediaUpdateOne {
+	smuo.mutation.ClearRegister()
+	return smuo
+}
+
+// RemoveRegisterIDs removes the "register" edge to Register entities by IDs.
+func (smuo *SocialMediaUpdateOne) RemoveRegisterIDs(ids ...int) *SocialMediaUpdateOne {
+	smuo.mutation.RemoveRegisterIDs(ids...)
+	return smuo
+}
+
+// RemoveRegister removes "register" edges to Register entities.
+func (smuo *SocialMediaUpdateOne) RemoveRegister(r ...*Register) *SocialMediaUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return smuo.RemoveRegisterIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -443,22 +434,10 @@ func (smuo *SocialMediaUpdateOne) sqlSave(ctx context.Context) (_node *SocialMed
 			Column: socialmedia.FieldInstagram,
 		})
 	}
-	if smuo.mutation.InstagramCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: socialmedia.FieldInstagram,
-		})
-	}
 	if value, ok := smuo.mutation.Facebook(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: socialmedia.FieldFacebook,
-		})
-	}
-	if smuo.mutation.FacebookCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
 			Column: socialmedia.FieldFacebook,
 		})
 	}
@@ -469,12 +448,6 @@ func (smuo *SocialMediaUpdateOne) sqlSave(ctx context.Context) (_node *SocialMed
 			Column: socialmedia.FieldTiktok,
 		})
 	}
-	if smuo.mutation.TiktokCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: socialmedia.FieldTiktok,
-		})
-	}
 	if value, ok := smuo.mutation.Twitter(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -482,11 +455,59 @@ func (smuo *SocialMediaUpdateOne) sqlSave(ctx context.Context) (_node *SocialMed
 			Column: socialmedia.FieldTwitter,
 		})
 	}
-	if smuo.mutation.TwitterCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: socialmedia.FieldTwitter,
-		})
+	if smuo.mutation.RegisterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   socialmedia.RegisterTable,
+			Columns: socialmedia.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := smuo.mutation.RemovedRegisterIDs(); len(nodes) > 0 && !smuo.mutation.RegisterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   socialmedia.RegisterTable,
+			Columns: socialmedia.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := smuo.mutation.RegisterIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   socialmedia.RegisterTable,
+			Columns: socialmedia.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &SocialMedia{config: smuo.config}
 	_spec.Assign = _node.assignValues

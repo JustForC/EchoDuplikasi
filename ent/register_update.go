@@ -9,9 +9,13 @@ import (
 	"Kynesia/ent/family"
 	"Kynesia/ent/language"
 	"Kynesia/ent/networth"
+	"Kynesia/ent/organization"
 	"Kynesia/ent/predicate"
 	"Kynesia/ent/register"
 	"Kynesia/ent/scholarship"
+	"Kynesia/ent/socialmedia"
+	"Kynesia/ent/talent"
+	"Kynesia/ent/training"
 	"Kynesia/ent/user"
 	"context"
 	"errors"
@@ -230,6 +234,66 @@ func (ru *RegisterUpdate) AddNetworth(n ...*Networth) *RegisterUpdate {
 	return ru.AddNetworthIDs(ids...)
 }
 
+// AddOrganizationIDs adds the "organization" edge to the Organization entity by IDs.
+func (ru *RegisterUpdate) AddOrganizationIDs(ids ...int) *RegisterUpdate {
+	ru.mutation.AddOrganizationIDs(ids...)
+	return ru
+}
+
+// AddOrganization adds the "organization" edges to the Organization entity.
+func (ru *RegisterUpdate) AddOrganization(o ...*Organization) *RegisterUpdate {
+	ids := make([]int, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return ru.AddOrganizationIDs(ids...)
+}
+
+// AddSocialmediumIDs adds the "socialmedia" edge to the SocialMedia entity by IDs.
+func (ru *RegisterUpdate) AddSocialmediumIDs(ids ...int) *RegisterUpdate {
+	ru.mutation.AddSocialmediumIDs(ids...)
+	return ru
+}
+
+// AddSocialmedia adds the "socialmedia" edges to the SocialMedia entity.
+func (ru *RegisterUpdate) AddSocialmedia(s ...*SocialMedia) *RegisterUpdate {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return ru.AddSocialmediumIDs(ids...)
+}
+
+// AddTalentIDs adds the "talent" edge to the Talent entity by IDs.
+func (ru *RegisterUpdate) AddTalentIDs(ids ...int) *RegisterUpdate {
+	ru.mutation.AddTalentIDs(ids...)
+	return ru
+}
+
+// AddTalent adds the "talent" edges to the Talent entity.
+func (ru *RegisterUpdate) AddTalent(t ...*Talent) *RegisterUpdate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return ru.AddTalentIDs(ids...)
+}
+
+// AddTrainingIDs adds the "training" edge to the Training entity by IDs.
+func (ru *RegisterUpdate) AddTrainingIDs(ids ...int) *RegisterUpdate {
+	ru.mutation.AddTrainingIDs(ids...)
+	return ru
+}
+
+// AddTraining adds the "training" edges to the Training entity.
+func (ru *RegisterUpdate) AddTraining(t ...*Training) *RegisterUpdate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return ru.AddTrainingIDs(ids...)
+}
+
 // Mutation returns the RegisterMutation object of the builder.
 func (ru *RegisterUpdate) Mutation() *RegisterMutation {
 	return ru.mutation
@@ -401,6 +465,90 @@ func (ru *RegisterUpdate) RemoveNetworth(n ...*Networth) *RegisterUpdate {
 		ids[i] = n[i].ID
 	}
 	return ru.RemoveNetworthIDs(ids...)
+}
+
+// ClearOrganization clears all "organization" edges to the Organization entity.
+func (ru *RegisterUpdate) ClearOrganization() *RegisterUpdate {
+	ru.mutation.ClearOrganization()
+	return ru
+}
+
+// RemoveOrganizationIDs removes the "organization" edge to Organization entities by IDs.
+func (ru *RegisterUpdate) RemoveOrganizationIDs(ids ...int) *RegisterUpdate {
+	ru.mutation.RemoveOrganizationIDs(ids...)
+	return ru
+}
+
+// RemoveOrganization removes "organization" edges to Organization entities.
+func (ru *RegisterUpdate) RemoveOrganization(o ...*Organization) *RegisterUpdate {
+	ids := make([]int, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return ru.RemoveOrganizationIDs(ids...)
+}
+
+// ClearSocialmedia clears all "socialmedia" edges to the SocialMedia entity.
+func (ru *RegisterUpdate) ClearSocialmedia() *RegisterUpdate {
+	ru.mutation.ClearSocialmedia()
+	return ru
+}
+
+// RemoveSocialmediumIDs removes the "socialmedia" edge to SocialMedia entities by IDs.
+func (ru *RegisterUpdate) RemoveSocialmediumIDs(ids ...int) *RegisterUpdate {
+	ru.mutation.RemoveSocialmediumIDs(ids...)
+	return ru
+}
+
+// RemoveSocialmedia removes "socialmedia" edges to SocialMedia entities.
+func (ru *RegisterUpdate) RemoveSocialmedia(s ...*SocialMedia) *RegisterUpdate {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return ru.RemoveSocialmediumIDs(ids...)
+}
+
+// ClearTalent clears all "talent" edges to the Talent entity.
+func (ru *RegisterUpdate) ClearTalent() *RegisterUpdate {
+	ru.mutation.ClearTalent()
+	return ru
+}
+
+// RemoveTalentIDs removes the "talent" edge to Talent entities by IDs.
+func (ru *RegisterUpdate) RemoveTalentIDs(ids ...int) *RegisterUpdate {
+	ru.mutation.RemoveTalentIDs(ids...)
+	return ru
+}
+
+// RemoveTalent removes "talent" edges to Talent entities.
+func (ru *RegisterUpdate) RemoveTalent(t ...*Talent) *RegisterUpdate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return ru.RemoveTalentIDs(ids...)
+}
+
+// ClearTraining clears all "training" edges to the Training entity.
+func (ru *RegisterUpdate) ClearTraining() *RegisterUpdate {
+	ru.mutation.ClearTraining()
+	return ru
+}
+
+// RemoveTrainingIDs removes the "training" edge to Training entities by IDs.
+func (ru *RegisterUpdate) RemoveTrainingIDs(ids ...int) *RegisterUpdate {
+	ru.mutation.RemoveTrainingIDs(ids...)
+	return ru
+}
+
+// RemoveTraining removes "training" edges to Training entities.
+func (ru *RegisterUpdate) RemoveTraining(t ...*Training) *RegisterUpdate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return ru.RemoveTrainingIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -961,6 +1109,222 @@ func (ru *RegisterUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if ru.mutation.OrganizationCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.OrganizationTable,
+			Columns: register.OrganizationPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: organization.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ru.mutation.RemovedOrganizationIDs(); len(nodes) > 0 && !ru.mutation.OrganizationCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.OrganizationTable,
+			Columns: register.OrganizationPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: organization.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ru.mutation.OrganizationIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.OrganizationTable,
+			Columns: register.OrganizationPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: organization.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ru.mutation.SocialmediaCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.SocialmediaTable,
+			Columns: register.SocialmediaPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: socialmedia.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ru.mutation.RemovedSocialmediaIDs(); len(nodes) > 0 && !ru.mutation.SocialmediaCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.SocialmediaTable,
+			Columns: register.SocialmediaPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: socialmedia.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ru.mutation.SocialmediaIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.SocialmediaTable,
+			Columns: register.SocialmediaPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: socialmedia.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ru.mutation.TalentCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.TalentTable,
+			Columns: register.TalentPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: talent.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ru.mutation.RemovedTalentIDs(); len(nodes) > 0 && !ru.mutation.TalentCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.TalentTable,
+			Columns: register.TalentPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: talent.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ru.mutation.TalentIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.TalentTable,
+			Columns: register.TalentPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: talent.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ru.mutation.TrainingCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.TrainingTable,
+			Columns: register.TrainingPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: training.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ru.mutation.RemovedTrainingIDs(); len(nodes) > 0 && !ru.mutation.TrainingCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.TrainingTable,
+			Columns: register.TrainingPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: training.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ru.mutation.TrainingIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.TrainingTable,
+			Columns: register.TrainingPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: training.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, ru.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{register.Label}
@@ -1174,6 +1538,66 @@ func (ruo *RegisterUpdateOne) AddNetworth(n ...*Networth) *RegisterUpdateOne {
 	return ruo.AddNetworthIDs(ids...)
 }
 
+// AddOrganizationIDs adds the "organization" edge to the Organization entity by IDs.
+func (ruo *RegisterUpdateOne) AddOrganizationIDs(ids ...int) *RegisterUpdateOne {
+	ruo.mutation.AddOrganizationIDs(ids...)
+	return ruo
+}
+
+// AddOrganization adds the "organization" edges to the Organization entity.
+func (ruo *RegisterUpdateOne) AddOrganization(o ...*Organization) *RegisterUpdateOne {
+	ids := make([]int, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return ruo.AddOrganizationIDs(ids...)
+}
+
+// AddSocialmediumIDs adds the "socialmedia" edge to the SocialMedia entity by IDs.
+func (ruo *RegisterUpdateOne) AddSocialmediumIDs(ids ...int) *RegisterUpdateOne {
+	ruo.mutation.AddSocialmediumIDs(ids...)
+	return ruo
+}
+
+// AddSocialmedia adds the "socialmedia" edges to the SocialMedia entity.
+func (ruo *RegisterUpdateOne) AddSocialmedia(s ...*SocialMedia) *RegisterUpdateOne {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return ruo.AddSocialmediumIDs(ids...)
+}
+
+// AddTalentIDs adds the "talent" edge to the Talent entity by IDs.
+func (ruo *RegisterUpdateOne) AddTalentIDs(ids ...int) *RegisterUpdateOne {
+	ruo.mutation.AddTalentIDs(ids...)
+	return ruo
+}
+
+// AddTalent adds the "talent" edges to the Talent entity.
+func (ruo *RegisterUpdateOne) AddTalent(t ...*Talent) *RegisterUpdateOne {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return ruo.AddTalentIDs(ids...)
+}
+
+// AddTrainingIDs adds the "training" edge to the Training entity by IDs.
+func (ruo *RegisterUpdateOne) AddTrainingIDs(ids ...int) *RegisterUpdateOne {
+	ruo.mutation.AddTrainingIDs(ids...)
+	return ruo
+}
+
+// AddTraining adds the "training" edges to the Training entity.
+func (ruo *RegisterUpdateOne) AddTraining(t ...*Training) *RegisterUpdateOne {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return ruo.AddTrainingIDs(ids...)
+}
+
 // Mutation returns the RegisterMutation object of the builder.
 func (ruo *RegisterUpdateOne) Mutation() *RegisterMutation {
 	return ruo.mutation
@@ -1345,6 +1769,90 @@ func (ruo *RegisterUpdateOne) RemoveNetworth(n ...*Networth) *RegisterUpdateOne 
 		ids[i] = n[i].ID
 	}
 	return ruo.RemoveNetworthIDs(ids...)
+}
+
+// ClearOrganization clears all "organization" edges to the Organization entity.
+func (ruo *RegisterUpdateOne) ClearOrganization() *RegisterUpdateOne {
+	ruo.mutation.ClearOrganization()
+	return ruo
+}
+
+// RemoveOrganizationIDs removes the "organization" edge to Organization entities by IDs.
+func (ruo *RegisterUpdateOne) RemoveOrganizationIDs(ids ...int) *RegisterUpdateOne {
+	ruo.mutation.RemoveOrganizationIDs(ids...)
+	return ruo
+}
+
+// RemoveOrganization removes "organization" edges to Organization entities.
+func (ruo *RegisterUpdateOne) RemoveOrganization(o ...*Organization) *RegisterUpdateOne {
+	ids := make([]int, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return ruo.RemoveOrganizationIDs(ids...)
+}
+
+// ClearSocialmedia clears all "socialmedia" edges to the SocialMedia entity.
+func (ruo *RegisterUpdateOne) ClearSocialmedia() *RegisterUpdateOne {
+	ruo.mutation.ClearSocialmedia()
+	return ruo
+}
+
+// RemoveSocialmediumIDs removes the "socialmedia" edge to SocialMedia entities by IDs.
+func (ruo *RegisterUpdateOne) RemoveSocialmediumIDs(ids ...int) *RegisterUpdateOne {
+	ruo.mutation.RemoveSocialmediumIDs(ids...)
+	return ruo
+}
+
+// RemoveSocialmedia removes "socialmedia" edges to SocialMedia entities.
+func (ruo *RegisterUpdateOne) RemoveSocialmedia(s ...*SocialMedia) *RegisterUpdateOne {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return ruo.RemoveSocialmediumIDs(ids...)
+}
+
+// ClearTalent clears all "talent" edges to the Talent entity.
+func (ruo *RegisterUpdateOne) ClearTalent() *RegisterUpdateOne {
+	ruo.mutation.ClearTalent()
+	return ruo
+}
+
+// RemoveTalentIDs removes the "talent" edge to Talent entities by IDs.
+func (ruo *RegisterUpdateOne) RemoveTalentIDs(ids ...int) *RegisterUpdateOne {
+	ruo.mutation.RemoveTalentIDs(ids...)
+	return ruo
+}
+
+// RemoveTalent removes "talent" edges to Talent entities.
+func (ruo *RegisterUpdateOne) RemoveTalent(t ...*Talent) *RegisterUpdateOne {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return ruo.RemoveTalentIDs(ids...)
+}
+
+// ClearTraining clears all "training" edges to the Training entity.
+func (ruo *RegisterUpdateOne) ClearTraining() *RegisterUpdateOne {
+	ruo.mutation.ClearTraining()
+	return ruo
+}
+
+// RemoveTrainingIDs removes the "training" edge to Training entities by IDs.
+func (ruo *RegisterUpdateOne) RemoveTrainingIDs(ids ...int) *RegisterUpdateOne {
+	ruo.mutation.RemoveTrainingIDs(ids...)
+	return ruo
+}
+
+// RemoveTraining removes "training" edges to Training entities.
+func (ruo *RegisterUpdateOne) RemoveTraining(t ...*Training) *RegisterUpdateOne {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return ruo.RemoveTrainingIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -1921,6 +2429,222 @@ func (ruo *RegisterUpdateOne) sqlSave(ctx context.Context) (_node *Register, err
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: networth.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ruo.mutation.OrganizationCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.OrganizationTable,
+			Columns: register.OrganizationPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: organization.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ruo.mutation.RemovedOrganizationIDs(); len(nodes) > 0 && !ruo.mutation.OrganizationCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.OrganizationTable,
+			Columns: register.OrganizationPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: organization.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ruo.mutation.OrganizationIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.OrganizationTable,
+			Columns: register.OrganizationPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: organization.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ruo.mutation.SocialmediaCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.SocialmediaTable,
+			Columns: register.SocialmediaPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: socialmedia.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ruo.mutation.RemovedSocialmediaIDs(); len(nodes) > 0 && !ruo.mutation.SocialmediaCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.SocialmediaTable,
+			Columns: register.SocialmediaPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: socialmedia.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ruo.mutation.SocialmediaIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.SocialmediaTable,
+			Columns: register.SocialmediaPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: socialmedia.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ruo.mutation.TalentCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.TalentTable,
+			Columns: register.TalentPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: talent.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ruo.mutation.RemovedTalentIDs(); len(nodes) > 0 && !ruo.mutation.TalentCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.TalentTable,
+			Columns: register.TalentPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: talent.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ruo.mutation.TalentIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.TalentTable,
+			Columns: register.TalentPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: talent.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ruo.mutation.TrainingCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.TrainingTable,
+			Columns: register.TrainingPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: training.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ruo.mutation.RemovedTrainingIDs(); len(nodes) > 0 && !ruo.mutation.TrainingCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.TrainingTable,
+			Columns: register.TrainingPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: training.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ruo.mutation.TrainingIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.TrainingTable,
+			Columns: register.TrainingPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: training.FieldID,
 				},
 			},
 		}

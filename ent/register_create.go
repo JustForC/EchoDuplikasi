@@ -9,8 +9,12 @@ import (
 	"Kynesia/ent/family"
 	"Kynesia/ent/language"
 	"Kynesia/ent/networth"
+	"Kynesia/ent/organization"
 	"Kynesia/ent/register"
 	"Kynesia/ent/scholarship"
+	"Kynesia/ent/socialmedia"
+	"Kynesia/ent/talent"
+	"Kynesia/ent/training"
 	"Kynesia/ent/user"
 	"context"
 	"errors"
@@ -194,6 +198,66 @@ func (rc *RegisterCreate) AddNetworth(n ...*Networth) *RegisterCreate {
 		ids[i] = n[i].ID
 	}
 	return rc.AddNetworthIDs(ids...)
+}
+
+// AddOrganizationIDs adds the "organization" edge to the Organization entity by IDs.
+func (rc *RegisterCreate) AddOrganizationIDs(ids ...int) *RegisterCreate {
+	rc.mutation.AddOrganizationIDs(ids...)
+	return rc
+}
+
+// AddOrganization adds the "organization" edges to the Organization entity.
+func (rc *RegisterCreate) AddOrganization(o ...*Organization) *RegisterCreate {
+	ids := make([]int, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return rc.AddOrganizationIDs(ids...)
+}
+
+// AddSocialmediumIDs adds the "socialmedia" edge to the SocialMedia entity by IDs.
+func (rc *RegisterCreate) AddSocialmediumIDs(ids ...int) *RegisterCreate {
+	rc.mutation.AddSocialmediumIDs(ids...)
+	return rc
+}
+
+// AddSocialmedia adds the "socialmedia" edges to the SocialMedia entity.
+func (rc *RegisterCreate) AddSocialmedia(s ...*SocialMedia) *RegisterCreate {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return rc.AddSocialmediumIDs(ids...)
+}
+
+// AddTalentIDs adds the "talent" edge to the Talent entity by IDs.
+func (rc *RegisterCreate) AddTalentIDs(ids ...int) *RegisterCreate {
+	rc.mutation.AddTalentIDs(ids...)
+	return rc
+}
+
+// AddTalent adds the "talent" edges to the Talent entity.
+func (rc *RegisterCreate) AddTalent(t ...*Talent) *RegisterCreate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return rc.AddTalentIDs(ids...)
+}
+
+// AddTrainingIDs adds the "training" edge to the Training entity by IDs.
+func (rc *RegisterCreate) AddTrainingIDs(ids ...int) *RegisterCreate {
+	rc.mutation.AddTrainingIDs(ids...)
+	return rc
+}
+
+// AddTraining adds the "training" edges to the Training entity.
+func (rc *RegisterCreate) AddTraining(t ...*Training) *RegisterCreate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return rc.AddTrainingIDs(ids...)
 }
 
 // Mutation returns the RegisterMutation object of the builder.
@@ -484,6 +548,82 @@ func (rc *RegisterCreate) createSpec() (*Register, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: networth.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := rc.mutation.OrganizationIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.OrganizationTable,
+			Columns: register.OrganizationPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: organization.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := rc.mutation.SocialmediaIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.SocialmediaTable,
+			Columns: register.SocialmediaPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: socialmedia.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := rc.mutation.TalentIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.TalentTable,
+			Columns: register.TalentPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: talent.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := rc.mutation.TrainingIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   register.TrainingTable,
+			Columns: register.TrainingPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: training.FieldID,
 				},
 			},
 		}

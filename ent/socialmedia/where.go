@@ -6,6 +6,7 @@ import (
 	"Kynesia/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 // ID filters vertices based on their ID field.
@@ -216,20 +217,6 @@ func InstagramHasSuffix(v string) predicate.SocialMedia {
 	})
 }
 
-// InstagramIsNil applies the IsNil predicate on the "instagram" field.
-func InstagramIsNil() predicate.SocialMedia {
-	return predicate.SocialMedia(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldInstagram)))
-	})
-}
-
-// InstagramNotNil applies the NotNil predicate on the "instagram" field.
-func InstagramNotNil() predicate.SocialMedia {
-	return predicate.SocialMedia(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldInstagram)))
-	})
-}
-
 // InstagramEqualFold applies the EqualFold predicate on the "instagram" field.
 func InstagramEqualFold(v string) predicate.SocialMedia {
 	return predicate.SocialMedia(func(s *sql.Selector) {
@@ -338,20 +325,6 @@ func FacebookHasPrefix(v string) predicate.SocialMedia {
 func FacebookHasSuffix(v string) predicate.SocialMedia {
 	return predicate.SocialMedia(func(s *sql.Selector) {
 		s.Where(sql.HasSuffix(s.C(FieldFacebook), v))
-	})
-}
-
-// FacebookIsNil applies the IsNil predicate on the "facebook" field.
-func FacebookIsNil() predicate.SocialMedia {
-	return predicate.SocialMedia(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldFacebook)))
-	})
-}
-
-// FacebookNotNil applies the NotNil predicate on the "facebook" field.
-func FacebookNotNil() predicate.SocialMedia {
-	return predicate.SocialMedia(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldFacebook)))
 	})
 }
 
@@ -466,20 +439,6 @@ func TiktokHasSuffix(v string) predicate.SocialMedia {
 	})
 }
 
-// TiktokIsNil applies the IsNil predicate on the "tiktok" field.
-func TiktokIsNil() predicate.SocialMedia {
-	return predicate.SocialMedia(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldTiktok)))
-	})
-}
-
-// TiktokNotNil applies the NotNil predicate on the "tiktok" field.
-func TiktokNotNil() predicate.SocialMedia {
-	return predicate.SocialMedia(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldTiktok)))
-	})
-}
-
 // TiktokEqualFold applies the EqualFold predicate on the "tiktok" field.
 func TiktokEqualFold(v string) predicate.SocialMedia {
 	return predicate.SocialMedia(func(s *sql.Selector) {
@@ -591,20 +550,6 @@ func TwitterHasSuffix(v string) predicate.SocialMedia {
 	})
 }
 
-// TwitterIsNil applies the IsNil predicate on the "twitter" field.
-func TwitterIsNil() predicate.SocialMedia {
-	return predicate.SocialMedia(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldTwitter)))
-	})
-}
-
-// TwitterNotNil applies the NotNil predicate on the "twitter" field.
-func TwitterNotNil() predicate.SocialMedia {
-	return predicate.SocialMedia(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldTwitter)))
-	})
-}
-
 // TwitterEqualFold applies the EqualFold predicate on the "twitter" field.
 func TwitterEqualFold(v string) predicate.SocialMedia {
 	return predicate.SocialMedia(func(s *sql.Selector) {
@@ -616,6 +561,34 @@ func TwitterEqualFold(v string) predicate.SocialMedia {
 func TwitterContainsFold(v string) predicate.SocialMedia {
 	return predicate.SocialMedia(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldTwitter), v))
+	})
+}
+
+// HasRegister applies the HasEdge predicate on the "register" edge.
+func HasRegister() predicate.SocialMedia {
+	return predicate.SocialMedia(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(RegisterTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, RegisterTable, RegisterPrimaryKey...),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasRegisterWith applies the HasEdge predicate on the "register" edge with a given conditions (other predicates).
+func HasRegisterWith(preds ...predicate.Register) predicate.SocialMedia {
+	return predicate.SocialMedia(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(RegisterInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, RegisterTable, RegisterPrimaryKey...),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
 	})
 }
 

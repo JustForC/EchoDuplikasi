@@ -9,9 +9,13 @@ import (
 	"Kynesia/ent/family"
 	"Kynesia/ent/language"
 	"Kynesia/ent/networth"
+	"Kynesia/ent/organization"
 	"Kynesia/ent/predicate"
 	"Kynesia/ent/register"
 	"Kynesia/ent/scholarship"
+	"Kynesia/ent/socialmedia"
+	"Kynesia/ent/talent"
+	"Kynesia/ent/training"
 	"Kynesia/ent/user"
 	"context"
 	"database/sql/driver"
@@ -34,14 +38,18 @@ type RegisterQuery struct {
 	fields     []string
 	predicates []predicate.Register
 	// eager-loading edges.
-	withUser        *UserQuery
-	withScholarship *ScholarshipQuery
-	withAchievement *AchievementQuery
-	withBiodata     *BiodataQuery
-	withEducation   *EducationQuery
-	withFamily      *FamilyQuery
-	withLanguage    *LanguageQuery
-	withNetworth    *NetworthQuery
+	withUser         *UserQuery
+	withScholarship  *ScholarshipQuery
+	withAchievement  *AchievementQuery
+	withBiodata      *BiodataQuery
+	withEducation    *EducationQuery
+	withFamily       *FamilyQuery
+	withLanguage     *LanguageQuery
+	withNetworth     *NetworthQuery
+	withOrganization *OrganizationQuery
+	withSocialmedia  *SocialMediaQuery
+	withTalent       *TalentQuery
+	withTraining     *TrainingQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -254,6 +262,94 @@ func (rq *RegisterQuery) QueryNetworth() *NetworthQuery {
 	return query
 }
 
+// QueryOrganization chains the current query on the "organization" edge.
+func (rq *RegisterQuery) QueryOrganization() *OrganizationQuery {
+	query := &OrganizationQuery{config: rq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := rq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := rq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(register.Table, register.FieldID, selector),
+			sqlgraph.To(organization.Table, organization.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, register.OrganizationTable, register.OrganizationPrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(rq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QuerySocialmedia chains the current query on the "socialmedia" edge.
+func (rq *RegisterQuery) QuerySocialmedia() *SocialMediaQuery {
+	query := &SocialMediaQuery{config: rq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := rq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := rq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(register.Table, register.FieldID, selector),
+			sqlgraph.To(socialmedia.Table, socialmedia.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, register.SocialmediaTable, register.SocialmediaPrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(rq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryTalent chains the current query on the "talent" edge.
+func (rq *RegisterQuery) QueryTalent() *TalentQuery {
+	query := &TalentQuery{config: rq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := rq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := rq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(register.Table, register.FieldID, selector),
+			sqlgraph.To(talent.Table, talent.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, register.TalentTable, register.TalentPrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(rq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryTraining chains the current query on the "training" edge.
+func (rq *RegisterQuery) QueryTraining() *TrainingQuery {
+	query := &TrainingQuery{config: rq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := rq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := rq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(register.Table, register.FieldID, selector),
+			sqlgraph.To(training.Table, training.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, register.TrainingTable, register.TrainingPrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(rq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // First returns the first Register entity from the query.
 // Returns a *NotFoundError when no Register was found.
 func (rq *RegisterQuery) First(ctx context.Context) (*Register, error) {
@@ -430,19 +526,23 @@ func (rq *RegisterQuery) Clone() *RegisterQuery {
 		return nil
 	}
 	return &RegisterQuery{
-		config:          rq.config,
-		limit:           rq.limit,
-		offset:          rq.offset,
-		order:           append([]OrderFunc{}, rq.order...),
-		predicates:      append([]predicate.Register{}, rq.predicates...),
-		withUser:        rq.withUser.Clone(),
-		withScholarship: rq.withScholarship.Clone(),
-		withAchievement: rq.withAchievement.Clone(),
-		withBiodata:     rq.withBiodata.Clone(),
-		withEducation:   rq.withEducation.Clone(),
-		withFamily:      rq.withFamily.Clone(),
-		withLanguage:    rq.withLanguage.Clone(),
-		withNetworth:    rq.withNetworth.Clone(),
+		config:           rq.config,
+		limit:            rq.limit,
+		offset:           rq.offset,
+		order:            append([]OrderFunc{}, rq.order...),
+		predicates:       append([]predicate.Register{}, rq.predicates...),
+		withUser:         rq.withUser.Clone(),
+		withScholarship:  rq.withScholarship.Clone(),
+		withAchievement:  rq.withAchievement.Clone(),
+		withBiodata:      rq.withBiodata.Clone(),
+		withEducation:    rq.withEducation.Clone(),
+		withFamily:       rq.withFamily.Clone(),
+		withLanguage:     rq.withLanguage.Clone(),
+		withNetworth:     rq.withNetworth.Clone(),
+		withOrganization: rq.withOrganization.Clone(),
+		withSocialmedia:  rq.withSocialmedia.Clone(),
+		withTalent:       rq.withTalent.Clone(),
+		withTraining:     rq.withTraining.Clone(),
 		// clone intermediate query.
 		sql:    rq.sql.Clone(),
 		path:   rq.path,
@@ -538,6 +638,50 @@ func (rq *RegisterQuery) WithNetworth(opts ...func(*NetworthQuery)) *RegisterQue
 	return rq
 }
 
+// WithOrganization tells the query-builder to eager-load the nodes that are connected to
+// the "organization" edge. The optional arguments are used to configure the query builder of the edge.
+func (rq *RegisterQuery) WithOrganization(opts ...func(*OrganizationQuery)) *RegisterQuery {
+	query := &OrganizationQuery{config: rq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	rq.withOrganization = query
+	return rq
+}
+
+// WithSocialmedia tells the query-builder to eager-load the nodes that are connected to
+// the "socialmedia" edge. The optional arguments are used to configure the query builder of the edge.
+func (rq *RegisterQuery) WithSocialmedia(opts ...func(*SocialMediaQuery)) *RegisterQuery {
+	query := &SocialMediaQuery{config: rq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	rq.withSocialmedia = query
+	return rq
+}
+
+// WithTalent tells the query-builder to eager-load the nodes that are connected to
+// the "talent" edge. The optional arguments are used to configure the query builder of the edge.
+func (rq *RegisterQuery) WithTalent(opts ...func(*TalentQuery)) *RegisterQuery {
+	query := &TalentQuery{config: rq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	rq.withTalent = query
+	return rq
+}
+
+// WithTraining tells the query-builder to eager-load the nodes that are connected to
+// the "training" edge. The optional arguments are used to configure the query builder of the edge.
+func (rq *RegisterQuery) WithTraining(opts ...func(*TrainingQuery)) *RegisterQuery {
+	query := &TrainingQuery{config: rq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	rq.withTraining = query
+	return rq
+}
+
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -603,7 +747,7 @@ func (rq *RegisterQuery) sqlAll(ctx context.Context) ([]*Register, error) {
 	var (
 		nodes       = []*Register{}
 		_spec       = rq.querySpec()
-		loadedTypes = [8]bool{
+		loadedTypes = [12]bool{
 			rq.withUser != nil,
 			rq.withScholarship != nil,
 			rq.withAchievement != nil,
@@ -612,6 +756,10 @@ func (rq *RegisterQuery) sqlAll(ctx context.Context) ([]*Register, error) {
 			rq.withFamily != nil,
 			rq.withLanguage != nil,
 			rq.withNetworth != nil,
+			rq.withOrganization != nil,
+			rq.withSocialmedia != nil,
+			rq.withTalent != nil,
+			rq.withTraining != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]interface{}, error) {
@@ -1150,6 +1298,266 @@ func (rq *RegisterQuery) sqlAll(ctx context.Context) ([]*Register, error) {
 			}
 			for i := range nodes {
 				nodes[i].Edges.Networth = append(nodes[i].Edges.Networth, n)
+			}
+		}
+	}
+
+	if query := rq.withOrganization; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		ids := make(map[int]*Register, len(nodes))
+		for _, node := range nodes {
+			ids[node.ID] = node
+			fks = append(fks, node.ID)
+			node.Edges.Organization = []*Organization{}
+		}
+		var (
+			edgeids []int
+			edges   = make(map[int][]*Register)
+		)
+		_spec := &sqlgraph.EdgeQuerySpec{
+			Edge: &sqlgraph.EdgeSpec{
+				Inverse: true,
+				Table:   register.OrganizationTable,
+				Columns: register.OrganizationPrimaryKey,
+			},
+			Predicate: func(s *sql.Selector) {
+				s.Where(sql.InValues(register.OrganizationPrimaryKey[1], fks...))
+			},
+			ScanValues: func() [2]interface{} {
+				return [2]interface{}{new(sql.NullInt64), new(sql.NullInt64)}
+			},
+			Assign: func(out, in interface{}) error {
+				eout, ok := out.(*sql.NullInt64)
+				if !ok || eout == nil {
+					return fmt.Errorf("unexpected id value for edge-out")
+				}
+				ein, ok := in.(*sql.NullInt64)
+				if !ok || ein == nil {
+					return fmt.Errorf("unexpected id value for edge-in")
+				}
+				outValue := int(eout.Int64)
+				inValue := int(ein.Int64)
+				node, ok := ids[outValue]
+				if !ok {
+					return fmt.Errorf("unexpected node id in edges: %v", outValue)
+				}
+				if _, ok := edges[inValue]; !ok {
+					edgeids = append(edgeids, inValue)
+				}
+				edges[inValue] = append(edges[inValue], node)
+				return nil
+			},
+		}
+		if err := sqlgraph.QueryEdges(ctx, rq.driver, _spec); err != nil {
+			return nil, fmt.Errorf(`query edges "organization": %w`, err)
+		}
+		query.Where(organization.IDIn(edgeids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := edges[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected "organization" node returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.Organization = append(nodes[i].Edges.Organization, n)
+			}
+		}
+	}
+
+	if query := rq.withSocialmedia; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		ids := make(map[int]*Register, len(nodes))
+		for _, node := range nodes {
+			ids[node.ID] = node
+			fks = append(fks, node.ID)
+			node.Edges.Socialmedia = []*SocialMedia{}
+		}
+		var (
+			edgeids []int
+			edges   = make(map[int][]*Register)
+		)
+		_spec := &sqlgraph.EdgeQuerySpec{
+			Edge: &sqlgraph.EdgeSpec{
+				Inverse: true,
+				Table:   register.SocialmediaTable,
+				Columns: register.SocialmediaPrimaryKey,
+			},
+			Predicate: func(s *sql.Selector) {
+				s.Where(sql.InValues(register.SocialmediaPrimaryKey[1], fks...))
+			},
+			ScanValues: func() [2]interface{} {
+				return [2]interface{}{new(sql.NullInt64), new(sql.NullInt64)}
+			},
+			Assign: func(out, in interface{}) error {
+				eout, ok := out.(*sql.NullInt64)
+				if !ok || eout == nil {
+					return fmt.Errorf("unexpected id value for edge-out")
+				}
+				ein, ok := in.(*sql.NullInt64)
+				if !ok || ein == nil {
+					return fmt.Errorf("unexpected id value for edge-in")
+				}
+				outValue := int(eout.Int64)
+				inValue := int(ein.Int64)
+				node, ok := ids[outValue]
+				if !ok {
+					return fmt.Errorf("unexpected node id in edges: %v", outValue)
+				}
+				if _, ok := edges[inValue]; !ok {
+					edgeids = append(edgeids, inValue)
+				}
+				edges[inValue] = append(edges[inValue], node)
+				return nil
+			},
+		}
+		if err := sqlgraph.QueryEdges(ctx, rq.driver, _spec); err != nil {
+			return nil, fmt.Errorf(`query edges "socialmedia": %w`, err)
+		}
+		query.Where(socialmedia.IDIn(edgeids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := edges[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected "socialmedia" node returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.Socialmedia = append(nodes[i].Edges.Socialmedia, n)
+			}
+		}
+	}
+
+	if query := rq.withTalent; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		ids := make(map[int]*Register, len(nodes))
+		for _, node := range nodes {
+			ids[node.ID] = node
+			fks = append(fks, node.ID)
+			node.Edges.Talent = []*Talent{}
+		}
+		var (
+			edgeids []int
+			edges   = make(map[int][]*Register)
+		)
+		_spec := &sqlgraph.EdgeQuerySpec{
+			Edge: &sqlgraph.EdgeSpec{
+				Inverse: true,
+				Table:   register.TalentTable,
+				Columns: register.TalentPrimaryKey,
+			},
+			Predicate: func(s *sql.Selector) {
+				s.Where(sql.InValues(register.TalentPrimaryKey[1], fks...))
+			},
+			ScanValues: func() [2]interface{} {
+				return [2]interface{}{new(sql.NullInt64), new(sql.NullInt64)}
+			},
+			Assign: func(out, in interface{}) error {
+				eout, ok := out.(*sql.NullInt64)
+				if !ok || eout == nil {
+					return fmt.Errorf("unexpected id value for edge-out")
+				}
+				ein, ok := in.(*sql.NullInt64)
+				if !ok || ein == nil {
+					return fmt.Errorf("unexpected id value for edge-in")
+				}
+				outValue := int(eout.Int64)
+				inValue := int(ein.Int64)
+				node, ok := ids[outValue]
+				if !ok {
+					return fmt.Errorf("unexpected node id in edges: %v", outValue)
+				}
+				if _, ok := edges[inValue]; !ok {
+					edgeids = append(edgeids, inValue)
+				}
+				edges[inValue] = append(edges[inValue], node)
+				return nil
+			},
+		}
+		if err := sqlgraph.QueryEdges(ctx, rq.driver, _spec); err != nil {
+			return nil, fmt.Errorf(`query edges "talent": %w`, err)
+		}
+		query.Where(talent.IDIn(edgeids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := edges[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected "talent" node returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.Talent = append(nodes[i].Edges.Talent, n)
+			}
+		}
+	}
+
+	if query := rq.withTraining; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		ids := make(map[int]*Register, len(nodes))
+		for _, node := range nodes {
+			ids[node.ID] = node
+			fks = append(fks, node.ID)
+			node.Edges.Training = []*Training{}
+		}
+		var (
+			edgeids []int
+			edges   = make(map[int][]*Register)
+		)
+		_spec := &sqlgraph.EdgeQuerySpec{
+			Edge: &sqlgraph.EdgeSpec{
+				Inverse: true,
+				Table:   register.TrainingTable,
+				Columns: register.TrainingPrimaryKey,
+			},
+			Predicate: func(s *sql.Selector) {
+				s.Where(sql.InValues(register.TrainingPrimaryKey[1], fks...))
+			},
+			ScanValues: func() [2]interface{} {
+				return [2]interface{}{new(sql.NullInt64), new(sql.NullInt64)}
+			},
+			Assign: func(out, in interface{}) error {
+				eout, ok := out.(*sql.NullInt64)
+				if !ok || eout == nil {
+					return fmt.Errorf("unexpected id value for edge-out")
+				}
+				ein, ok := in.(*sql.NullInt64)
+				if !ok || ein == nil {
+					return fmt.Errorf("unexpected id value for edge-in")
+				}
+				outValue := int(eout.Int64)
+				inValue := int(ein.Int64)
+				node, ok := ids[outValue]
+				if !ok {
+					return fmt.Errorf("unexpected node id in edges: %v", outValue)
+				}
+				if _, ok := edges[inValue]; !ok {
+					edgeids = append(edgeids, inValue)
+				}
+				edges[inValue] = append(edges[inValue], node)
+				return nil
+			},
+		}
+		if err := sqlgraph.QueryEdges(ctx, rq.driver, _spec); err != nil {
+			return nil, fmt.Errorf(`query edges "training": %w`, err)
+		}
+		query.Where(training.IDIn(edgeids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := edges[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected "training" node returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.Training = append(nodes[i].Edges.Training, n)
 			}
 		}
 	}

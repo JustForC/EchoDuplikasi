@@ -6,6 +6,7 @@ import (
 	"Kynesia/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 // ID filters vertices based on their ID field.
@@ -216,20 +217,6 @@ func NameHasSuffix(v string) predicate.Organization {
 	})
 }
 
-// NameIsNil applies the IsNil predicate on the "name" field.
-func NameIsNil() predicate.Organization {
-	return predicate.Organization(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldName)))
-	})
-}
-
-// NameNotNil applies the NotNil predicate on the "name" field.
-func NameNotNil() predicate.Organization {
-	return predicate.Organization(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldName)))
-	})
-}
-
 // NameEqualFold applies the EqualFold predicate on the "name" field.
 func NameEqualFold(v string) predicate.Organization {
 	return predicate.Organization(func(s *sql.Selector) {
@@ -338,20 +325,6 @@ func PeriodHasPrefix(v string) predicate.Organization {
 func PeriodHasSuffix(v string) predicate.Organization {
 	return predicate.Organization(func(s *sql.Selector) {
 		s.Where(sql.HasSuffix(s.C(FieldPeriod), v))
-	})
-}
-
-// PeriodIsNil applies the IsNil predicate on the "period" field.
-func PeriodIsNil() predicate.Organization {
-	return predicate.Organization(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldPeriod)))
-	})
-}
-
-// PeriodNotNil applies the NotNil predicate on the "period" field.
-func PeriodNotNil() predicate.Organization {
-	return predicate.Organization(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldPeriod)))
 	})
 }
 
@@ -466,20 +439,6 @@ func PositionHasSuffix(v string) predicate.Organization {
 	})
 }
 
-// PositionIsNil applies the IsNil predicate on the "position" field.
-func PositionIsNil() predicate.Organization {
-	return predicate.Organization(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldPosition)))
-	})
-}
-
-// PositionNotNil applies the NotNil predicate on the "position" field.
-func PositionNotNil() predicate.Organization {
-	return predicate.Organization(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldPosition)))
-	})
-}
-
 // PositionEqualFold applies the EqualFold predicate on the "position" field.
 func PositionEqualFold(v string) predicate.Organization {
 	return predicate.Organization(func(s *sql.Selector) {
@@ -591,20 +550,6 @@ func DetailHasSuffix(v string) predicate.Organization {
 	})
 }
 
-// DetailIsNil applies the IsNil predicate on the "detail" field.
-func DetailIsNil() predicate.Organization {
-	return predicate.Organization(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldDetail)))
-	})
-}
-
-// DetailNotNil applies the NotNil predicate on the "detail" field.
-func DetailNotNil() predicate.Organization {
-	return predicate.Organization(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldDetail)))
-	})
-}
-
 // DetailEqualFold applies the EqualFold predicate on the "detail" field.
 func DetailEqualFold(v string) predicate.Organization {
 	return predicate.Organization(func(s *sql.Selector) {
@@ -616,6 +561,34 @@ func DetailEqualFold(v string) predicate.Organization {
 func DetailContainsFold(v string) predicate.Organization {
 	return predicate.Organization(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldDetail), v))
+	})
+}
+
+// HasRegister applies the HasEdge predicate on the "register" edge.
+func HasRegister() predicate.Organization {
+	return predicate.Organization(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(RegisterTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, RegisterTable, RegisterPrimaryKey...),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasRegisterWith applies the HasEdge predicate on the "register" edge with a given conditions (other predicates).
+func HasRegisterWith(preds ...predicate.Register) predicate.Organization {
+	return predicate.Organization(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(RegisterInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, RegisterTable, RegisterPrimaryKey...),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
 	})
 }
 

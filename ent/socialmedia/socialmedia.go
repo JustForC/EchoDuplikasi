@@ -15,8 +15,15 @@ const (
 	FieldTiktok = "tiktok"
 	// FieldTwitter holds the string denoting the twitter field in the database.
 	FieldTwitter = "twitter"
+	// EdgeRegister holds the string denoting the register edge name in mutations.
+	EdgeRegister = "register"
 	// Table holds the table name of the socialmedia in the database.
 	Table = "social_media"
+	// RegisterTable is the table that holds the register relation/edge. The primary key declared below.
+	RegisterTable = "social_media_register"
+	// RegisterInverseTable is the table name for the Register entity.
+	// It exists in this package in order to avoid circular dependency with the "register" package.
+	RegisterInverseTable = "registers"
 )
 
 // Columns holds all SQL columns for socialmedia fields.
@@ -27,6 +34,12 @@ var Columns = []string{
 	FieldTiktok,
 	FieldTwitter,
 }
+
+var (
+	// RegisterPrimaryKey and RegisterColumn2 are the table columns denoting the
+	// primary key for the register relation (M2M).
+	RegisterPrimaryKey = []string{"social_media_id", "register_id"}
+)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {

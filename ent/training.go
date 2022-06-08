@@ -16,15 +16,36 @@ type Training struct {
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
 	// Name holds the value of the "name" field.
-	Name *string `json:"name,omitempty"`
+	Name string `json:"name,omitempty"`
 	// Period holds the value of the "period" field.
-	Period *string `json:"period,omitempty"`
+	Period string `json:"period,omitempty"`
 	// Year holds the value of the "year" field.
-	Year *string `json:"year,omitempty"`
+	Year string `json:"year,omitempty"`
 	// Organizer holds the value of the "organizer" field.
-	Organizer *string `json:"organizer,omitempty"`
+	Organizer string `json:"organizer,omitempty"`
 	// Certificate holds the value of the "certificate" field.
-	Certificate *string `json:"certificate,omitempty"`
+	Certificate string `json:"certificate,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the TrainingQuery when eager-loading is set.
+	Edges TrainingEdges `json:"edges"`
+}
+
+// TrainingEdges holds the relations/edges for other nodes in the graph.
+type TrainingEdges struct {
+	// Register holds the value of the register edge.
+	Register []*Register `json:"register,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [1]bool
+}
+
+// RegisterOrErr returns the Register value or an error if the edge
+// was not loaded in eager-loading.
+func (e TrainingEdges) RegisterOrErr() ([]*Register, error) {
+	if e.loadedTypes[0] {
+		return e.Register, nil
+	}
+	return nil, &NotLoadedError{edge: "register"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -61,40 +82,40 @@ func (t *Training) assignValues(columns []string, values []interface{}) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
 			} else if value.Valid {
-				t.Name = new(string)
-				*t.Name = value.String
+				t.Name = value.String
 			}
 		case training.FieldPeriod:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field period", values[i])
 			} else if value.Valid {
-				t.Period = new(string)
-				*t.Period = value.String
+				t.Period = value.String
 			}
 		case training.FieldYear:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field year", values[i])
 			} else if value.Valid {
-				t.Year = new(string)
-				*t.Year = value.String
+				t.Year = value.String
 			}
 		case training.FieldOrganizer:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field organizer", values[i])
 			} else if value.Valid {
-				t.Organizer = new(string)
-				*t.Organizer = value.String
+				t.Organizer = value.String
 			}
 		case training.FieldCertificate:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field certificate", values[i])
 			} else if value.Valid {
-				t.Certificate = new(string)
-				*t.Certificate = value.String
+				t.Certificate = value.String
 			}
 		}
 	}
 	return nil
+}
+
+// QueryRegister queries the "register" edge of the Training entity.
+func (t *Training) QueryRegister() *RegisterQuery {
+	return (&TrainingClient{config: t.config}).QueryRegister(t)
 }
 
 // Update returns a builder for updating this Training.
@@ -120,26 +141,16 @@ func (t *Training) String() string {
 	var builder strings.Builder
 	builder.WriteString("Training(")
 	builder.WriteString(fmt.Sprintf("id=%v", t.ID))
-	if v := t.Name; v != nil {
-		builder.WriteString(", name=")
-		builder.WriteString(*v)
-	}
-	if v := t.Period; v != nil {
-		builder.WriteString(", period=")
-		builder.WriteString(*v)
-	}
-	if v := t.Year; v != nil {
-		builder.WriteString(", year=")
-		builder.WriteString(*v)
-	}
-	if v := t.Organizer; v != nil {
-		builder.WriteString(", organizer=")
-		builder.WriteString(*v)
-	}
-	if v := t.Certificate; v != nil {
-		builder.WriteString(", certificate=")
-		builder.WriteString(*v)
-	}
+	builder.WriteString(", name=")
+	builder.WriteString(t.Name)
+	builder.WriteString(", period=")
+	builder.WriteString(t.Period)
+	builder.WriteString(", year=")
+	builder.WriteString(t.Year)
+	builder.WriteString(", organizer=")
+	builder.WriteString(t.Organizer)
+	builder.WriteString(", certificate=")
+	builder.WriteString(t.Certificate)
 	builder.WriteByte(')')
 	return builder.String()
 }

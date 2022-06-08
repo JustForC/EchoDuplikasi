@@ -4,7 +4,9 @@ package ent
 
 import (
 	"Kynesia/ent/organization"
+	"Kynesia/ent/register"
 	"context"
+	"errors"
 	"fmt"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -24,25 +26,9 @@ func (oc *OrganizationCreate) SetName(s string) *OrganizationCreate {
 	return oc
 }
 
-// SetNillableName sets the "name" field if the given value is not nil.
-func (oc *OrganizationCreate) SetNillableName(s *string) *OrganizationCreate {
-	if s != nil {
-		oc.SetName(*s)
-	}
-	return oc
-}
-
 // SetPeriod sets the "period" field.
 func (oc *OrganizationCreate) SetPeriod(s string) *OrganizationCreate {
 	oc.mutation.SetPeriod(s)
-	return oc
-}
-
-// SetNillablePeriod sets the "period" field if the given value is not nil.
-func (oc *OrganizationCreate) SetNillablePeriod(s *string) *OrganizationCreate {
-	if s != nil {
-		oc.SetPeriod(*s)
-	}
 	return oc
 }
 
@@ -52,26 +38,25 @@ func (oc *OrganizationCreate) SetPosition(s string) *OrganizationCreate {
 	return oc
 }
 
-// SetNillablePosition sets the "position" field if the given value is not nil.
-func (oc *OrganizationCreate) SetNillablePosition(s *string) *OrganizationCreate {
-	if s != nil {
-		oc.SetPosition(*s)
-	}
-	return oc
-}
-
 // SetDetail sets the "detail" field.
 func (oc *OrganizationCreate) SetDetail(s string) *OrganizationCreate {
 	oc.mutation.SetDetail(s)
 	return oc
 }
 
-// SetNillableDetail sets the "detail" field if the given value is not nil.
-func (oc *OrganizationCreate) SetNillableDetail(s *string) *OrganizationCreate {
-	if s != nil {
-		oc.SetDetail(*s)
-	}
+// AddRegisterIDs adds the "register" edge to the Register entity by IDs.
+func (oc *OrganizationCreate) AddRegisterIDs(ids ...int) *OrganizationCreate {
+	oc.mutation.AddRegisterIDs(ids...)
 	return oc
+}
+
+// AddRegister adds the "register" edges to the Register entity.
+func (oc *OrganizationCreate) AddRegister(r ...*Register) *OrganizationCreate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return oc.AddRegisterIDs(ids...)
 }
 
 // Mutation returns the OrganizationMutation object of the builder.
@@ -144,6 +129,18 @@ func (oc *OrganizationCreate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (oc *OrganizationCreate) check() error {
+	if _, ok := oc.mutation.Name(); !ok {
+		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Organization.name"`)}
+	}
+	if _, ok := oc.mutation.Period(); !ok {
+		return &ValidationError{Name: "period", err: errors.New(`ent: missing required field "Organization.period"`)}
+	}
+	if _, ok := oc.mutation.Position(); !ok {
+		return &ValidationError{Name: "position", err: errors.New(`ent: missing required field "Organization.position"`)}
+	}
+	if _, ok := oc.mutation.Detail(); !ok {
+		return &ValidationError{Name: "detail", err: errors.New(`ent: missing required field "Organization.detail"`)}
+	}
 	return nil
 }
 
@@ -177,7 +174,7 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 			Value:  value,
 			Column: organization.FieldName,
 		})
-		_node.Name = &value
+		_node.Name = value
 	}
 	if value, ok := oc.mutation.Period(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -185,7 +182,7 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 			Value:  value,
 			Column: organization.FieldPeriod,
 		})
-		_node.Period = &value
+		_node.Period = value
 	}
 	if value, ok := oc.mutation.Position(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -193,7 +190,7 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 			Value:  value,
 			Column: organization.FieldPosition,
 		})
-		_node.Position = &value
+		_node.Position = value
 	}
 	if value, ok := oc.mutation.Detail(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -201,7 +198,26 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 			Value:  value,
 			Column: organization.FieldDetail,
 		})
-		_node.Detail = &value
+		_node.Detail = value
+	}
+	if nodes := oc.mutation.RegisterIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   organization.RegisterTable,
+			Columns: organization.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

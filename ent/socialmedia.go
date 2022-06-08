@@ -16,13 +16,34 @@ type SocialMedia struct {
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
 	// Instagram holds the value of the "instagram" field.
-	Instagram *string `json:"instagram,omitempty"`
+	Instagram string `json:"instagram,omitempty"`
 	// Facebook holds the value of the "facebook" field.
-	Facebook *string `json:"facebook,omitempty"`
+	Facebook string `json:"facebook,omitempty"`
 	// Tiktok holds the value of the "tiktok" field.
-	Tiktok *string `json:"tiktok,omitempty"`
+	Tiktok string `json:"tiktok,omitempty"`
 	// Twitter holds the value of the "twitter" field.
-	Twitter *string `json:"twitter,omitempty"`
+	Twitter string `json:"twitter,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the SocialMediaQuery when eager-loading is set.
+	Edges SocialMediaEdges `json:"edges"`
+}
+
+// SocialMediaEdges holds the relations/edges for other nodes in the graph.
+type SocialMediaEdges struct {
+	// Register holds the value of the register edge.
+	Register []*Register `json:"register,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [1]bool
+}
+
+// RegisterOrErr returns the Register value or an error if the edge
+// was not loaded in eager-loading.
+func (e SocialMediaEdges) RegisterOrErr() ([]*Register, error) {
+	if e.loadedTypes[0] {
+		return e.Register, nil
+	}
+	return nil, &NotLoadedError{edge: "register"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -59,33 +80,34 @@ func (sm *SocialMedia) assignValues(columns []string, values []interface{}) erro
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field instagram", values[i])
 			} else if value.Valid {
-				sm.Instagram = new(string)
-				*sm.Instagram = value.String
+				sm.Instagram = value.String
 			}
 		case socialmedia.FieldFacebook:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field facebook", values[i])
 			} else if value.Valid {
-				sm.Facebook = new(string)
-				*sm.Facebook = value.String
+				sm.Facebook = value.String
 			}
 		case socialmedia.FieldTiktok:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field tiktok", values[i])
 			} else if value.Valid {
-				sm.Tiktok = new(string)
-				*sm.Tiktok = value.String
+				sm.Tiktok = value.String
 			}
 		case socialmedia.FieldTwitter:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field twitter", values[i])
 			} else if value.Valid {
-				sm.Twitter = new(string)
-				*sm.Twitter = value.String
+				sm.Twitter = value.String
 			}
 		}
 	}
 	return nil
+}
+
+// QueryRegister queries the "register" edge of the SocialMedia entity.
+func (sm *SocialMedia) QueryRegister() *RegisterQuery {
+	return (&SocialMediaClient{config: sm.config}).QueryRegister(sm)
 }
 
 // Update returns a builder for updating this SocialMedia.
@@ -111,22 +133,14 @@ func (sm *SocialMedia) String() string {
 	var builder strings.Builder
 	builder.WriteString("SocialMedia(")
 	builder.WriteString(fmt.Sprintf("id=%v", sm.ID))
-	if v := sm.Instagram; v != nil {
-		builder.WriteString(", instagram=")
-		builder.WriteString(*v)
-	}
-	if v := sm.Facebook; v != nil {
-		builder.WriteString(", facebook=")
-		builder.WriteString(*v)
-	}
-	if v := sm.Tiktok; v != nil {
-		builder.WriteString(", tiktok=")
-		builder.WriteString(*v)
-	}
-	if v := sm.Twitter; v != nil {
-		builder.WriteString(", twitter=")
-		builder.WriteString(*v)
-	}
+	builder.WriteString(", instagram=")
+	builder.WriteString(sm.Instagram)
+	builder.WriteString(", facebook=")
+	builder.WriteString(sm.Facebook)
+	builder.WriteString(", tiktok=")
+	builder.WriteString(sm.Tiktok)
+	builder.WriteString(", twitter=")
+	builder.WriteString(sm.Twitter)
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -47,9 +47,17 @@ type RegisterEdges struct {
 	Language []*Language `json:"language,omitempty"`
 	// Networth holds the value of the networth edge.
 	Networth []*Networth `json:"networth,omitempty"`
+	// Organization holds the value of the organization edge.
+	Organization []*Organization `json:"organization,omitempty"`
+	// Socialmedia holds the value of the socialmedia edge.
+	Socialmedia []*SocialMedia `json:"socialmedia,omitempty"`
+	// Talent holds the value of the talent edge.
+	Talent []*Talent `json:"talent,omitempty"`
+	// Training holds the value of the training edge.
+	Training []*Training `json:"training,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [8]bool
+	loadedTypes [12]bool
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -122,6 +130,42 @@ func (e RegisterEdges) NetworthOrErr() ([]*Networth, error) {
 		return e.Networth, nil
 	}
 	return nil, &NotLoadedError{edge: "networth"}
+}
+
+// OrganizationOrErr returns the Organization value or an error if the edge
+// was not loaded in eager-loading.
+func (e RegisterEdges) OrganizationOrErr() ([]*Organization, error) {
+	if e.loadedTypes[8] {
+		return e.Organization, nil
+	}
+	return nil, &NotLoadedError{edge: "organization"}
+}
+
+// SocialmediaOrErr returns the Socialmedia value or an error if the edge
+// was not loaded in eager-loading.
+func (e RegisterEdges) SocialmediaOrErr() ([]*SocialMedia, error) {
+	if e.loadedTypes[9] {
+		return e.Socialmedia, nil
+	}
+	return nil, &NotLoadedError{edge: "socialmedia"}
+}
+
+// TalentOrErr returns the Talent value or an error if the edge
+// was not loaded in eager-loading.
+func (e RegisterEdges) TalentOrErr() ([]*Talent, error) {
+	if e.loadedTypes[10] {
+		return e.Talent, nil
+	}
+	return nil, &NotLoadedError{edge: "talent"}
+}
+
+// TrainingOrErr returns the Training value or an error if the edge
+// was not loaded in eager-loading.
+func (e RegisterEdges) TrainingOrErr() ([]*Training, error) {
+	if e.loadedTypes[11] {
+		return e.Training, nil
+	}
+	return nil, &NotLoadedError{edge: "training"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -225,6 +269,26 @@ func (r *Register) QueryLanguage() *LanguageQuery {
 // QueryNetworth queries the "networth" edge of the Register entity.
 func (r *Register) QueryNetworth() *NetworthQuery {
 	return (&RegisterClient{config: r.config}).QueryNetworth(r)
+}
+
+// QueryOrganization queries the "organization" edge of the Register entity.
+func (r *Register) QueryOrganization() *OrganizationQuery {
+	return (&RegisterClient{config: r.config}).QueryOrganization(r)
+}
+
+// QuerySocialmedia queries the "socialmedia" edge of the Register entity.
+func (r *Register) QuerySocialmedia() *SocialMediaQuery {
+	return (&RegisterClient{config: r.config}).QuerySocialmedia(r)
+}
+
+// QueryTalent queries the "talent" edge of the Register entity.
+func (r *Register) QueryTalent() *TalentQuery {
+	return (&RegisterClient{config: r.config}).QueryTalent(r)
+}
+
+// QueryTraining queries the "training" edge of the Register entity.
+func (r *Register) QueryTraining() *TrainingQuery {
+	return (&RegisterClient{config: r.config}).QueryTraining(r)
 }
 
 // Update returns a builder for updating this Register.

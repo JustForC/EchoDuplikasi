@@ -37,5 +37,9 @@ func (Register) Edges() []ent.Edge {
 		edge.From("family", Family.Type).Ref("register"),
 		edge.From("language", Language.Type).Ref("register"),
 		edge.From("networth", Networth.Type).Ref("register"),
+		edge.From("organization", Organization.Type).Ref("register"),
+		edge.From("socialmedia", SocialMedia.Type).Ref("register"),
+		edge.From("talent", Talent.Type).Ref("register"),
+		edge.From("training", Training.Type).Ref("register"),
 	}
 }

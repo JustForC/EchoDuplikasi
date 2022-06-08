@@ -4679,17 +4679,20 @@ func (m *NetworthMutation) ResetEdge(name string) error {
 // OrganizationMutation represents an operation that mutates the Organization nodes in the graph.
 type OrganizationMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *int
-	name          *string
-	period        *string
-	position      *string
-	detail        *string
-	clearedFields map[string]struct{}
-	done          bool
-	oldValue      func(context.Context) (*Organization, error)
-	predicates    []predicate.Organization
+	op              Op
+	typ             string
+	id              *int
+	name            *string
+	period          *string
+	position        *string
+	detail          *string
+	clearedFields   map[string]struct{}
+	register        map[int]struct{}
+	removedregister map[int]struct{}
+	clearedregister bool
+	done            bool
+	oldValue        func(context.Context) (*Organization, error)
+	predicates      []predicate.Organization
 }
 
 var _ ent.Mutation = (*OrganizationMutation)(nil)
@@ -4807,7 +4810,7 @@ func (m *OrganizationMutation) Name() (r string, exists bool) {
 // OldName returns the old "name" field's value of the Organization entity.
 // If the Organization object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *OrganizationMutation) OldName(ctx context.Context) (v *string, err error) {
+func (m *OrganizationMutation) OldName(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldName is only allowed on UpdateOne operations")
 	}
@@ -4821,22 +4824,9 @@ func (m *OrganizationMutation) OldName(ctx context.Context) (v *string, err erro
 	return oldValue.Name, nil
 }
 
-// ClearName clears the value of the "name" field.
-func (m *OrganizationMutation) ClearName() {
-	m.name = nil
-	m.clearedFields[organization.FieldName] = struct{}{}
-}
-
-// NameCleared returns if the "name" field was cleared in this mutation.
-func (m *OrganizationMutation) NameCleared() bool {
-	_, ok := m.clearedFields[organization.FieldName]
-	return ok
-}
-
 // ResetName resets all changes to the "name" field.
 func (m *OrganizationMutation) ResetName() {
 	m.name = nil
-	delete(m.clearedFields, organization.FieldName)
 }
 
 // SetPeriod sets the "period" field.
@@ -4856,7 +4846,7 @@ func (m *OrganizationMutation) Period() (r string, exists bool) {
 // OldPeriod returns the old "period" field's value of the Organization entity.
 // If the Organization object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *OrganizationMutation) OldPeriod(ctx context.Context) (v *string, err error) {
+func (m *OrganizationMutation) OldPeriod(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldPeriod is only allowed on UpdateOne operations")
 	}
@@ -4870,22 +4860,9 @@ func (m *OrganizationMutation) OldPeriod(ctx context.Context) (v *string, err er
 	return oldValue.Period, nil
 }
 
-// ClearPeriod clears the value of the "period" field.
-func (m *OrganizationMutation) ClearPeriod() {
-	m.period = nil
-	m.clearedFields[organization.FieldPeriod] = struct{}{}
-}
-
-// PeriodCleared returns if the "period" field was cleared in this mutation.
-func (m *OrganizationMutation) PeriodCleared() bool {
-	_, ok := m.clearedFields[organization.FieldPeriod]
-	return ok
-}
-
 // ResetPeriod resets all changes to the "period" field.
 func (m *OrganizationMutation) ResetPeriod() {
 	m.period = nil
-	delete(m.clearedFields, organization.FieldPeriod)
 }
 
 // SetPosition sets the "position" field.
@@ -4905,7 +4882,7 @@ func (m *OrganizationMutation) Position() (r string, exists bool) {
 // OldPosition returns the old "position" field's value of the Organization entity.
 // If the Organization object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *OrganizationMutation) OldPosition(ctx context.Context) (v *string, err error) {
+func (m *OrganizationMutation) OldPosition(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldPosition is only allowed on UpdateOne operations")
 	}
@@ -4919,22 +4896,9 @@ func (m *OrganizationMutation) OldPosition(ctx context.Context) (v *string, err 
 	return oldValue.Position, nil
 }
 
-// ClearPosition clears the value of the "position" field.
-func (m *OrganizationMutation) ClearPosition() {
-	m.position = nil
-	m.clearedFields[organization.FieldPosition] = struct{}{}
-}
-
-// PositionCleared returns if the "position" field was cleared in this mutation.
-func (m *OrganizationMutation) PositionCleared() bool {
-	_, ok := m.clearedFields[organization.FieldPosition]
-	return ok
-}
-
 // ResetPosition resets all changes to the "position" field.
 func (m *OrganizationMutation) ResetPosition() {
 	m.position = nil
-	delete(m.clearedFields, organization.FieldPosition)
 }
 
 // SetDetail sets the "detail" field.
@@ -4954,7 +4918,7 @@ func (m *OrganizationMutation) Detail() (r string, exists bool) {
 // OldDetail returns the old "detail" field's value of the Organization entity.
 // If the Organization object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *OrganizationMutation) OldDetail(ctx context.Context) (v *string, err error) {
+func (m *OrganizationMutation) OldDetail(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldDetail is only allowed on UpdateOne operations")
 	}
@@ -4968,22 +4932,63 @@ func (m *OrganizationMutation) OldDetail(ctx context.Context) (v *string, err er
 	return oldValue.Detail, nil
 }
 
-// ClearDetail clears the value of the "detail" field.
-func (m *OrganizationMutation) ClearDetail() {
-	m.detail = nil
-	m.clearedFields[organization.FieldDetail] = struct{}{}
-}
-
-// DetailCleared returns if the "detail" field was cleared in this mutation.
-func (m *OrganizationMutation) DetailCleared() bool {
-	_, ok := m.clearedFields[organization.FieldDetail]
-	return ok
-}
-
 // ResetDetail resets all changes to the "detail" field.
 func (m *OrganizationMutation) ResetDetail() {
 	m.detail = nil
-	delete(m.clearedFields, organization.FieldDetail)
+}
+
+// AddRegisterIDs adds the "register" edge to the Register entity by ids.
+func (m *OrganizationMutation) AddRegisterIDs(ids ...int) {
+	if m.register == nil {
+		m.register = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.register[ids[i]] = struct{}{}
+	}
+}
+
+// ClearRegister clears the "register" edge to the Register entity.
+func (m *OrganizationMutation) ClearRegister() {
+	m.clearedregister = true
+}
+
+// RegisterCleared reports if the "register" edge to the Register entity was cleared.
+func (m *OrganizationMutation) RegisterCleared() bool {
+	return m.clearedregister
+}
+
+// RemoveRegisterIDs removes the "register" edge to the Register entity by IDs.
+func (m *OrganizationMutation) RemoveRegisterIDs(ids ...int) {
+	if m.removedregister == nil {
+		m.removedregister = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.register, ids[i])
+		m.removedregister[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedRegister returns the removed IDs of the "register" edge to the Register entity.
+func (m *OrganizationMutation) RemovedRegisterIDs() (ids []int) {
+	for id := range m.removedregister {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// RegisterIDs returns the "register" edge IDs in the mutation.
+func (m *OrganizationMutation) RegisterIDs() (ids []int) {
+	for id := range m.register {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetRegister resets all changes to the "register" edge.
+func (m *OrganizationMutation) ResetRegister() {
+	m.register = nil
+	m.clearedregister = false
+	m.removedregister = nil
 }
 
 // Where appends a list predicates to the OrganizationMutation builder.
@@ -5117,20 +5122,7 @@ func (m *OrganizationMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *OrganizationMutation) ClearedFields() []string {
-	var fields []string
-	if m.FieldCleared(organization.FieldName) {
-		fields = append(fields, organization.FieldName)
-	}
-	if m.FieldCleared(organization.FieldPeriod) {
-		fields = append(fields, organization.FieldPeriod)
-	}
-	if m.FieldCleared(organization.FieldPosition) {
-		fields = append(fields, organization.FieldPosition)
-	}
-	if m.FieldCleared(organization.FieldDetail) {
-		fields = append(fields, organization.FieldDetail)
-	}
-	return fields
+	return nil
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -5143,20 +5135,6 @@ func (m *OrganizationMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *OrganizationMutation) ClearField(name string) error {
-	switch name {
-	case organization.FieldName:
-		m.ClearName()
-		return nil
-	case organization.FieldPeriod:
-		m.ClearPeriod()
-		return nil
-	case organization.FieldPosition:
-		m.ClearPosition()
-		return nil
-	case organization.FieldDetail:
-		m.ClearDetail()
-		return nil
-	}
 	return fmt.Errorf("unknown Organization nullable field %s", name)
 }
 
@@ -5182,92 +5160,140 @@ func (m *OrganizationMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *OrganizationMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.register != nil {
+		edges = append(edges, organization.EdgeRegister)
+	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
 func (m *OrganizationMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case organization.EdgeRegister:
+		ids := make([]ent.Value, 0, len(m.register))
+		for id := range m.register {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *OrganizationMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.removedregister != nil {
+		edges = append(edges, organization.EdgeRegister)
+	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *OrganizationMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case organization.EdgeRegister:
+		ids := make([]ent.Value, 0, len(m.removedregister))
+		for id := range m.removedregister {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *OrganizationMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.clearedregister {
+		edges = append(edges, organization.EdgeRegister)
+	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
 func (m *OrganizationMutation) EdgeCleared(name string) bool {
+	switch name {
+	case organization.EdgeRegister:
+		return m.clearedregister
+	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *OrganizationMutation) ClearEdge(name string) error {
+	switch name {
+	}
 	return fmt.Errorf("unknown Organization unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *OrganizationMutation) ResetEdge(name string) error {
+	switch name {
+	case organization.EdgeRegister:
+		m.ResetRegister()
+		return nil
+	}
 	return fmt.Errorf("unknown Organization edge %s", name)
 }
 
 // RegisterMutation represents an operation that mutates the Register nodes in the graph.
 type RegisterMutation struct {
 	config
-	op                 Op
-	typ                string
-	id                 *int
-	statusOne          *int
-	addstatusOne       *int
-	statusTwo          *int
-	addstatusTwo       *int
-	onlineInterview    *string
-	interviewTime      *time.Time
-	clearedFields      map[string]struct{}
-	user               map[int]struct{}
-	removeduser        map[int]struct{}
-	cleareduser        bool
-	scholarship        map[int]struct{}
-	removedscholarship map[int]struct{}
-	clearedscholarship bool
-	achievement        map[int]struct{}
-	removedachievement map[int]struct{}
-	clearedachievement bool
-	biodata            map[int]struct{}
-	removedbiodata     map[int]struct{}
-	clearedbiodata     bool
-	education          map[int]struct{}
-	removededucation   map[int]struct{}
-	clearededucation   bool
-	family             map[int]struct{}
-	removedfamily      map[int]struct{}
-	clearedfamily      bool
-	language           map[int]struct{}
-	removedlanguage    map[int]struct{}
-	clearedlanguage    bool
-	networth           map[int]struct{}
-	removednetworth    map[int]struct{}
-	clearednetworth    bool
-	done               bool
-	oldValue           func(context.Context) (*Register, error)
-	predicates         []predicate.Register
+	op                  Op
+	typ                 string
+	id                  *int
+	statusOne           *int
+	addstatusOne        *int
+	statusTwo           *int
+	addstatusTwo        *int
+	onlineInterview     *string
+	interviewTime       *time.Time
+	clearedFields       map[string]struct{}
+	user                map[int]struct{}
+	removeduser         map[int]struct{}
+	cleareduser         bool
+	scholarship         map[int]struct{}
+	removedscholarship  map[int]struct{}
+	clearedscholarship  bool
+	achievement         map[int]struct{}
+	removedachievement  map[int]struct{}
+	clearedachievement  bool
+	biodata             map[int]struct{}
+	removedbiodata      map[int]struct{}
+	clearedbiodata      bool
+	education           map[int]struct{}
+	removededucation    map[int]struct{}
+	clearededucation    bool
+	family              map[int]struct{}
+	removedfamily       map[int]struct{}
+	clearedfamily       bool
+	language            map[int]struct{}
+	removedlanguage     map[int]struct{}
+	clearedlanguage     bool
+	networth            map[int]struct{}
+	removednetworth     map[int]struct{}
+	clearednetworth     bool
+	organization        map[int]struct{}
+	removedorganization map[int]struct{}
+	clearedorganization bool
+	socialmedia         map[int]struct{}
+	removedsocialmedia  map[int]struct{}
+	clearedsocialmedia  bool
+	talent              map[int]struct{}
+	removedtalent       map[int]struct{}
+	clearedtalent       bool
+	training            map[int]struct{}
+	removedtraining     map[int]struct{}
+	clearedtraining     bool
+	done                bool
+	oldValue            func(context.Context) (*Register, error)
+	predicates          []predicate.Register
 }
 
 var _ ent.Mutation = (*RegisterMutation)(nil)
@@ -6010,6 +6036,222 @@ func (m *RegisterMutation) ResetNetworth() {
 	m.removednetworth = nil
 }
 
+// AddOrganizationIDs adds the "organization" edge to the Organization entity by ids.
+func (m *RegisterMutation) AddOrganizationIDs(ids ...int) {
+	if m.organization == nil {
+		m.organization = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.organization[ids[i]] = struct{}{}
+	}
+}
+
+// ClearOrganization clears the "organization" edge to the Organization entity.
+func (m *RegisterMutation) ClearOrganization() {
+	m.clearedorganization = true
+}
+
+// OrganizationCleared reports if the "organization" edge to the Organization entity was cleared.
+func (m *RegisterMutation) OrganizationCleared() bool {
+	return m.clearedorganization
+}
+
+// RemoveOrganizationIDs removes the "organization" edge to the Organization entity by IDs.
+func (m *RegisterMutation) RemoveOrganizationIDs(ids ...int) {
+	if m.removedorganization == nil {
+		m.removedorganization = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.organization, ids[i])
+		m.removedorganization[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedOrganization returns the removed IDs of the "organization" edge to the Organization entity.
+func (m *RegisterMutation) RemovedOrganizationIDs() (ids []int) {
+	for id := range m.removedorganization {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// OrganizationIDs returns the "organization" edge IDs in the mutation.
+func (m *RegisterMutation) OrganizationIDs() (ids []int) {
+	for id := range m.organization {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetOrganization resets all changes to the "organization" edge.
+func (m *RegisterMutation) ResetOrganization() {
+	m.organization = nil
+	m.clearedorganization = false
+	m.removedorganization = nil
+}
+
+// AddSocialmediumIDs adds the "socialmedia" edge to the SocialMedia entity by ids.
+func (m *RegisterMutation) AddSocialmediumIDs(ids ...int) {
+	if m.socialmedia == nil {
+		m.socialmedia = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.socialmedia[ids[i]] = struct{}{}
+	}
+}
+
+// ClearSocialmedia clears the "socialmedia" edge to the SocialMedia entity.
+func (m *RegisterMutation) ClearSocialmedia() {
+	m.clearedsocialmedia = true
+}
+
+// SocialmediaCleared reports if the "socialmedia" edge to the SocialMedia entity was cleared.
+func (m *RegisterMutation) SocialmediaCleared() bool {
+	return m.clearedsocialmedia
+}
+
+// RemoveSocialmediumIDs removes the "socialmedia" edge to the SocialMedia entity by IDs.
+func (m *RegisterMutation) RemoveSocialmediumIDs(ids ...int) {
+	if m.removedsocialmedia == nil {
+		m.removedsocialmedia = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.socialmedia, ids[i])
+		m.removedsocialmedia[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedSocialmedia returns the removed IDs of the "socialmedia" edge to the SocialMedia entity.
+func (m *RegisterMutation) RemovedSocialmediaIDs() (ids []int) {
+	for id := range m.removedsocialmedia {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// SocialmediaIDs returns the "socialmedia" edge IDs in the mutation.
+func (m *RegisterMutation) SocialmediaIDs() (ids []int) {
+	for id := range m.socialmedia {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetSocialmedia resets all changes to the "socialmedia" edge.
+func (m *RegisterMutation) ResetSocialmedia() {
+	m.socialmedia = nil
+	m.clearedsocialmedia = false
+	m.removedsocialmedia = nil
+}
+
+// AddTalentIDs adds the "talent" edge to the Talent entity by ids.
+func (m *RegisterMutation) AddTalentIDs(ids ...int) {
+	if m.talent == nil {
+		m.talent = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.talent[ids[i]] = struct{}{}
+	}
+}
+
+// ClearTalent clears the "talent" edge to the Talent entity.
+func (m *RegisterMutation) ClearTalent() {
+	m.clearedtalent = true
+}
+
+// TalentCleared reports if the "talent" edge to the Talent entity was cleared.
+func (m *RegisterMutation) TalentCleared() bool {
+	return m.clearedtalent
+}
+
+// RemoveTalentIDs removes the "talent" edge to the Talent entity by IDs.
+func (m *RegisterMutation) RemoveTalentIDs(ids ...int) {
+	if m.removedtalent == nil {
+		m.removedtalent = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.talent, ids[i])
+		m.removedtalent[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedTalent returns the removed IDs of the "talent" edge to the Talent entity.
+func (m *RegisterMutation) RemovedTalentIDs() (ids []int) {
+	for id := range m.removedtalent {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// TalentIDs returns the "talent" edge IDs in the mutation.
+func (m *RegisterMutation) TalentIDs() (ids []int) {
+	for id := range m.talent {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetTalent resets all changes to the "talent" edge.
+func (m *RegisterMutation) ResetTalent() {
+	m.talent = nil
+	m.clearedtalent = false
+	m.removedtalent = nil
+}
+
+// AddTrainingIDs adds the "training" edge to the Training entity by ids.
+func (m *RegisterMutation) AddTrainingIDs(ids ...int) {
+	if m.training == nil {
+		m.training = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.training[ids[i]] = struct{}{}
+	}
+}
+
+// ClearTraining clears the "training" edge to the Training entity.
+func (m *RegisterMutation) ClearTraining() {
+	m.clearedtraining = true
+}
+
+// TrainingCleared reports if the "training" edge to the Training entity was cleared.
+func (m *RegisterMutation) TrainingCleared() bool {
+	return m.clearedtraining
+}
+
+// RemoveTrainingIDs removes the "training" edge to the Training entity by IDs.
+func (m *RegisterMutation) RemoveTrainingIDs(ids ...int) {
+	if m.removedtraining == nil {
+		m.removedtraining = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.training, ids[i])
+		m.removedtraining[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedTraining returns the removed IDs of the "training" edge to the Training entity.
+func (m *RegisterMutation) RemovedTrainingIDs() (ids []int) {
+	for id := range m.removedtraining {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// TrainingIDs returns the "training" edge IDs in the mutation.
+func (m *RegisterMutation) TrainingIDs() (ids []int) {
+	for id := range m.training {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetTraining resets all changes to the "training" edge.
+func (m *RegisterMutation) ResetTraining() {
+	m.training = nil
+	m.clearedtraining = false
+	m.removedtraining = nil
+}
+
 // Where appends a list predicates to the RegisterMutation builder.
 func (m *RegisterMutation) Where(ps ...predicate.Register) {
 	m.predicates = append(m.predicates, ps...)
@@ -6221,7 +6463,7 @@ func (m *RegisterMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *RegisterMutation) AddedEdges() []string {
-	edges := make([]string, 0, 8)
+	edges := make([]string, 0, 12)
 	if m.user != nil {
 		edges = append(edges, register.EdgeUser)
 	}
@@ -6245,6 +6487,18 @@ func (m *RegisterMutation) AddedEdges() []string {
 	}
 	if m.networth != nil {
 		edges = append(edges, register.EdgeNetworth)
+	}
+	if m.organization != nil {
+		edges = append(edges, register.EdgeOrganization)
+	}
+	if m.socialmedia != nil {
+		edges = append(edges, register.EdgeSocialmedia)
+	}
+	if m.talent != nil {
+		edges = append(edges, register.EdgeTalent)
+	}
+	if m.training != nil {
+		edges = append(edges, register.EdgeTraining)
 	}
 	return edges
 }
@@ -6301,13 +6555,37 @@ func (m *RegisterMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case register.EdgeOrganization:
+		ids := make([]ent.Value, 0, len(m.organization))
+		for id := range m.organization {
+			ids = append(ids, id)
+		}
+		return ids
+	case register.EdgeSocialmedia:
+		ids := make([]ent.Value, 0, len(m.socialmedia))
+		for id := range m.socialmedia {
+			ids = append(ids, id)
+		}
+		return ids
+	case register.EdgeTalent:
+		ids := make([]ent.Value, 0, len(m.talent))
+		for id := range m.talent {
+			ids = append(ids, id)
+		}
+		return ids
+	case register.EdgeTraining:
+		ids := make([]ent.Value, 0, len(m.training))
+		for id := range m.training {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *RegisterMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 8)
+	edges := make([]string, 0, 12)
 	if m.removeduser != nil {
 		edges = append(edges, register.EdgeUser)
 	}
@@ -6331,6 +6609,18 @@ func (m *RegisterMutation) RemovedEdges() []string {
 	}
 	if m.removednetworth != nil {
 		edges = append(edges, register.EdgeNetworth)
+	}
+	if m.removedorganization != nil {
+		edges = append(edges, register.EdgeOrganization)
+	}
+	if m.removedsocialmedia != nil {
+		edges = append(edges, register.EdgeSocialmedia)
+	}
+	if m.removedtalent != nil {
+		edges = append(edges, register.EdgeTalent)
+	}
+	if m.removedtraining != nil {
+		edges = append(edges, register.EdgeTraining)
 	}
 	return edges
 }
@@ -6387,13 +6677,37 @@ func (m *RegisterMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case register.EdgeOrganization:
+		ids := make([]ent.Value, 0, len(m.removedorganization))
+		for id := range m.removedorganization {
+			ids = append(ids, id)
+		}
+		return ids
+	case register.EdgeSocialmedia:
+		ids := make([]ent.Value, 0, len(m.removedsocialmedia))
+		for id := range m.removedsocialmedia {
+			ids = append(ids, id)
+		}
+		return ids
+	case register.EdgeTalent:
+		ids := make([]ent.Value, 0, len(m.removedtalent))
+		for id := range m.removedtalent {
+			ids = append(ids, id)
+		}
+		return ids
+	case register.EdgeTraining:
+		ids := make([]ent.Value, 0, len(m.removedtraining))
+		for id := range m.removedtraining {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *RegisterMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 8)
+	edges := make([]string, 0, 12)
 	if m.cleareduser {
 		edges = append(edges, register.EdgeUser)
 	}
@@ -6418,6 +6732,18 @@ func (m *RegisterMutation) ClearedEdges() []string {
 	if m.clearednetworth {
 		edges = append(edges, register.EdgeNetworth)
 	}
+	if m.clearedorganization {
+		edges = append(edges, register.EdgeOrganization)
+	}
+	if m.clearedsocialmedia {
+		edges = append(edges, register.EdgeSocialmedia)
+	}
+	if m.clearedtalent {
+		edges = append(edges, register.EdgeTalent)
+	}
+	if m.clearedtraining {
+		edges = append(edges, register.EdgeTraining)
+	}
 	return edges
 }
 
@@ -6441,6 +6767,14 @@ func (m *RegisterMutation) EdgeCleared(name string) bool {
 		return m.clearedlanguage
 	case register.EdgeNetworth:
 		return m.clearednetworth
+	case register.EdgeOrganization:
+		return m.clearedorganization
+	case register.EdgeSocialmedia:
+		return m.clearedsocialmedia
+	case register.EdgeTalent:
+		return m.clearedtalent
+	case register.EdgeTraining:
+		return m.clearedtraining
 	}
 	return false
 }
@@ -6480,6 +6814,18 @@ func (m *RegisterMutation) ResetEdge(name string) error {
 		return nil
 	case register.EdgeNetworth:
 		m.ResetNetworth()
+		return nil
+	case register.EdgeOrganization:
+		m.ResetOrganization()
+		return nil
+	case register.EdgeSocialmedia:
+		m.ResetSocialmedia()
+		return nil
+	case register.EdgeTalent:
+		m.ResetTalent()
+		return nil
+	case register.EdgeTraining:
+		m.ResetTraining()
 		return nil
 	}
 	return fmt.Errorf("unknown Register edge %s", name)
@@ -7360,17 +7706,20 @@ func (m *ScholarshipMutation) ResetEdge(name string) error {
 // SocialMediaMutation represents an operation that mutates the SocialMedia nodes in the graph.
 type SocialMediaMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *int
-	instagram     *string
-	facebook      *string
-	tiktok        *string
-	twitter       *string
-	clearedFields map[string]struct{}
-	done          bool
-	oldValue      func(context.Context) (*SocialMedia, error)
-	predicates    []predicate.SocialMedia
+	op              Op
+	typ             string
+	id              *int
+	instagram       *string
+	facebook        *string
+	tiktok          *string
+	twitter         *string
+	clearedFields   map[string]struct{}
+	register        map[int]struct{}
+	removedregister map[int]struct{}
+	clearedregister bool
+	done            bool
+	oldValue        func(context.Context) (*SocialMedia, error)
+	predicates      []predicate.SocialMedia
 }
 
 var _ ent.Mutation = (*SocialMediaMutation)(nil)
@@ -7488,7 +7837,7 @@ func (m *SocialMediaMutation) Instagram() (r string, exists bool) {
 // OldInstagram returns the old "instagram" field's value of the SocialMedia entity.
 // If the SocialMedia object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SocialMediaMutation) OldInstagram(ctx context.Context) (v *string, err error) {
+func (m *SocialMediaMutation) OldInstagram(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldInstagram is only allowed on UpdateOne operations")
 	}
@@ -7502,22 +7851,9 @@ func (m *SocialMediaMutation) OldInstagram(ctx context.Context) (v *string, err 
 	return oldValue.Instagram, nil
 }
 
-// ClearInstagram clears the value of the "instagram" field.
-func (m *SocialMediaMutation) ClearInstagram() {
-	m.instagram = nil
-	m.clearedFields[socialmedia.FieldInstagram] = struct{}{}
-}
-
-// InstagramCleared returns if the "instagram" field was cleared in this mutation.
-func (m *SocialMediaMutation) InstagramCleared() bool {
-	_, ok := m.clearedFields[socialmedia.FieldInstagram]
-	return ok
-}
-
 // ResetInstagram resets all changes to the "instagram" field.
 func (m *SocialMediaMutation) ResetInstagram() {
 	m.instagram = nil
-	delete(m.clearedFields, socialmedia.FieldInstagram)
 }
 
 // SetFacebook sets the "facebook" field.
@@ -7537,7 +7873,7 @@ func (m *SocialMediaMutation) Facebook() (r string, exists bool) {
 // OldFacebook returns the old "facebook" field's value of the SocialMedia entity.
 // If the SocialMedia object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SocialMediaMutation) OldFacebook(ctx context.Context) (v *string, err error) {
+func (m *SocialMediaMutation) OldFacebook(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldFacebook is only allowed on UpdateOne operations")
 	}
@@ -7551,22 +7887,9 @@ func (m *SocialMediaMutation) OldFacebook(ctx context.Context) (v *string, err e
 	return oldValue.Facebook, nil
 }
 
-// ClearFacebook clears the value of the "facebook" field.
-func (m *SocialMediaMutation) ClearFacebook() {
-	m.facebook = nil
-	m.clearedFields[socialmedia.FieldFacebook] = struct{}{}
-}
-
-// FacebookCleared returns if the "facebook" field was cleared in this mutation.
-func (m *SocialMediaMutation) FacebookCleared() bool {
-	_, ok := m.clearedFields[socialmedia.FieldFacebook]
-	return ok
-}
-
 // ResetFacebook resets all changes to the "facebook" field.
 func (m *SocialMediaMutation) ResetFacebook() {
 	m.facebook = nil
-	delete(m.clearedFields, socialmedia.FieldFacebook)
 }
 
 // SetTiktok sets the "tiktok" field.
@@ -7586,7 +7909,7 @@ func (m *SocialMediaMutation) Tiktok() (r string, exists bool) {
 // OldTiktok returns the old "tiktok" field's value of the SocialMedia entity.
 // If the SocialMedia object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SocialMediaMutation) OldTiktok(ctx context.Context) (v *string, err error) {
+func (m *SocialMediaMutation) OldTiktok(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldTiktok is only allowed on UpdateOne operations")
 	}
@@ -7600,22 +7923,9 @@ func (m *SocialMediaMutation) OldTiktok(ctx context.Context) (v *string, err err
 	return oldValue.Tiktok, nil
 }
 
-// ClearTiktok clears the value of the "tiktok" field.
-func (m *SocialMediaMutation) ClearTiktok() {
-	m.tiktok = nil
-	m.clearedFields[socialmedia.FieldTiktok] = struct{}{}
-}
-
-// TiktokCleared returns if the "tiktok" field was cleared in this mutation.
-func (m *SocialMediaMutation) TiktokCleared() bool {
-	_, ok := m.clearedFields[socialmedia.FieldTiktok]
-	return ok
-}
-
 // ResetTiktok resets all changes to the "tiktok" field.
 func (m *SocialMediaMutation) ResetTiktok() {
 	m.tiktok = nil
-	delete(m.clearedFields, socialmedia.FieldTiktok)
 }
 
 // SetTwitter sets the "twitter" field.
@@ -7635,7 +7945,7 @@ func (m *SocialMediaMutation) Twitter() (r string, exists bool) {
 // OldTwitter returns the old "twitter" field's value of the SocialMedia entity.
 // If the SocialMedia object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SocialMediaMutation) OldTwitter(ctx context.Context) (v *string, err error) {
+func (m *SocialMediaMutation) OldTwitter(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldTwitter is only allowed on UpdateOne operations")
 	}
@@ -7649,22 +7959,63 @@ func (m *SocialMediaMutation) OldTwitter(ctx context.Context) (v *string, err er
 	return oldValue.Twitter, nil
 }
 
-// ClearTwitter clears the value of the "twitter" field.
-func (m *SocialMediaMutation) ClearTwitter() {
-	m.twitter = nil
-	m.clearedFields[socialmedia.FieldTwitter] = struct{}{}
-}
-
-// TwitterCleared returns if the "twitter" field was cleared in this mutation.
-func (m *SocialMediaMutation) TwitterCleared() bool {
-	_, ok := m.clearedFields[socialmedia.FieldTwitter]
-	return ok
-}
-
 // ResetTwitter resets all changes to the "twitter" field.
 func (m *SocialMediaMutation) ResetTwitter() {
 	m.twitter = nil
-	delete(m.clearedFields, socialmedia.FieldTwitter)
+}
+
+// AddRegisterIDs adds the "register" edge to the Register entity by ids.
+func (m *SocialMediaMutation) AddRegisterIDs(ids ...int) {
+	if m.register == nil {
+		m.register = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.register[ids[i]] = struct{}{}
+	}
+}
+
+// ClearRegister clears the "register" edge to the Register entity.
+func (m *SocialMediaMutation) ClearRegister() {
+	m.clearedregister = true
+}
+
+// RegisterCleared reports if the "register" edge to the Register entity was cleared.
+func (m *SocialMediaMutation) RegisterCleared() bool {
+	return m.clearedregister
+}
+
+// RemoveRegisterIDs removes the "register" edge to the Register entity by IDs.
+func (m *SocialMediaMutation) RemoveRegisterIDs(ids ...int) {
+	if m.removedregister == nil {
+		m.removedregister = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.register, ids[i])
+		m.removedregister[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedRegister returns the removed IDs of the "register" edge to the Register entity.
+func (m *SocialMediaMutation) RemovedRegisterIDs() (ids []int) {
+	for id := range m.removedregister {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// RegisterIDs returns the "register" edge IDs in the mutation.
+func (m *SocialMediaMutation) RegisterIDs() (ids []int) {
+	for id := range m.register {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetRegister resets all changes to the "register" edge.
+func (m *SocialMediaMutation) ResetRegister() {
+	m.register = nil
+	m.clearedregister = false
+	m.removedregister = nil
 }
 
 // Where appends a list predicates to the SocialMediaMutation builder.
@@ -7798,20 +8149,7 @@ func (m *SocialMediaMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *SocialMediaMutation) ClearedFields() []string {
-	var fields []string
-	if m.FieldCleared(socialmedia.FieldInstagram) {
-		fields = append(fields, socialmedia.FieldInstagram)
-	}
-	if m.FieldCleared(socialmedia.FieldFacebook) {
-		fields = append(fields, socialmedia.FieldFacebook)
-	}
-	if m.FieldCleared(socialmedia.FieldTiktok) {
-		fields = append(fields, socialmedia.FieldTiktok)
-	}
-	if m.FieldCleared(socialmedia.FieldTwitter) {
-		fields = append(fields, socialmedia.FieldTwitter)
-	}
-	return fields
+	return nil
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -7824,20 +8162,6 @@ func (m *SocialMediaMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *SocialMediaMutation) ClearField(name string) error {
-	switch name {
-	case socialmedia.FieldInstagram:
-		m.ClearInstagram()
-		return nil
-	case socialmedia.FieldFacebook:
-		m.ClearFacebook()
-		return nil
-	case socialmedia.FieldTiktok:
-		m.ClearTiktok()
-		return nil
-	case socialmedia.FieldTwitter:
-		m.ClearTwitter()
-		return nil
-	}
 	return fmt.Errorf("unknown SocialMedia nullable field %s", name)
 }
 
@@ -7863,63 +8187,102 @@ func (m *SocialMediaMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *SocialMediaMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.register != nil {
+		edges = append(edges, socialmedia.EdgeRegister)
+	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
 func (m *SocialMediaMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case socialmedia.EdgeRegister:
+		ids := make([]ent.Value, 0, len(m.register))
+		for id := range m.register {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *SocialMediaMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.removedregister != nil {
+		edges = append(edges, socialmedia.EdgeRegister)
+	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *SocialMediaMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case socialmedia.EdgeRegister:
+		ids := make([]ent.Value, 0, len(m.removedregister))
+		for id := range m.removedregister {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *SocialMediaMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.clearedregister {
+		edges = append(edges, socialmedia.EdgeRegister)
+	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
 func (m *SocialMediaMutation) EdgeCleared(name string) bool {
+	switch name {
+	case socialmedia.EdgeRegister:
+		return m.clearedregister
+	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *SocialMediaMutation) ClearEdge(name string) error {
+	switch name {
+	}
 	return fmt.Errorf("unknown SocialMedia unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *SocialMediaMutation) ResetEdge(name string) error {
+	switch name {
+	case socialmedia.EdgeRegister:
+		m.ResetRegister()
+		return nil
+	}
 	return fmt.Errorf("unknown SocialMedia edge %s", name)
 }
 
 // TalentMutation represents an operation that mutates the Talent nodes in the graph.
 type TalentMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *int
-	name          *string
-	clearedFields map[string]struct{}
-	done          bool
-	oldValue      func(context.Context) (*Talent, error)
-	predicates    []predicate.Talent
+	op              Op
+	typ             string
+	id              *int
+	name            *string
+	clearedFields   map[string]struct{}
+	register        map[int]struct{}
+	removedregister map[int]struct{}
+	clearedregister bool
+	done            bool
+	oldValue        func(context.Context) (*Talent, error)
+	predicates      []predicate.Talent
 }
 
 var _ ent.Mutation = (*TalentMutation)(nil)
@@ -8056,6 +8419,60 @@ func (m *TalentMutation) ResetName() {
 	m.name = nil
 }
 
+// AddRegisterIDs adds the "register" edge to the Register entity by ids.
+func (m *TalentMutation) AddRegisterIDs(ids ...int) {
+	if m.register == nil {
+		m.register = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.register[ids[i]] = struct{}{}
+	}
+}
+
+// ClearRegister clears the "register" edge to the Register entity.
+func (m *TalentMutation) ClearRegister() {
+	m.clearedregister = true
+}
+
+// RegisterCleared reports if the "register" edge to the Register entity was cleared.
+func (m *TalentMutation) RegisterCleared() bool {
+	return m.clearedregister
+}
+
+// RemoveRegisterIDs removes the "register" edge to the Register entity by IDs.
+func (m *TalentMutation) RemoveRegisterIDs(ids ...int) {
+	if m.removedregister == nil {
+		m.removedregister = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.register, ids[i])
+		m.removedregister[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedRegister returns the removed IDs of the "register" edge to the Register entity.
+func (m *TalentMutation) RemovedRegisterIDs() (ids []int) {
+	for id := range m.removedregister {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// RegisterIDs returns the "register" edge IDs in the mutation.
+func (m *TalentMutation) RegisterIDs() (ids []int) {
+	for id := range m.register {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetRegister resets all changes to the "register" edge.
+func (m *TalentMutation) ResetRegister() {
+	m.register = nil
+	m.clearedregister = false
+	m.removedregister = nil
+}
+
 // Where appends a list predicates to the TalentMutation builder.
 func (m *TalentMutation) Where(ps ...predicate.Talent) {
 	m.predicates = append(m.predicates, ps...)
@@ -8174,67 +8591,106 @@ func (m *TalentMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *TalentMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.register != nil {
+		edges = append(edges, talent.EdgeRegister)
+	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
 func (m *TalentMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case talent.EdgeRegister:
+		ids := make([]ent.Value, 0, len(m.register))
+		for id := range m.register {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *TalentMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.removedregister != nil {
+		edges = append(edges, talent.EdgeRegister)
+	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *TalentMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case talent.EdgeRegister:
+		ids := make([]ent.Value, 0, len(m.removedregister))
+		for id := range m.removedregister {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *TalentMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.clearedregister {
+		edges = append(edges, talent.EdgeRegister)
+	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
 func (m *TalentMutation) EdgeCleared(name string) bool {
+	switch name {
+	case talent.EdgeRegister:
+		return m.clearedregister
+	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *TalentMutation) ClearEdge(name string) error {
+	switch name {
+	}
 	return fmt.Errorf("unknown Talent unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *TalentMutation) ResetEdge(name string) error {
+	switch name {
+	case talent.EdgeRegister:
+		m.ResetRegister()
+		return nil
+	}
 	return fmt.Errorf("unknown Talent edge %s", name)
 }
 
 // TrainingMutation represents an operation that mutates the Training nodes in the graph.
 type TrainingMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *int
-	name          *string
-	period        *string
-	year          *string
-	organizer     *string
-	certificate   *string
-	clearedFields map[string]struct{}
-	done          bool
-	oldValue      func(context.Context) (*Training, error)
-	predicates    []predicate.Training
+	op              Op
+	typ             string
+	id              *int
+	name            *string
+	period          *string
+	year            *string
+	organizer       *string
+	certificate     *string
+	clearedFields   map[string]struct{}
+	register        map[int]struct{}
+	removedregister map[int]struct{}
+	clearedregister bool
+	done            bool
+	oldValue        func(context.Context) (*Training, error)
+	predicates      []predicate.Training
 }
 
 var _ ent.Mutation = (*TrainingMutation)(nil)
@@ -8352,7 +8808,7 @@ func (m *TrainingMutation) Name() (r string, exists bool) {
 // OldName returns the old "name" field's value of the Training entity.
 // If the Training object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TrainingMutation) OldName(ctx context.Context) (v *string, err error) {
+func (m *TrainingMutation) OldName(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldName is only allowed on UpdateOne operations")
 	}
@@ -8366,22 +8822,9 @@ func (m *TrainingMutation) OldName(ctx context.Context) (v *string, err error) {
 	return oldValue.Name, nil
 }
 
-// ClearName clears the value of the "name" field.
-func (m *TrainingMutation) ClearName() {
-	m.name = nil
-	m.clearedFields[training.FieldName] = struct{}{}
-}
-
-// NameCleared returns if the "name" field was cleared in this mutation.
-func (m *TrainingMutation) NameCleared() bool {
-	_, ok := m.clearedFields[training.FieldName]
-	return ok
-}
-
 // ResetName resets all changes to the "name" field.
 func (m *TrainingMutation) ResetName() {
 	m.name = nil
-	delete(m.clearedFields, training.FieldName)
 }
 
 // SetPeriod sets the "period" field.
@@ -8401,7 +8844,7 @@ func (m *TrainingMutation) Period() (r string, exists bool) {
 // OldPeriod returns the old "period" field's value of the Training entity.
 // If the Training object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TrainingMutation) OldPeriod(ctx context.Context) (v *string, err error) {
+func (m *TrainingMutation) OldPeriod(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldPeriod is only allowed on UpdateOne operations")
 	}
@@ -8415,22 +8858,9 @@ func (m *TrainingMutation) OldPeriod(ctx context.Context) (v *string, err error)
 	return oldValue.Period, nil
 }
 
-// ClearPeriod clears the value of the "period" field.
-func (m *TrainingMutation) ClearPeriod() {
-	m.period = nil
-	m.clearedFields[training.FieldPeriod] = struct{}{}
-}
-
-// PeriodCleared returns if the "period" field was cleared in this mutation.
-func (m *TrainingMutation) PeriodCleared() bool {
-	_, ok := m.clearedFields[training.FieldPeriod]
-	return ok
-}
-
 // ResetPeriod resets all changes to the "period" field.
 func (m *TrainingMutation) ResetPeriod() {
 	m.period = nil
-	delete(m.clearedFields, training.FieldPeriod)
 }
 
 // SetYear sets the "year" field.
@@ -8450,7 +8880,7 @@ func (m *TrainingMutation) Year() (r string, exists bool) {
 // OldYear returns the old "year" field's value of the Training entity.
 // If the Training object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TrainingMutation) OldYear(ctx context.Context) (v *string, err error) {
+func (m *TrainingMutation) OldYear(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldYear is only allowed on UpdateOne operations")
 	}
@@ -8464,22 +8894,9 @@ func (m *TrainingMutation) OldYear(ctx context.Context) (v *string, err error) {
 	return oldValue.Year, nil
 }
 
-// ClearYear clears the value of the "year" field.
-func (m *TrainingMutation) ClearYear() {
-	m.year = nil
-	m.clearedFields[training.FieldYear] = struct{}{}
-}
-
-// YearCleared returns if the "year" field was cleared in this mutation.
-func (m *TrainingMutation) YearCleared() bool {
-	_, ok := m.clearedFields[training.FieldYear]
-	return ok
-}
-
 // ResetYear resets all changes to the "year" field.
 func (m *TrainingMutation) ResetYear() {
 	m.year = nil
-	delete(m.clearedFields, training.FieldYear)
 }
 
 // SetOrganizer sets the "organizer" field.
@@ -8499,7 +8916,7 @@ func (m *TrainingMutation) Organizer() (r string, exists bool) {
 // OldOrganizer returns the old "organizer" field's value of the Training entity.
 // If the Training object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TrainingMutation) OldOrganizer(ctx context.Context) (v *string, err error) {
+func (m *TrainingMutation) OldOrganizer(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldOrganizer is only allowed on UpdateOne operations")
 	}
@@ -8513,22 +8930,9 @@ func (m *TrainingMutation) OldOrganizer(ctx context.Context) (v *string, err err
 	return oldValue.Organizer, nil
 }
 
-// ClearOrganizer clears the value of the "organizer" field.
-func (m *TrainingMutation) ClearOrganizer() {
-	m.organizer = nil
-	m.clearedFields[training.FieldOrganizer] = struct{}{}
-}
-
-// OrganizerCleared returns if the "organizer" field was cleared in this mutation.
-func (m *TrainingMutation) OrganizerCleared() bool {
-	_, ok := m.clearedFields[training.FieldOrganizer]
-	return ok
-}
-
 // ResetOrganizer resets all changes to the "organizer" field.
 func (m *TrainingMutation) ResetOrganizer() {
 	m.organizer = nil
-	delete(m.clearedFields, training.FieldOrganizer)
 }
 
 // SetCertificate sets the "certificate" field.
@@ -8548,7 +8952,7 @@ func (m *TrainingMutation) Certificate() (r string, exists bool) {
 // OldCertificate returns the old "certificate" field's value of the Training entity.
 // If the Training object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TrainingMutation) OldCertificate(ctx context.Context) (v *string, err error) {
+func (m *TrainingMutation) OldCertificate(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldCertificate is only allowed on UpdateOne operations")
 	}
@@ -8562,22 +8966,63 @@ func (m *TrainingMutation) OldCertificate(ctx context.Context) (v *string, err e
 	return oldValue.Certificate, nil
 }
 
-// ClearCertificate clears the value of the "certificate" field.
-func (m *TrainingMutation) ClearCertificate() {
-	m.certificate = nil
-	m.clearedFields[training.FieldCertificate] = struct{}{}
-}
-
-// CertificateCleared returns if the "certificate" field was cleared in this mutation.
-func (m *TrainingMutation) CertificateCleared() bool {
-	_, ok := m.clearedFields[training.FieldCertificate]
-	return ok
-}
-
 // ResetCertificate resets all changes to the "certificate" field.
 func (m *TrainingMutation) ResetCertificate() {
 	m.certificate = nil
-	delete(m.clearedFields, training.FieldCertificate)
+}
+
+// AddRegisterIDs adds the "register" edge to the Register entity by ids.
+func (m *TrainingMutation) AddRegisterIDs(ids ...int) {
+	if m.register == nil {
+		m.register = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.register[ids[i]] = struct{}{}
+	}
+}
+
+// ClearRegister clears the "register" edge to the Register entity.
+func (m *TrainingMutation) ClearRegister() {
+	m.clearedregister = true
+}
+
+// RegisterCleared reports if the "register" edge to the Register entity was cleared.
+func (m *TrainingMutation) RegisterCleared() bool {
+	return m.clearedregister
+}
+
+// RemoveRegisterIDs removes the "register" edge to the Register entity by IDs.
+func (m *TrainingMutation) RemoveRegisterIDs(ids ...int) {
+	if m.removedregister == nil {
+		m.removedregister = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.register, ids[i])
+		m.removedregister[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedRegister returns the removed IDs of the "register" edge to the Register entity.
+func (m *TrainingMutation) RemovedRegisterIDs() (ids []int) {
+	for id := range m.removedregister {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// RegisterIDs returns the "register" edge IDs in the mutation.
+func (m *TrainingMutation) RegisterIDs() (ids []int) {
+	for id := range m.register {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetRegister resets all changes to the "register" edge.
+func (m *TrainingMutation) ResetRegister() {
+	m.register = nil
+	m.clearedregister = false
+	m.removedregister = nil
 }
 
 // Where appends a list predicates to the TrainingMutation builder.
@@ -8725,23 +9170,7 @@ func (m *TrainingMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *TrainingMutation) ClearedFields() []string {
-	var fields []string
-	if m.FieldCleared(training.FieldName) {
-		fields = append(fields, training.FieldName)
-	}
-	if m.FieldCleared(training.FieldPeriod) {
-		fields = append(fields, training.FieldPeriod)
-	}
-	if m.FieldCleared(training.FieldYear) {
-		fields = append(fields, training.FieldYear)
-	}
-	if m.FieldCleared(training.FieldOrganizer) {
-		fields = append(fields, training.FieldOrganizer)
-	}
-	if m.FieldCleared(training.FieldCertificate) {
-		fields = append(fields, training.FieldCertificate)
-	}
-	return fields
+	return nil
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -8754,23 +9183,6 @@ func (m *TrainingMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *TrainingMutation) ClearField(name string) error {
-	switch name {
-	case training.FieldName:
-		m.ClearName()
-		return nil
-	case training.FieldPeriod:
-		m.ClearPeriod()
-		return nil
-	case training.FieldYear:
-		m.ClearYear()
-		return nil
-	case training.FieldOrganizer:
-		m.ClearOrganizer()
-		return nil
-	case training.FieldCertificate:
-		m.ClearCertificate()
-		return nil
-	}
 	return fmt.Errorf("unknown Training nullable field %s", name)
 }
 
@@ -8799,49 +9211,85 @@ func (m *TrainingMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *TrainingMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.register != nil {
+		edges = append(edges, training.EdgeRegister)
+	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
 func (m *TrainingMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case training.EdgeRegister:
+		ids := make([]ent.Value, 0, len(m.register))
+		for id := range m.register {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *TrainingMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.removedregister != nil {
+		edges = append(edges, training.EdgeRegister)
+	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *TrainingMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case training.EdgeRegister:
+		ids := make([]ent.Value, 0, len(m.removedregister))
+		for id := range m.removedregister {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *TrainingMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.clearedregister {
+		edges = append(edges, training.EdgeRegister)
+	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
 func (m *TrainingMutation) EdgeCleared(name string) bool {
+	switch name {
+	case training.EdgeRegister:
+		return m.clearedregister
+	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *TrainingMutation) ClearEdge(name string) error {
+	switch name {
+	}
 	return fmt.Errorf("unknown Training unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *TrainingMutation) ResetEdge(name string) error {
+	switch name {
+	case training.EdgeRegister:
+		m.ResetRegister()
+		return nil
+	}
 	return fmt.Errorf("unknown Training edge %s", name)
 }
 

@@ -4,8 +4,10 @@ package ent
 
 import (
 	"Kynesia/ent/predicate"
+	"Kynesia/ent/register"
 	"Kynesia/ent/training"
 	"context"
+	"database/sql/driver"
 	"errors"
 	"fmt"
 	"math"
@@ -24,6 +26,8 @@ type TrainingQuery struct {
 	order      []OrderFunc
 	fields     []string
 	predicates []predicate.Training
+	// eager-loading edges.
+	withRegister *RegisterQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -58,6 +62,28 @@ func (tq *TrainingQuery) Unique(unique bool) *TrainingQuery {
 func (tq *TrainingQuery) Order(o ...OrderFunc) *TrainingQuery {
 	tq.order = append(tq.order, o...)
 	return tq
+}
+
+// QueryRegister chains the current query on the "register" edge.
+func (tq *TrainingQuery) QueryRegister() *RegisterQuery {
+	query := &RegisterQuery{config: tq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := tq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := tq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(training.Table, training.FieldID, selector),
+			sqlgraph.To(register.Table, register.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, training.RegisterTable, training.RegisterPrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(tq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
 }
 
 // First returns the first Training entity from the query.
@@ -236,16 +262,28 @@ func (tq *TrainingQuery) Clone() *TrainingQuery {
 		return nil
 	}
 	return &TrainingQuery{
-		config:     tq.config,
-		limit:      tq.limit,
-		offset:     tq.offset,
-		order:      append([]OrderFunc{}, tq.order...),
-		predicates: append([]predicate.Training{}, tq.predicates...),
+		config:       tq.config,
+		limit:        tq.limit,
+		offset:       tq.offset,
+		order:        append([]OrderFunc{}, tq.order...),
+		predicates:   append([]predicate.Training{}, tq.predicates...),
+		withRegister: tq.withRegister.Clone(),
 		// clone intermediate query.
 		sql:    tq.sql.Clone(),
 		path:   tq.path,
 		unique: tq.unique,
 	}
+}
+
+// WithRegister tells the query-builder to eager-load the nodes that are connected to
+// the "register" edge. The optional arguments are used to configure the query builder of the edge.
+func (tq *TrainingQuery) WithRegister(opts ...func(*RegisterQuery)) *TrainingQuery {
+	query := &RegisterQuery{config: tq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	tq.withRegister = query
+	return tq
 }
 
 // GroupBy is used to group vertices by one or more fields/columns.
@@ -311,8 +349,11 @@ func (tq *TrainingQuery) prepareQuery(ctx context.Context) error {
 
 func (tq *TrainingQuery) sqlAll(ctx context.Context) ([]*Training, error) {
 	var (
-		nodes = []*Training{}
-		_spec = tq.querySpec()
+		nodes       = []*Training{}
+		_spec       = tq.querySpec()
+		loadedTypes = [1]bool{
+			tq.withRegister != nil,
+		}
 	)
 	_spec.ScanValues = func(columns []string) ([]interface{}, error) {
 		node := &Training{config: tq.config}
@@ -324,6 +365,7 @@ func (tq *TrainingQuery) sqlAll(ctx context.Context) ([]*Training, error) {
 			return fmt.Errorf("ent: Assign called without calling ScanValues")
 		}
 		node := nodes[len(nodes)-1]
+		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
 	if err := sqlgraph.QueryNodes(ctx, tq.driver, _spec); err != nil {
@@ -332,6 +374,72 @@ func (tq *TrainingQuery) sqlAll(ctx context.Context) ([]*Training, error) {
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+
+	if query := tq.withRegister; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		ids := make(map[int]*Training, len(nodes))
+		for _, node := range nodes {
+			ids[node.ID] = node
+			fks = append(fks, node.ID)
+			node.Edges.Register = []*Register{}
+		}
+		var (
+			edgeids []int
+			edges   = make(map[int][]*Training)
+		)
+		_spec := &sqlgraph.EdgeQuerySpec{
+			Edge: &sqlgraph.EdgeSpec{
+				Inverse: false,
+				Table:   training.RegisterTable,
+				Columns: training.RegisterPrimaryKey,
+			},
+			Predicate: func(s *sql.Selector) {
+				s.Where(sql.InValues(training.RegisterPrimaryKey[0], fks...))
+			},
+			ScanValues: func() [2]interface{} {
+				return [2]interface{}{new(sql.NullInt64), new(sql.NullInt64)}
+			},
+			Assign: func(out, in interface{}) error {
+				eout, ok := out.(*sql.NullInt64)
+				if !ok || eout == nil {
+					return fmt.Errorf("unexpected id value for edge-out")
+				}
+				ein, ok := in.(*sql.NullInt64)
+				if !ok || ein == nil {
+					return fmt.Errorf("unexpected id value for edge-in")
+				}
+				outValue := int(eout.Int64)
+				inValue := int(ein.Int64)
+				node, ok := ids[outValue]
+				if !ok {
+					return fmt.Errorf("unexpected node id in edges: %v", outValue)
+				}
+				if _, ok := edges[inValue]; !ok {
+					edgeids = append(edgeids, inValue)
+				}
+				edges[inValue] = append(edges[inValue], node)
+				return nil
+			},
+		}
+		if err := sqlgraph.QueryEdges(ctx, tq.driver, _spec); err != nil {
+			return nil, fmt.Errorf(`query edges "register": %w`, err)
+		}
+		query.Where(register.IDIn(edgeids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := edges[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected "register" node returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.Register = append(nodes[i].Edges.Register, n)
+			}
+		}
+	}
+
 	return nodes, nil
 }
 

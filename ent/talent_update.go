@@ -4,6 +4,7 @@ package ent
 
 import (
 	"Kynesia/ent/predicate"
+	"Kynesia/ent/register"
 	"Kynesia/ent/talent"
 	"context"
 	"errors"
@@ -33,9 +34,45 @@ func (tu *TalentUpdate) SetName(s string) *TalentUpdate {
 	return tu
 }
 
+// AddRegisterIDs adds the "register" edge to the Register entity by IDs.
+func (tu *TalentUpdate) AddRegisterIDs(ids ...int) *TalentUpdate {
+	tu.mutation.AddRegisterIDs(ids...)
+	return tu
+}
+
+// AddRegister adds the "register" edges to the Register entity.
+func (tu *TalentUpdate) AddRegister(r ...*Register) *TalentUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return tu.AddRegisterIDs(ids...)
+}
+
 // Mutation returns the TalentMutation object of the builder.
 func (tu *TalentUpdate) Mutation() *TalentMutation {
 	return tu.mutation
+}
+
+// ClearRegister clears all "register" edges to the Register entity.
+func (tu *TalentUpdate) ClearRegister() *TalentUpdate {
+	tu.mutation.ClearRegister()
+	return tu
+}
+
+// RemoveRegisterIDs removes the "register" edge to Register entities by IDs.
+func (tu *TalentUpdate) RemoveRegisterIDs(ids ...int) *TalentUpdate {
+	tu.mutation.RemoveRegisterIDs(ids...)
+	return tu
+}
+
+// RemoveRegister removes "register" edges to Register entities.
+func (tu *TalentUpdate) RemoveRegister(r ...*Register) *TalentUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return tu.RemoveRegisterIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -117,6 +154,60 @@ func (tu *TalentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: talent.FieldName,
 		})
 	}
+	if tu.mutation.RegisterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   talent.RegisterTable,
+			Columns: talent.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tu.mutation.RemovedRegisterIDs(); len(nodes) > 0 && !tu.mutation.RegisterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   talent.RegisterTable,
+			Columns: talent.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tu.mutation.RegisterIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   talent.RegisterTable,
+			Columns: talent.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, tu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{talent.Label}
@@ -142,9 +233,45 @@ func (tuo *TalentUpdateOne) SetName(s string) *TalentUpdateOne {
 	return tuo
 }
 
+// AddRegisterIDs adds the "register" edge to the Register entity by IDs.
+func (tuo *TalentUpdateOne) AddRegisterIDs(ids ...int) *TalentUpdateOne {
+	tuo.mutation.AddRegisterIDs(ids...)
+	return tuo
+}
+
+// AddRegister adds the "register" edges to the Register entity.
+func (tuo *TalentUpdateOne) AddRegister(r ...*Register) *TalentUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return tuo.AddRegisterIDs(ids...)
+}
+
 // Mutation returns the TalentMutation object of the builder.
 func (tuo *TalentUpdateOne) Mutation() *TalentMutation {
 	return tuo.mutation
+}
+
+// ClearRegister clears all "register" edges to the Register entity.
+func (tuo *TalentUpdateOne) ClearRegister() *TalentUpdateOne {
+	tuo.mutation.ClearRegister()
+	return tuo
+}
+
+// RemoveRegisterIDs removes the "register" edge to Register entities by IDs.
+func (tuo *TalentUpdateOne) RemoveRegisterIDs(ids ...int) *TalentUpdateOne {
+	tuo.mutation.RemoveRegisterIDs(ids...)
+	return tuo
+}
+
+// RemoveRegister removes "register" edges to Register entities.
+func (tuo *TalentUpdateOne) RemoveRegister(r ...*Register) *TalentUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return tuo.RemoveRegisterIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -249,6 +376,60 @@ func (tuo *TalentUpdateOne) sqlSave(ctx context.Context) (_node *Talent, err err
 			Value:  value,
 			Column: talent.FieldName,
 		})
+	}
+	if tuo.mutation.RegisterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   talent.RegisterTable,
+			Columns: talent.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tuo.mutation.RemovedRegisterIDs(); len(nodes) > 0 && !tuo.mutation.RegisterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   talent.RegisterTable,
+			Columns: talent.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tuo.mutation.RegisterIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   talent.RegisterTable,
+			Columns: talent.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &Talent{config: tuo.config}
 	_spec.Assign = _node.assignValues

@@ -17,6 +17,27 @@ type Talent struct {
 	ID int `json:"id,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the TalentQuery when eager-loading is set.
+	Edges TalentEdges `json:"edges"`
+}
+
+// TalentEdges holds the relations/edges for other nodes in the graph.
+type TalentEdges struct {
+	// Register holds the value of the register edge.
+	Register []*Register `json:"register,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [1]bool
+}
+
+// RegisterOrErr returns the Register value or an error if the edge
+// was not loaded in eager-loading.
+func (e TalentEdges) RegisterOrErr() ([]*Register, error) {
+	if e.loadedTypes[0] {
+		return e.Register, nil
+	}
+	return nil, &NotLoadedError{edge: "register"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -58,6 +79,11 @@ func (t *Talent) assignValues(columns []string, values []interface{}) error {
 		}
 	}
 	return nil
+}
+
+// QueryRegister queries the "register" edge of the Talent entity.
+func (t *Talent) QueryRegister() *RegisterQuery {
+	return (&TalentClient{config: t.config}).QueryRegister(t)
 }
 
 // Update returns a builder for updating this Talent.

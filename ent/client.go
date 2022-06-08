@@ -928,6 +928,22 @@ func (c *OrganizationClient) GetX(ctx context.Context, id int) *Organization {
 	return obj
 }
 
+// QueryRegister queries the register edge of a Organization.
+func (c *OrganizationClient) QueryRegister(o *Organization) *RegisterQuery {
+	query := &RegisterQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := o.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organization.Table, organization.FieldID, id),
+			sqlgraph.To(register.Table, register.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, organization.RegisterTable, organization.RegisterPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *OrganizationClient) Hooks() []Hook {
 	return c.hooks.Organization
@@ -1146,6 +1162,70 @@ func (c *RegisterClient) QueryNetworth(r *Register) *NetworthQuery {
 	return query
 }
 
+// QueryOrganization queries the organization edge of a Register.
+func (c *RegisterClient) QueryOrganization(r *Register) *OrganizationQuery {
+	query := &OrganizationQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := r.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(register.Table, register.FieldID, id),
+			sqlgraph.To(organization.Table, organization.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, register.OrganizationTable, register.OrganizationPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(r.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QuerySocialmedia queries the socialmedia edge of a Register.
+func (c *RegisterClient) QuerySocialmedia(r *Register) *SocialMediaQuery {
+	query := &SocialMediaQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := r.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(register.Table, register.FieldID, id),
+			sqlgraph.To(socialmedia.Table, socialmedia.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, register.SocialmediaTable, register.SocialmediaPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(r.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryTalent queries the talent edge of a Register.
+func (c *RegisterClient) QueryTalent(r *Register) *TalentQuery {
+	query := &TalentQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := r.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(register.Table, register.FieldID, id),
+			sqlgraph.To(talent.Table, talent.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, register.TalentTable, register.TalentPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(r.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryTraining queries the training edge of a Register.
+func (c *RegisterClient) QueryTraining(r *Register) *TrainingQuery {
+	query := &TrainingQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := r.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(register.Table, register.FieldID, id),
+			sqlgraph.To(training.Table, training.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, register.TrainingTable, register.TrainingPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(r.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *RegisterClient) Hooks() []Hook {
 	return c.hooks.Register
@@ -1342,6 +1422,22 @@ func (c *SocialMediaClient) GetX(ctx context.Context, id int) *SocialMedia {
 	return obj
 }
 
+// QueryRegister queries the register edge of a SocialMedia.
+func (c *SocialMediaClient) QueryRegister(sm *SocialMedia) *RegisterQuery {
+	query := &RegisterQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := sm.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(socialmedia.Table, socialmedia.FieldID, id),
+			sqlgraph.To(register.Table, register.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, socialmedia.RegisterTable, socialmedia.RegisterPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(sm.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *SocialMediaClient) Hooks() []Hook {
 	return c.hooks.SocialMedia
@@ -1432,6 +1528,22 @@ func (c *TalentClient) GetX(ctx context.Context, id int) *Talent {
 	return obj
 }
 
+// QueryRegister queries the register edge of a Talent.
+func (c *TalentClient) QueryRegister(t *Talent) *RegisterQuery {
+	query := &RegisterQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := t.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(talent.Table, talent.FieldID, id),
+			sqlgraph.To(register.Table, register.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, talent.RegisterTable, talent.RegisterPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *TalentClient) Hooks() []Hook {
 	return c.hooks.Talent
@@ -1520,6 +1632,22 @@ func (c *TrainingClient) GetX(ctx context.Context, id int) *Training {
 		panic(err)
 	}
 	return obj
+}
+
+// QueryRegister queries the register edge of a Training.
+func (c *TrainingClient) QueryRegister(t *Training) *RegisterQuery {
+	query := &RegisterQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := t.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(training.Table, training.FieldID, id),
+			sqlgraph.To(register.Table, register.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, training.RegisterTable, training.RegisterPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
 }
 
 // Hooks returns the client hooks.

@@ -2,6 +2,8 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/dialect/entsql"
+	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
 
@@ -13,15 +15,18 @@ type Organization struct {
 // Fields of the Organization.
 func (Organization) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("name").Optional().Nillable(),
-		field.String("period").Optional().Nillable(),
-		field.String("position").Optional().Nillable(),
-		field.String("detail").Optional().Nillable(),
+		field.String("name"),
+		field.String("period"),
+		field.String("position"),
+		field.String("detail"),
 	}
 }
 
 // Edges of the Organization.
 func (Organization) Edges() []ent.Edge {
-	return nil
-	// return []ent.Edge{}
+	return []ent.Edge{
+		edge.To("register", Register.Type).Annotations(entsql.Annotation{
+			OnDelete: entsql.Cascade,
+		}),
+	}
 }

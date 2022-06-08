@@ -3,8 +3,10 @@
 package ent
 
 import (
+	"Kynesia/ent/register"
 	"Kynesia/ent/training"
 	"context"
+	"errors"
 	"fmt"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -24,25 +26,9 @@ func (tc *TrainingCreate) SetName(s string) *TrainingCreate {
 	return tc
 }
 
-// SetNillableName sets the "name" field if the given value is not nil.
-func (tc *TrainingCreate) SetNillableName(s *string) *TrainingCreate {
-	if s != nil {
-		tc.SetName(*s)
-	}
-	return tc
-}
-
 // SetPeriod sets the "period" field.
 func (tc *TrainingCreate) SetPeriod(s string) *TrainingCreate {
 	tc.mutation.SetPeriod(s)
-	return tc
-}
-
-// SetNillablePeriod sets the "period" field if the given value is not nil.
-func (tc *TrainingCreate) SetNillablePeriod(s *string) *TrainingCreate {
-	if s != nil {
-		tc.SetPeriod(*s)
-	}
 	return tc
 }
 
@@ -52,25 +38,9 @@ func (tc *TrainingCreate) SetYear(s string) *TrainingCreate {
 	return tc
 }
 
-// SetNillableYear sets the "year" field if the given value is not nil.
-func (tc *TrainingCreate) SetNillableYear(s *string) *TrainingCreate {
-	if s != nil {
-		tc.SetYear(*s)
-	}
-	return tc
-}
-
 // SetOrganizer sets the "organizer" field.
 func (tc *TrainingCreate) SetOrganizer(s string) *TrainingCreate {
 	tc.mutation.SetOrganizer(s)
-	return tc
-}
-
-// SetNillableOrganizer sets the "organizer" field if the given value is not nil.
-func (tc *TrainingCreate) SetNillableOrganizer(s *string) *TrainingCreate {
-	if s != nil {
-		tc.SetOrganizer(*s)
-	}
 	return tc
 }
 
@@ -80,12 +50,19 @@ func (tc *TrainingCreate) SetCertificate(s string) *TrainingCreate {
 	return tc
 }
 
-// SetNillableCertificate sets the "certificate" field if the given value is not nil.
-func (tc *TrainingCreate) SetNillableCertificate(s *string) *TrainingCreate {
-	if s != nil {
-		tc.SetCertificate(*s)
-	}
+// AddRegisterIDs adds the "register" edge to the Register entity by IDs.
+func (tc *TrainingCreate) AddRegisterIDs(ids ...int) *TrainingCreate {
+	tc.mutation.AddRegisterIDs(ids...)
 	return tc
+}
+
+// AddRegister adds the "register" edges to the Register entity.
+func (tc *TrainingCreate) AddRegister(r ...*Register) *TrainingCreate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return tc.AddRegisterIDs(ids...)
 }
 
 // Mutation returns the TrainingMutation object of the builder.
@@ -158,6 +135,21 @@ func (tc *TrainingCreate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (tc *TrainingCreate) check() error {
+	if _, ok := tc.mutation.Name(); !ok {
+		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Training.name"`)}
+	}
+	if _, ok := tc.mutation.Period(); !ok {
+		return &ValidationError{Name: "period", err: errors.New(`ent: missing required field "Training.period"`)}
+	}
+	if _, ok := tc.mutation.Year(); !ok {
+		return &ValidationError{Name: "year", err: errors.New(`ent: missing required field "Training.year"`)}
+	}
+	if _, ok := tc.mutation.Organizer(); !ok {
+		return &ValidationError{Name: "organizer", err: errors.New(`ent: missing required field "Training.organizer"`)}
+	}
+	if _, ok := tc.mutation.Certificate(); !ok {
+		return &ValidationError{Name: "certificate", err: errors.New(`ent: missing required field "Training.certificate"`)}
+	}
 	return nil
 }
 
@@ -191,7 +183,7 @@ func (tc *TrainingCreate) createSpec() (*Training, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: training.FieldName,
 		})
-		_node.Name = &value
+		_node.Name = value
 	}
 	if value, ok := tc.mutation.Period(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -199,7 +191,7 @@ func (tc *TrainingCreate) createSpec() (*Training, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: training.FieldPeriod,
 		})
-		_node.Period = &value
+		_node.Period = value
 	}
 	if value, ok := tc.mutation.Year(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -207,7 +199,7 @@ func (tc *TrainingCreate) createSpec() (*Training, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: training.FieldYear,
 		})
-		_node.Year = &value
+		_node.Year = value
 	}
 	if value, ok := tc.mutation.Organizer(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -215,7 +207,7 @@ func (tc *TrainingCreate) createSpec() (*Training, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: training.FieldOrganizer,
 		})
-		_node.Organizer = &value
+		_node.Organizer = value
 	}
 	if value, ok := tc.mutation.Certificate(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -223,7 +215,26 @@ func (tc *TrainingCreate) createSpec() (*Training, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: training.FieldCertificate,
 		})
-		_node.Certificate = &value
+		_node.Certificate = value
+	}
+	if nodes := tc.mutation.RegisterIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   training.RegisterTable,
+			Columns: training.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

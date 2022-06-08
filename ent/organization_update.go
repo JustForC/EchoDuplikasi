@@ -5,6 +5,7 @@ package ent
 import (
 	"Kynesia/ent/organization"
 	"Kynesia/ent/predicate"
+	"Kynesia/ent/register"
 	"context"
 	"errors"
 	"fmt"
@@ -33,37 +34,9 @@ func (ou *OrganizationUpdate) SetName(s string) *OrganizationUpdate {
 	return ou
 }
 
-// SetNillableName sets the "name" field if the given value is not nil.
-func (ou *OrganizationUpdate) SetNillableName(s *string) *OrganizationUpdate {
-	if s != nil {
-		ou.SetName(*s)
-	}
-	return ou
-}
-
-// ClearName clears the value of the "name" field.
-func (ou *OrganizationUpdate) ClearName() *OrganizationUpdate {
-	ou.mutation.ClearName()
-	return ou
-}
-
 // SetPeriod sets the "period" field.
 func (ou *OrganizationUpdate) SetPeriod(s string) *OrganizationUpdate {
 	ou.mutation.SetPeriod(s)
-	return ou
-}
-
-// SetNillablePeriod sets the "period" field if the given value is not nil.
-func (ou *OrganizationUpdate) SetNillablePeriod(s *string) *OrganizationUpdate {
-	if s != nil {
-		ou.SetPeriod(*s)
-	}
-	return ou
-}
-
-// ClearPeriod clears the value of the "period" field.
-func (ou *OrganizationUpdate) ClearPeriod() *OrganizationUpdate {
-	ou.mutation.ClearPeriod()
 	return ou
 }
 
@@ -73,43 +46,51 @@ func (ou *OrganizationUpdate) SetPosition(s string) *OrganizationUpdate {
 	return ou
 }
 
-// SetNillablePosition sets the "position" field if the given value is not nil.
-func (ou *OrganizationUpdate) SetNillablePosition(s *string) *OrganizationUpdate {
-	if s != nil {
-		ou.SetPosition(*s)
-	}
-	return ou
-}
-
-// ClearPosition clears the value of the "position" field.
-func (ou *OrganizationUpdate) ClearPosition() *OrganizationUpdate {
-	ou.mutation.ClearPosition()
-	return ou
-}
-
 // SetDetail sets the "detail" field.
 func (ou *OrganizationUpdate) SetDetail(s string) *OrganizationUpdate {
 	ou.mutation.SetDetail(s)
 	return ou
 }
 
-// SetNillableDetail sets the "detail" field if the given value is not nil.
-func (ou *OrganizationUpdate) SetNillableDetail(s *string) *OrganizationUpdate {
-	if s != nil {
-		ou.SetDetail(*s)
-	}
+// AddRegisterIDs adds the "register" edge to the Register entity by IDs.
+func (ou *OrganizationUpdate) AddRegisterIDs(ids ...int) *OrganizationUpdate {
+	ou.mutation.AddRegisterIDs(ids...)
 	return ou
 }
 
-// ClearDetail clears the value of the "detail" field.
-func (ou *OrganizationUpdate) ClearDetail() *OrganizationUpdate {
-	ou.mutation.ClearDetail()
-	return ou
+// AddRegister adds the "register" edges to the Register entity.
+func (ou *OrganizationUpdate) AddRegister(r ...*Register) *OrganizationUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return ou.AddRegisterIDs(ids...)
 }
 
 // Mutation returns the OrganizationMutation object of the builder.
 func (ou *OrganizationUpdate) Mutation() *OrganizationMutation {
 	return ou.mutation
+}
+
+// ClearRegister clears all "register" edges to the Register entity.
+func (ou *OrganizationUpdate) ClearRegister() *OrganizationUpdate {
+	ou.mutation.ClearRegister()
+	return ou
+}
+
+// RemoveRegisterIDs removes the "register" edge to Register entities by IDs.
+func (ou *OrganizationUpdate) RemoveRegisterIDs(ids ...int) *OrganizationUpdate {
+	ou.mutation.RemoveRegisterIDs(ids...)
+	return ou
+}
+
+// RemoveRegister removes "register" edges to Register entities.
+func (ou *OrganizationUpdate) RemoveRegister(r ...*Register) *OrganizationUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return ou.RemoveRegisterIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -191,22 +172,10 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: organization.FieldName,
 		})
 	}
-	if ou.mutation.NameCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: organization.FieldName,
-		})
-	}
 	if value, ok := ou.mutation.Period(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: organization.FieldPeriod,
-		})
-	}
-	if ou.mutation.PeriodCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
 			Column: organization.FieldPeriod,
 		})
 	}
@@ -217,12 +186,6 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: organization.FieldPosition,
 		})
 	}
-	if ou.mutation.PositionCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: organization.FieldPosition,
-		})
-	}
 	if value, ok := ou.mutation.Detail(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -230,11 +193,59 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: organization.FieldDetail,
 		})
 	}
-	if ou.mutation.DetailCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: organization.FieldDetail,
-		})
+	if ou.mutation.RegisterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   organization.RegisterTable,
+			Columns: organization.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ou.mutation.RemovedRegisterIDs(); len(nodes) > 0 && !ou.mutation.RegisterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   organization.RegisterTable,
+			Columns: organization.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ou.mutation.RegisterIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   organization.RegisterTable,
+			Columns: organization.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, ou.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -261,37 +272,9 @@ func (ouo *OrganizationUpdateOne) SetName(s string) *OrganizationUpdateOne {
 	return ouo
 }
 
-// SetNillableName sets the "name" field if the given value is not nil.
-func (ouo *OrganizationUpdateOne) SetNillableName(s *string) *OrganizationUpdateOne {
-	if s != nil {
-		ouo.SetName(*s)
-	}
-	return ouo
-}
-
-// ClearName clears the value of the "name" field.
-func (ouo *OrganizationUpdateOne) ClearName() *OrganizationUpdateOne {
-	ouo.mutation.ClearName()
-	return ouo
-}
-
 // SetPeriod sets the "period" field.
 func (ouo *OrganizationUpdateOne) SetPeriod(s string) *OrganizationUpdateOne {
 	ouo.mutation.SetPeriod(s)
-	return ouo
-}
-
-// SetNillablePeriod sets the "period" field if the given value is not nil.
-func (ouo *OrganizationUpdateOne) SetNillablePeriod(s *string) *OrganizationUpdateOne {
-	if s != nil {
-		ouo.SetPeriod(*s)
-	}
-	return ouo
-}
-
-// ClearPeriod clears the value of the "period" field.
-func (ouo *OrganizationUpdateOne) ClearPeriod() *OrganizationUpdateOne {
-	ouo.mutation.ClearPeriod()
 	return ouo
 }
 
@@ -301,43 +284,51 @@ func (ouo *OrganizationUpdateOne) SetPosition(s string) *OrganizationUpdateOne {
 	return ouo
 }
 
-// SetNillablePosition sets the "position" field if the given value is not nil.
-func (ouo *OrganizationUpdateOne) SetNillablePosition(s *string) *OrganizationUpdateOne {
-	if s != nil {
-		ouo.SetPosition(*s)
-	}
-	return ouo
-}
-
-// ClearPosition clears the value of the "position" field.
-func (ouo *OrganizationUpdateOne) ClearPosition() *OrganizationUpdateOne {
-	ouo.mutation.ClearPosition()
-	return ouo
-}
-
 // SetDetail sets the "detail" field.
 func (ouo *OrganizationUpdateOne) SetDetail(s string) *OrganizationUpdateOne {
 	ouo.mutation.SetDetail(s)
 	return ouo
 }
 
-// SetNillableDetail sets the "detail" field if the given value is not nil.
-func (ouo *OrganizationUpdateOne) SetNillableDetail(s *string) *OrganizationUpdateOne {
-	if s != nil {
-		ouo.SetDetail(*s)
-	}
+// AddRegisterIDs adds the "register" edge to the Register entity by IDs.
+func (ouo *OrganizationUpdateOne) AddRegisterIDs(ids ...int) *OrganizationUpdateOne {
+	ouo.mutation.AddRegisterIDs(ids...)
 	return ouo
 }
 
-// ClearDetail clears the value of the "detail" field.
-func (ouo *OrganizationUpdateOne) ClearDetail() *OrganizationUpdateOne {
-	ouo.mutation.ClearDetail()
-	return ouo
+// AddRegister adds the "register" edges to the Register entity.
+func (ouo *OrganizationUpdateOne) AddRegister(r ...*Register) *OrganizationUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return ouo.AddRegisterIDs(ids...)
 }
 
 // Mutation returns the OrganizationMutation object of the builder.
 func (ouo *OrganizationUpdateOne) Mutation() *OrganizationMutation {
 	return ouo.mutation
+}
+
+// ClearRegister clears all "register" edges to the Register entity.
+func (ouo *OrganizationUpdateOne) ClearRegister() *OrganizationUpdateOne {
+	ouo.mutation.ClearRegister()
+	return ouo
+}
+
+// RemoveRegisterIDs removes the "register" edge to Register entities by IDs.
+func (ouo *OrganizationUpdateOne) RemoveRegisterIDs(ids ...int) *OrganizationUpdateOne {
+	ouo.mutation.RemoveRegisterIDs(ids...)
+	return ouo
+}
+
+// RemoveRegister removes "register" edges to Register entities.
+func (ouo *OrganizationUpdateOne) RemoveRegister(r ...*Register) *OrganizationUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return ouo.RemoveRegisterIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -443,22 +434,10 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 			Column: organization.FieldName,
 		})
 	}
-	if ouo.mutation.NameCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: organization.FieldName,
-		})
-	}
 	if value, ok := ouo.mutation.Period(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: organization.FieldPeriod,
-		})
-	}
-	if ouo.mutation.PeriodCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
 			Column: organization.FieldPeriod,
 		})
 	}
@@ -469,12 +448,6 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 			Column: organization.FieldPosition,
 		})
 	}
-	if ouo.mutation.PositionCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: organization.FieldPosition,
-		})
-	}
 	if value, ok := ouo.mutation.Detail(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -482,11 +455,59 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 			Column: organization.FieldDetail,
 		})
 	}
-	if ouo.mutation.DetailCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: organization.FieldDetail,
-		})
+	if ouo.mutation.RegisterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   organization.RegisterTable,
+			Columns: organization.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ouo.mutation.RemovedRegisterIDs(); len(nodes) > 0 && !ouo.mutation.RegisterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   organization.RegisterTable,
+			Columns: organization.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ouo.mutation.RegisterIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   organization.RegisterTable,
+			Columns: organization.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &Organization{config: ouo.config}
 	_spec.Assign = _node.assignValues

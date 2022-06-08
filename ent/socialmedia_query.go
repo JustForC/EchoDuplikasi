@@ -4,8 +4,10 @@ package ent
 
 import (
 	"Kynesia/ent/predicate"
+	"Kynesia/ent/register"
 	"Kynesia/ent/socialmedia"
 	"context"
+	"database/sql/driver"
 	"errors"
 	"fmt"
 	"math"
@@ -24,6 +26,8 @@ type SocialMediaQuery struct {
 	order      []OrderFunc
 	fields     []string
 	predicates []predicate.SocialMedia
+	// eager-loading edges.
+	withRegister *RegisterQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -58,6 +62,28 @@ func (smq *SocialMediaQuery) Unique(unique bool) *SocialMediaQuery {
 func (smq *SocialMediaQuery) Order(o ...OrderFunc) *SocialMediaQuery {
 	smq.order = append(smq.order, o...)
 	return smq
+}
+
+// QueryRegister chains the current query on the "register" edge.
+func (smq *SocialMediaQuery) QueryRegister() *RegisterQuery {
+	query := &RegisterQuery{config: smq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := smq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := smq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(socialmedia.Table, socialmedia.FieldID, selector),
+			sqlgraph.To(register.Table, register.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, socialmedia.RegisterTable, socialmedia.RegisterPrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(smq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
 }
 
 // First returns the first SocialMedia entity from the query.
@@ -236,16 +262,28 @@ func (smq *SocialMediaQuery) Clone() *SocialMediaQuery {
 		return nil
 	}
 	return &SocialMediaQuery{
-		config:     smq.config,
-		limit:      smq.limit,
-		offset:     smq.offset,
-		order:      append([]OrderFunc{}, smq.order...),
-		predicates: append([]predicate.SocialMedia{}, smq.predicates...),
+		config:       smq.config,
+		limit:        smq.limit,
+		offset:       smq.offset,
+		order:        append([]OrderFunc{}, smq.order...),
+		predicates:   append([]predicate.SocialMedia{}, smq.predicates...),
+		withRegister: smq.withRegister.Clone(),
 		// clone intermediate query.
 		sql:    smq.sql.Clone(),
 		path:   smq.path,
 		unique: smq.unique,
 	}
+}
+
+// WithRegister tells the query-builder to eager-load the nodes that are connected to
+// the "register" edge. The optional arguments are used to configure the query builder of the edge.
+func (smq *SocialMediaQuery) WithRegister(opts ...func(*RegisterQuery)) *SocialMediaQuery {
+	query := &RegisterQuery{config: smq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	smq.withRegister = query
+	return smq
 }
 
 // GroupBy is used to group vertices by one or more fields/columns.
@@ -311,8 +349,11 @@ func (smq *SocialMediaQuery) prepareQuery(ctx context.Context) error {
 
 func (smq *SocialMediaQuery) sqlAll(ctx context.Context) ([]*SocialMedia, error) {
 	var (
-		nodes = []*SocialMedia{}
-		_spec = smq.querySpec()
+		nodes       = []*SocialMedia{}
+		_spec       = smq.querySpec()
+		loadedTypes = [1]bool{
+			smq.withRegister != nil,
+		}
 	)
 	_spec.ScanValues = func(columns []string) ([]interface{}, error) {
 		node := &SocialMedia{config: smq.config}
@@ -324,6 +365,7 @@ func (smq *SocialMediaQuery) sqlAll(ctx context.Context) ([]*SocialMedia, error)
 			return fmt.Errorf("ent: Assign called without calling ScanValues")
 		}
 		node := nodes[len(nodes)-1]
+		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
 	if err := sqlgraph.QueryNodes(ctx, smq.driver, _spec); err != nil {
@@ -332,6 +374,72 @@ func (smq *SocialMediaQuery) sqlAll(ctx context.Context) ([]*SocialMedia, error)
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+
+	if query := smq.withRegister; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		ids := make(map[int]*SocialMedia, len(nodes))
+		for _, node := range nodes {
+			ids[node.ID] = node
+			fks = append(fks, node.ID)
+			node.Edges.Register = []*Register{}
+		}
+		var (
+			edgeids []int
+			edges   = make(map[int][]*SocialMedia)
+		)
+		_spec := &sqlgraph.EdgeQuerySpec{
+			Edge: &sqlgraph.EdgeSpec{
+				Inverse: false,
+				Table:   socialmedia.RegisterTable,
+				Columns: socialmedia.RegisterPrimaryKey,
+			},
+			Predicate: func(s *sql.Selector) {
+				s.Where(sql.InValues(socialmedia.RegisterPrimaryKey[0], fks...))
+			},
+			ScanValues: func() [2]interface{} {
+				return [2]interface{}{new(sql.NullInt64), new(sql.NullInt64)}
+			},
+			Assign: func(out, in interface{}) error {
+				eout, ok := out.(*sql.NullInt64)
+				if !ok || eout == nil {
+					return fmt.Errorf("unexpected id value for edge-out")
+				}
+				ein, ok := in.(*sql.NullInt64)
+				if !ok || ein == nil {
+					return fmt.Errorf("unexpected id value for edge-in")
+				}
+				outValue := int(eout.Int64)
+				inValue := int(ein.Int64)
+				node, ok := ids[outValue]
+				if !ok {
+					return fmt.Errorf("unexpected node id in edges: %v", outValue)
+				}
+				if _, ok := edges[inValue]; !ok {
+					edgeids = append(edgeids, inValue)
+				}
+				edges[inValue] = append(edges[inValue], node)
+				return nil
+			},
+		}
+		if err := sqlgraph.QueryEdges(ctx, smq.driver, _spec); err != nil {
+			return nil, fmt.Errorf(`query edges "register": %w`, err)
+		}
+		query.Where(register.IDIn(edgeids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := edges[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected "register" node returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.Register = append(nodes[i].Edges.Register, n)
+			}
+		}
+	}
+
 	return nodes, nil
 }
 

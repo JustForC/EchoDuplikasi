@@ -4,6 +4,7 @@ package ent
 
 import (
 	"Kynesia/ent/predicate"
+	"Kynesia/ent/register"
 	"Kynesia/ent/training"
 	"context"
 	"errors"
@@ -33,37 +34,9 @@ func (tu *TrainingUpdate) SetName(s string) *TrainingUpdate {
 	return tu
 }
 
-// SetNillableName sets the "name" field if the given value is not nil.
-func (tu *TrainingUpdate) SetNillableName(s *string) *TrainingUpdate {
-	if s != nil {
-		tu.SetName(*s)
-	}
-	return tu
-}
-
-// ClearName clears the value of the "name" field.
-func (tu *TrainingUpdate) ClearName() *TrainingUpdate {
-	tu.mutation.ClearName()
-	return tu
-}
-
 // SetPeriod sets the "period" field.
 func (tu *TrainingUpdate) SetPeriod(s string) *TrainingUpdate {
 	tu.mutation.SetPeriod(s)
-	return tu
-}
-
-// SetNillablePeriod sets the "period" field if the given value is not nil.
-func (tu *TrainingUpdate) SetNillablePeriod(s *string) *TrainingUpdate {
-	if s != nil {
-		tu.SetPeriod(*s)
-	}
-	return tu
-}
-
-// ClearPeriod clears the value of the "period" field.
-func (tu *TrainingUpdate) ClearPeriod() *TrainingUpdate {
-	tu.mutation.ClearPeriod()
 	return tu
 }
 
@@ -73,37 +46,9 @@ func (tu *TrainingUpdate) SetYear(s string) *TrainingUpdate {
 	return tu
 }
 
-// SetNillableYear sets the "year" field if the given value is not nil.
-func (tu *TrainingUpdate) SetNillableYear(s *string) *TrainingUpdate {
-	if s != nil {
-		tu.SetYear(*s)
-	}
-	return tu
-}
-
-// ClearYear clears the value of the "year" field.
-func (tu *TrainingUpdate) ClearYear() *TrainingUpdate {
-	tu.mutation.ClearYear()
-	return tu
-}
-
 // SetOrganizer sets the "organizer" field.
 func (tu *TrainingUpdate) SetOrganizer(s string) *TrainingUpdate {
 	tu.mutation.SetOrganizer(s)
-	return tu
-}
-
-// SetNillableOrganizer sets the "organizer" field if the given value is not nil.
-func (tu *TrainingUpdate) SetNillableOrganizer(s *string) *TrainingUpdate {
-	if s != nil {
-		tu.SetOrganizer(*s)
-	}
-	return tu
-}
-
-// ClearOrganizer clears the value of the "organizer" field.
-func (tu *TrainingUpdate) ClearOrganizer() *TrainingUpdate {
-	tu.mutation.ClearOrganizer()
 	return tu
 }
 
@@ -113,23 +58,45 @@ func (tu *TrainingUpdate) SetCertificate(s string) *TrainingUpdate {
 	return tu
 }
 
-// SetNillableCertificate sets the "certificate" field if the given value is not nil.
-func (tu *TrainingUpdate) SetNillableCertificate(s *string) *TrainingUpdate {
-	if s != nil {
-		tu.SetCertificate(*s)
-	}
+// AddRegisterIDs adds the "register" edge to the Register entity by IDs.
+func (tu *TrainingUpdate) AddRegisterIDs(ids ...int) *TrainingUpdate {
+	tu.mutation.AddRegisterIDs(ids...)
 	return tu
 }
 
-// ClearCertificate clears the value of the "certificate" field.
-func (tu *TrainingUpdate) ClearCertificate() *TrainingUpdate {
-	tu.mutation.ClearCertificate()
-	return tu
+// AddRegister adds the "register" edges to the Register entity.
+func (tu *TrainingUpdate) AddRegister(r ...*Register) *TrainingUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return tu.AddRegisterIDs(ids...)
 }
 
 // Mutation returns the TrainingMutation object of the builder.
 func (tu *TrainingUpdate) Mutation() *TrainingMutation {
 	return tu.mutation
+}
+
+// ClearRegister clears all "register" edges to the Register entity.
+func (tu *TrainingUpdate) ClearRegister() *TrainingUpdate {
+	tu.mutation.ClearRegister()
+	return tu
+}
+
+// RemoveRegisterIDs removes the "register" edge to Register entities by IDs.
+func (tu *TrainingUpdate) RemoveRegisterIDs(ids ...int) *TrainingUpdate {
+	tu.mutation.RemoveRegisterIDs(ids...)
+	return tu
+}
+
+// RemoveRegister removes "register" edges to Register entities.
+func (tu *TrainingUpdate) RemoveRegister(r ...*Register) *TrainingUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return tu.RemoveRegisterIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -211,22 +178,10 @@ func (tu *TrainingUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: training.FieldName,
 		})
 	}
-	if tu.mutation.NameCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: training.FieldName,
-		})
-	}
 	if value, ok := tu.mutation.Period(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: training.FieldPeriod,
-		})
-	}
-	if tu.mutation.PeriodCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
 			Column: training.FieldPeriod,
 		})
 	}
@@ -237,22 +192,10 @@ func (tu *TrainingUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: training.FieldYear,
 		})
 	}
-	if tu.mutation.YearCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: training.FieldYear,
-		})
-	}
 	if value, ok := tu.mutation.Organizer(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: training.FieldOrganizer,
-		})
-	}
-	if tu.mutation.OrganizerCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
 			Column: training.FieldOrganizer,
 		})
 	}
@@ -263,11 +206,59 @@ func (tu *TrainingUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: training.FieldCertificate,
 		})
 	}
-	if tu.mutation.CertificateCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: training.FieldCertificate,
-		})
+	if tu.mutation.RegisterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   training.RegisterTable,
+			Columns: training.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tu.mutation.RemovedRegisterIDs(); len(nodes) > 0 && !tu.mutation.RegisterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   training.RegisterTable,
+			Columns: training.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tu.mutation.RegisterIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   training.RegisterTable,
+			Columns: training.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, tu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -294,37 +285,9 @@ func (tuo *TrainingUpdateOne) SetName(s string) *TrainingUpdateOne {
 	return tuo
 }
 
-// SetNillableName sets the "name" field if the given value is not nil.
-func (tuo *TrainingUpdateOne) SetNillableName(s *string) *TrainingUpdateOne {
-	if s != nil {
-		tuo.SetName(*s)
-	}
-	return tuo
-}
-
-// ClearName clears the value of the "name" field.
-func (tuo *TrainingUpdateOne) ClearName() *TrainingUpdateOne {
-	tuo.mutation.ClearName()
-	return tuo
-}
-
 // SetPeriod sets the "period" field.
 func (tuo *TrainingUpdateOne) SetPeriod(s string) *TrainingUpdateOne {
 	tuo.mutation.SetPeriod(s)
-	return tuo
-}
-
-// SetNillablePeriod sets the "period" field if the given value is not nil.
-func (tuo *TrainingUpdateOne) SetNillablePeriod(s *string) *TrainingUpdateOne {
-	if s != nil {
-		tuo.SetPeriod(*s)
-	}
-	return tuo
-}
-
-// ClearPeriod clears the value of the "period" field.
-func (tuo *TrainingUpdateOne) ClearPeriod() *TrainingUpdateOne {
-	tuo.mutation.ClearPeriod()
 	return tuo
 }
 
@@ -334,37 +297,9 @@ func (tuo *TrainingUpdateOne) SetYear(s string) *TrainingUpdateOne {
 	return tuo
 }
 
-// SetNillableYear sets the "year" field if the given value is not nil.
-func (tuo *TrainingUpdateOne) SetNillableYear(s *string) *TrainingUpdateOne {
-	if s != nil {
-		tuo.SetYear(*s)
-	}
-	return tuo
-}
-
-// ClearYear clears the value of the "year" field.
-func (tuo *TrainingUpdateOne) ClearYear() *TrainingUpdateOne {
-	tuo.mutation.ClearYear()
-	return tuo
-}
-
 // SetOrganizer sets the "organizer" field.
 func (tuo *TrainingUpdateOne) SetOrganizer(s string) *TrainingUpdateOne {
 	tuo.mutation.SetOrganizer(s)
-	return tuo
-}
-
-// SetNillableOrganizer sets the "organizer" field if the given value is not nil.
-func (tuo *TrainingUpdateOne) SetNillableOrganizer(s *string) *TrainingUpdateOne {
-	if s != nil {
-		tuo.SetOrganizer(*s)
-	}
-	return tuo
-}
-
-// ClearOrganizer clears the value of the "organizer" field.
-func (tuo *TrainingUpdateOne) ClearOrganizer() *TrainingUpdateOne {
-	tuo.mutation.ClearOrganizer()
 	return tuo
 }
 
@@ -374,23 +309,45 @@ func (tuo *TrainingUpdateOne) SetCertificate(s string) *TrainingUpdateOne {
 	return tuo
 }
 
-// SetNillableCertificate sets the "certificate" field if the given value is not nil.
-func (tuo *TrainingUpdateOne) SetNillableCertificate(s *string) *TrainingUpdateOne {
-	if s != nil {
-		tuo.SetCertificate(*s)
-	}
+// AddRegisterIDs adds the "register" edge to the Register entity by IDs.
+func (tuo *TrainingUpdateOne) AddRegisterIDs(ids ...int) *TrainingUpdateOne {
+	tuo.mutation.AddRegisterIDs(ids...)
 	return tuo
 }
 
-// ClearCertificate clears the value of the "certificate" field.
-func (tuo *TrainingUpdateOne) ClearCertificate() *TrainingUpdateOne {
-	tuo.mutation.ClearCertificate()
-	return tuo
+// AddRegister adds the "register" edges to the Register entity.
+func (tuo *TrainingUpdateOne) AddRegister(r ...*Register) *TrainingUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return tuo.AddRegisterIDs(ids...)
 }
 
 // Mutation returns the TrainingMutation object of the builder.
 func (tuo *TrainingUpdateOne) Mutation() *TrainingMutation {
 	return tuo.mutation
+}
+
+// ClearRegister clears all "register" edges to the Register entity.
+func (tuo *TrainingUpdateOne) ClearRegister() *TrainingUpdateOne {
+	tuo.mutation.ClearRegister()
+	return tuo
+}
+
+// RemoveRegisterIDs removes the "register" edge to Register entities by IDs.
+func (tuo *TrainingUpdateOne) RemoveRegisterIDs(ids ...int) *TrainingUpdateOne {
+	tuo.mutation.RemoveRegisterIDs(ids...)
+	return tuo
+}
+
+// RemoveRegister removes "register" edges to Register entities.
+func (tuo *TrainingUpdateOne) RemoveRegister(r ...*Register) *TrainingUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return tuo.RemoveRegisterIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -496,22 +453,10 @@ func (tuo *TrainingUpdateOne) sqlSave(ctx context.Context) (_node *Training, err
 			Column: training.FieldName,
 		})
 	}
-	if tuo.mutation.NameCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: training.FieldName,
-		})
-	}
 	if value, ok := tuo.mutation.Period(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: training.FieldPeriod,
-		})
-	}
-	if tuo.mutation.PeriodCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
 			Column: training.FieldPeriod,
 		})
 	}
@@ -522,22 +467,10 @@ func (tuo *TrainingUpdateOne) sqlSave(ctx context.Context) (_node *Training, err
 			Column: training.FieldYear,
 		})
 	}
-	if tuo.mutation.YearCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: training.FieldYear,
-		})
-	}
 	if value, ok := tuo.mutation.Organizer(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: training.FieldOrganizer,
-		})
-	}
-	if tuo.mutation.OrganizerCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
 			Column: training.FieldOrganizer,
 		})
 	}
@@ -548,11 +481,59 @@ func (tuo *TrainingUpdateOne) sqlSave(ctx context.Context) (_node *Training, err
 			Column: training.FieldCertificate,
 		})
 	}
-	if tuo.mutation.CertificateCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: training.FieldCertificate,
-		})
+	if tuo.mutation.RegisterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   training.RegisterTable,
+			Columns: training.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tuo.mutation.RemovedRegisterIDs(); len(nodes) > 0 && !tuo.mutation.RegisterCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   training.RegisterTable,
+			Columns: training.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tuo.mutation.RegisterIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   training.RegisterTable,
+			Columns: training.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &Training{config: tuo.config}
 	_spec.Assign = _node.assignValues

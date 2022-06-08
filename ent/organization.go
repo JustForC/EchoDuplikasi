@@ -16,13 +16,34 @@ type Organization struct {
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
 	// Name holds the value of the "name" field.
-	Name *string `json:"name,omitempty"`
+	Name string `json:"name,omitempty"`
 	// Period holds the value of the "period" field.
-	Period *string `json:"period,omitempty"`
+	Period string `json:"period,omitempty"`
 	// Position holds the value of the "position" field.
-	Position *string `json:"position,omitempty"`
+	Position string `json:"position,omitempty"`
 	// Detail holds the value of the "detail" field.
-	Detail *string `json:"detail,omitempty"`
+	Detail string `json:"detail,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the OrganizationQuery when eager-loading is set.
+	Edges OrganizationEdges `json:"edges"`
+}
+
+// OrganizationEdges holds the relations/edges for other nodes in the graph.
+type OrganizationEdges struct {
+	// Register holds the value of the register edge.
+	Register []*Register `json:"register,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [1]bool
+}
+
+// RegisterOrErr returns the Register value or an error if the edge
+// was not loaded in eager-loading.
+func (e OrganizationEdges) RegisterOrErr() ([]*Register, error) {
+	if e.loadedTypes[0] {
+		return e.Register, nil
+	}
+	return nil, &NotLoadedError{edge: "register"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -59,33 +80,34 @@ func (o *Organization) assignValues(columns []string, values []interface{}) erro
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
 			} else if value.Valid {
-				o.Name = new(string)
-				*o.Name = value.String
+				o.Name = value.String
 			}
 		case organization.FieldPeriod:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field period", values[i])
 			} else if value.Valid {
-				o.Period = new(string)
-				*o.Period = value.String
+				o.Period = value.String
 			}
 		case organization.FieldPosition:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field position", values[i])
 			} else if value.Valid {
-				o.Position = new(string)
-				*o.Position = value.String
+				o.Position = value.String
 			}
 		case organization.FieldDetail:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field detail", values[i])
 			} else if value.Valid {
-				o.Detail = new(string)
-				*o.Detail = value.String
+				o.Detail = value.String
 			}
 		}
 	}
 	return nil
+}
+
+// QueryRegister queries the "register" edge of the Organization entity.
+func (o *Organization) QueryRegister() *RegisterQuery {
+	return (&OrganizationClient{config: o.config}).QueryRegister(o)
 }
 
 // Update returns a builder for updating this Organization.
@@ -111,22 +133,14 @@ func (o *Organization) String() string {
 	var builder strings.Builder
 	builder.WriteString("Organization(")
 	builder.WriteString(fmt.Sprintf("id=%v", o.ID))
-	if v := o.Name; v != nil {
-		builder.WriteString(", name=")
-		builder.WriteString(*v)
-	}
-	if v := o.Period; v != nil {
-		builder.WriteString(", period=")
-		builder.WriteString(*v)
-	}
-	if v := o.Position; v != nil {
-		builder.WriteString(", position=")
-		builder.WriteString(*v)
-	}
-	if v := o.Detail; v != nil {
-		builder.WriteString(", detail=")
-		builder.WriteString(*v)
-	}
+	builder.WriteString(", name=")
+	builder.WriteString(o.Name)
+	builder.WriteString(", period=")
+	builder.WriteString(o.Period)
+	builder.WriteString(", position=")
+	builder.WriteString(o.Position)
+	builder.WriteString(", detail=")
+	builder.WriteString(o.Detail)
 	builder.WriteByte(')')
 	return builder.String()
 }

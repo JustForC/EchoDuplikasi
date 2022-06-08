@@ -3,6 +3,7 @@
 package ent
 
 import (
+	"Kynesia/ent/register"
 	"Kynesia/ent/talent"
 	"context"
 	"errors"
@@ -23,6 +24,21 @@ type TalentCreate struct {
 func (tc *TalentCreate) SetName(s string) *TalentCreate {
 	tc.mutation.SetName(s)
 	return tc
+}
+
+// AddRegisterIDs adds the "register" edge to the Register entity by IDs.
+func (tc *TalentCreate) AddRegisterIDs(ids ...int) *TalentCreate {
+	tc.mutation.AddRegisterIDs(ids...)
+	return tc
+}
+
+// AddRegister adds the "register" edges to the Register entity.
+func (tc *TalentCreate) AddRegister(r ...*Register) *TalentCreate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return tc.AddRegisterIDs(ids...)
 }
 
 // Mutation returns the TalentMutation object of the builder.
@@ -132,6 +148,25 @@ func (tc *TalentCreate) createSpec() (*Talent, *sqlgraph.CreateSpec) {
 			Column: talent.FieldName,
 		})
 		_node.Name = value
+	}
+	if nodes := tc.mutation.RegisterIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   talent.RegisterTable,
+			Columns: talent.RegisterPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: register.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

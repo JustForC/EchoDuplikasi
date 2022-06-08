@@ -36,6 +36,10 @@ func Init() *echo.Echo {
 	famCont := controllers.NewFamilyController(db)
 	langCont := controllers.NewLanguageController(db)
 	netCont := controllers.NewNetworthController(db)
+	trainCont := controllers.NewTrainingController(db)
+	orgCont := controllers.NewOrganizationController(db)
+	socialCont := controllers.NewSocialMediaRequest(db)
+	talCont := controllers.NewTalentController(db)
 
 	// Buat Context kosong
 	ctx := context.Background()
@@ -109,6 +113,34 @@ func Init() *echo.Echo {
 	networth.GET("/:id", netCont.ReadByID)
 	networth.PUT("/:id", netCont.Update)
 	networth.DELETE("/:id", netCont.Delete)
+
+	training := e.Group("/training")
+	training.POST("", trainCont.Create)
+	training.GET("", trainCont.ReadAll)
+	training.GET("/:id", trainCont.ReadByID)
+	training.PUT("/:id", trainCont.Update)
+	training.DELETE("/:id", trainCont.Delete)
+
+	organization := e.Group("/organization")
+	organization.POST("", orgCont.Create)
+	organization.GET("", orgCont.ReadAll)
+	organization.GET("/:id", orgCont.ReadByID)
+	organization.PUT("/:id", orgCont.Update)
+	organization.DELETE("/:id", orgCont.Delete)
+
+	social := e.Group("/social")
+	social.POST("", socialCont.Create)
+	social.GET("", socialCont.ReadAll)
+	social.GET("/:id", socialCont.ReadByID)
+	social.PUT("/:id", socialCont.Update)
+	social.DELETE("/:id", socialCont.Delete)
+
+	talent := e.Group("/talent")
+	talent.POST("", talCont.Create)
+	talent.GET("", talCont.ReadAll)
+	talent.GET("/:id", talCont.ReadByID)
+	talent.PUT("/:id", talCont.Update)
+	talent.DELETE("/:id", talCont.Delete)
 
 	return e
 }

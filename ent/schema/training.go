@@ -2,6 +2,8 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/dialect/entsql"
+	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
 
@@ -13,16 +15,19 @@ type Training struct {
 // Fields of the Training.
 func (Training) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("name").Optional().Nillable(),
-		field.String("period").Optional().Nillable(),
-		field.String("year").Optional().Nillable(),
-		field.String("organizer").Optional().Nillable(),
-		field.String("certificate").Optional().Nillable(),
+		field.String("name"),
+		field.String("period"),
+		field.String("year"),
+		field.String("organizer"),
+		field.String("certificate"),
 	}
 }
 
 // Edges of the Training.
 func (Training) Edges() []ent.Edge {
-	return nil
-	// return []ent.Edge{}
+	return []ent.Edge{
+		edge.To("register", Register.Type).Annotations(entsql.Annotation{
+			OnDelete: entsql.Cascade,
+		}),
+	}
 }

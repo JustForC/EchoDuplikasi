@@ -116,10 +116,10 @@ var (
 	// OrganizationsColumns holds the columns for the "organizations" table.
 	OrganizationsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "name", Type: field.TypeString, Nullable: true},
-		{Name: "period", Type: field.TypeString, Nullable: true},
-		{Name: "position", Type: field.TypeString, Nullable: true},
-		{Name: "detail", Type: field.TypeString, Nullable: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "period", Type: field.TypeString},
+		{Name: "position", Type: field.TypeString},
+		{Name: "detail", Type: field.TypeString},
 	}
 	// OrganizationsTable holds the schema information for the "organizations" table.
 	OrganizationsTable = &schema.Table{
@@ -163,10 +163,10 @@ var (
 	// SocialMediaColumns holds the columns for the "social_media" table.
 	SocialMediaColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "instagram", Type: field.TypeString, Nullable: true},
-		{Name: "facebook", Type: field.TypeString, Nullable: true},
-		{Name: "tiktok", Type: field.TypeString, Nullable: true},
-		{Name: "twitter", Type: field.TypeString, Nullable: true},
+		{Name: "instagram", Type: field.TypeString},
+		{Name: "facebook", Type: field.TypeString},
+		{Name: "tiktok", Type: field.TypeString},
+		{Name: "twitter", Type: field.TypeString},
 	}
 	// SocialMediaTable holds the schema information for the "social_media" table.
 	SocialMediaTable = &schema.Table{
@@ -188,11 +188,11 @@ var (
 	// TrainingsColumns holds the columns for the "trainings" table.
 	TrainingsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "name", Type: field.TypeString, Nullable: true},
-		{Name: "period", Type: field.TypeString, Nullable: true},
-		{Name: "year", Type: field.TypeString, Nullable: true},
-		{Name: "organizer", Type: field.TypeString, Nullable: true},
-		{Name: "certificate", Type: field.TypeString, Nullable: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "period", Type: field.TypeString},
+		{Name: "year", Type: field.TypeString},
+		{Name: "organizer", Type: field.TypeString},
+		{Name: "certificate", Type: field.TypeString},
 	}
 	// TrainingsTable holds the schema information for the "trainings" table.
 	TrainingsTable = &schema.Table{
@@ -364,6 +364,31 @@ var (
 			},
 		},
 	}
+	// OrganizationRegisterColumns holds the columns for the "organization_register" table.
+	OrganizationRegisterColumns = []*schema.Column{
+		{Name: "organization_id", Type: field.TypeInt},
+		{Name: "register_id", Type: field.TypeInt},
+	}
+	// OrganizationRegisterTable holds the schema information for the "organization_register" table.
+	OrganizationRegisterTable = &schema.Table{
+		Name:       "organization_register",
+		Columns:    OrganizationRegisterColumns,
+		PrimaryKey: []*schema.Column{OrganizationRegisterColumns[0], OrganizationRegisterColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "organization_register_organization_id",
+				Columns:    []*schema.Column{OrganizationRegisterColumns[0]},
+				RefColumns: []*schema.Column{OrganizationsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "organization_register_register_id",
+				Columns:    []*schema.Column{OrganizationRegisterColumns[1]},
+				RefColumns: []*schema.Column{RegistersColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// RegisterUserColumns holds the columns for the "register_user" table.
 	RegisterUserColumns = []*schema.Column{
 		{Name: "register_id", Type: field.TypeInt},
@@ -414,6 +439,81 @@ var (
 			},
 		},
 	}
+	// SocialMediaRegisterColumns holds the columns for the "social_media_register" table.
+	SocialMediaRegisterColumns = []*schema.Column{
+		{Name: "social_media_id", Type: field.TypeInt},
+		{Name: "register_id", Type: field.TypeInt},
+	}
+	// SocialMediaRegisterTable holds the schema information for the "social_media_register" table.
+	SocialMediaRegisterTable = &schema.Table{
+		Name:       "social_media_register",
+		Columns:    SocialMediaRegisterColumns,
+		PrimaryKey: []*schema.Column{SocialMediaRegisterColumns[0], SocialMediaRegisterColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "social_media_register_social_media_id",
+				Columns:    []*schema.Column{SocialMediaRegisterColumns[0]},
+				RefColumns: []*schema.Column{SocialMediaColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "social_media_register_register_id",
+				Columns:    []*schema.Column{SocialMediaRegisterColumns[1]},
+				RefColumns: []*schema.Column{RegistersColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// TalentRegisterColumns holds the columns for the "talent_register" table.
+	TalentRegisterColumns = []*schema.Column{
+		{Name: "talent_id", Type: field.TypeInt},
+		{Name: "register_id", Type: field.TypeInt},
+	}
+	// TalentRegisterTable holds the schema information for the "talent_register" table.
+	TalentRegisterTable = &schema.Table{
+		Name:       "talent_register",
+		Columns:    TalentRegisterColumns,
+		PrimaryKey: []*schema.Column{TalentRegisterColumns[0], TalentRegisterColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "talent_register_talent_id",
+				Columns:    []*schema.Column{TalentRegisterColumns[0]},
+				RefColumns: []*schema.Column{TalentsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "talent_register_register_id",
+				Columns:    []*schema.Column{TalentRegisterColumns[1]},
+				RefColumns: []*schema.Column{RegistersColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// TrainingRegisterColumns holds the columns for the "training_register" table.
+	TrainingRegisterColumns = []*schema.Column{
+		{Name: "training_id", Type: field.TypeInt},
+		{Name: "register_id", Type: field.TypeInt},
+	}
+	// TrainingRegisterTable holds the schema information for the "training_register" table.
+	TrainingRegisterTable = &schema.Table{
+		Name:       "training_register",
+		Columns:    TrainingRegisterColumns,
+		PrimaryKey: []*schema.Column{TrainingRegisterColumns[0], TrainingRegisterColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "training_register_training_id",
+				Columns:    []*schema.Column{TrainingRegisterColumns[0]},
+				RefColumns: []*schema.Column{TrainingsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "training_register_register_id",
+				Columns:    []*schema.Column{TrainingRegisterColumns[1]},
+				RefColumns: []*schema.Column{RegistersColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		AchievementsTable,
@@ -435,8 +535,12 @@ var (
 		FamilyRegisterTable,
 		LanguageRegisterTable,
 		NetworthRegisterTable,
+		OrganizationRegisterTable,
 		RegisterUserTable,
 		RegisterScholarshipTable,
+		SocialMediaRegisterTable,
+		TalentRegisterTable,
+		TrainingRegisterTable,
 	}
 )
 
@@ -453,8 +557,16 @@ func init() {
 	LanguageRegisterTable.ForeignKeys[1].RefTable = RegistersTable
 	NetworthRegisterTable.ForeignKeys[0].RefTable = NetworthsTable
 	NetworthRegisterTable.ForeignKeys[1].RefTable = RegistersTable
+	OrganizationRegisterTable.ForeignKeys[0].RefTable = OrganizationsTable
+	OrganizationRegisterTable.ForeignKeys[1].RefTable = RegistersTable
 	RegisterUserTable.ForeignKeys[0].RefTable = RegistersTable
 	RegisterUserTable.ForeignKeys[1].RefTable = UsersTable
 	RegisterScholarshipTable.ForeignKeys[0].RefTable = RegistersTable
 	RegisterScholarshipTable.ForeignKeys[1].RefTable = ScholarshipsTable
+	SocialMediaRegisterTable.ForeignKeys[0].RefTable = SocialMediaTable
+	SocialMediaRegisterTable.ForeignKeys[1].RefTable = RegistersTable
+	TalentRegisterTable.ForeignKeys[0].RefTable = TalentsTable
+	TalentRegisterTable.ForeignKeys[1].RefTable = RegistersTable
+	TrainingRegisterTable.ForeignKeys[0].RefTable = TrainingsTable
+	TrainingRegisterTable.ForeignKeys[1].RefTable = RegistersTable
 }
