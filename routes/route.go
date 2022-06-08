@@ -59,7 +59,7 @@ func Init() *echo.Echo {
 
 	// Grouping Route CRUD Scholarship
 	scholarship := e.Group("/scholarship")
-	e.Use(middleware.JWTWithConfig(controllers.Config()))
+	scholarship.Use(middleware.JWTWithConfig(controllers.Config()))
 	scholarship.POST("", scholarCont.Create)
 	scholarship.GET("", scholarCont.ReadAll)
 	scholarship.GET("/:id", scholarCont.ReadByID)
