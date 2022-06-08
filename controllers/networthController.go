@@ -3,6 +3,7 @@ package controllers
 import (
 	"Kynesia/ent"
 	"Kynesia/ent/networth"
+	"Kynesia/ent/register"
 	"Kynesia/helpers"
 	"Kynesia/requests"
 	"context"
@@ -55,7 +56,20 @@ func (netController *networthController) Create(c echo.Context) error {
 func (netController *networthController) ReadAll(c echo.Context) error {
 	ctx := context.Background()
 
-	networth := netController.db.Networth.Query().AllX(ctx)
+	// Take register cookie for id register scholarship
+	scholarship, err := c.Cookie("Register")
+
+	// Check if register cookie exist or not
+	if err != nil {
+		return c.JSON(http.StatusOK, echo.Map{
+			"message": "Select scholarship first!",
+		})
+	}
+
+	// Convert id register scholarship to int
+	scholarshipID, _ := strconv.Atoi(scholarship.Value)
+
+	networth := netController.db.Networth.Query().Where(networth.HasRegisterWith(register.ID(scholarshipID))).AllX(ctx)
 
 	return c.JSON(http.StatusOK, networth)
 }

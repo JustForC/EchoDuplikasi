@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"Kynesia/ent"
+	"Kynesia/ent/register"
 	"Kynesia/ent/socialmedia"
 	"Kynesia/helpers"
 	"Kynesia/requests"
@@ -60,7 +61,20 @@ func (socialController *socialMediaController) Create(c echo.Context) error {
 func (socialController *socialMediaController) ReadAll(c echo.Context) error {
 	ctx := context.Background()
 
-	socialMedia := socialController.db.SocialMedia.Query().AllX(ctx)
+	// Take register cookie for id register scholarship
+	scholarship, err := c.Cookie("Register")
+
+	// Check if register cookie exist or not
+	if err != nil {
+		return c.JSON(http.StatusOK, echo.Map{
+			"message": "Select scholarship first!",
+		})
+	}
+
+	// Convert id register scholarship to int
+	scholarshipID, _ := strconv.Atoi(scholarship.Value)
+
+	socialMedia := socialController.db.SocialMedia.Query().Where(socialmedia.HasRegisterWith(register.ID(scholarshipID))).AllX(ctx)
 
 	return c.JSON(http.StatusOK, socialMedia)
 }

@@ -73,6 +73,7 @@ func Init() *echo.Echo {
 	register.GET("/:scholarshipID", regCont.RegisterScholarship)
 
 	achievement := e.Group("/achievement")
+	achievement.Use(middleware.JWTWithConfig(controllers.Config()))
 	achievement.POST("", achievCont.Create)
 	achievement.GET("", achievCont.ReadAll)
 	achievement.GET("/:id", achievCont.ReadByID)
@@ -80,6 +81,7 @@ func Init() *echo.Echo {
 	achievement.DELETE("/:id", achievCont.Delete)
 
 	biodata := e.Group("/biodata")
+	biodata.Use(middleware.JWTWithConfig(controllers.Config()))
 	biodata.POST("", bioCont.Create)
 	biodata.GET("", bioCont.ReadAll)
 	biodata.GET("/:id", bioCont.ReadByID)
@@ -87,6 +89,7 @@ func Init() *echo.Echo {
 	biodata.DELETE("/:id", bioCont.Delete)
 
 	education := e.Group("/education")
+	education.Use(middleware.JWTWithConfig(controllers.Config()))
 	education.POST("", eduCont.Create)
 	education.GET("", eduCont.ReadAll)
 	education.GET("/:id", eduCont.ReadByID)
@@ -94,6 +97,7 @@ func Init() *echo.Echo {
 	education.DELETE(":/id", eduCont.Delete)
 
 	family := e.Group("/family")
+	family.Use(middleware.JWTWithConfig(controllers.Config()))
 	family.POST("", famCont.Create)
 	family.GET("", famCont.ReadAll)
 	family.GET("/:id", famCont.ReadByID)
@@ -101,6 +105,7 @@ func Init() *echo.Echo {
 	family.DELETE("/:id", famCont.Delete)
 
 	language := e.Group("/language")
+	language.Use(middleware.JWTWithConfig(controllers.Config()))
 	language.POST("", langCont.Create)
 	language.GET("", langCont.ReadAll)
 	language.GET("/:id", langCont.ReadByID)
@@ -108,6 +113,7 @@ func Init() *echo.Echo {
 	language.DELETE("/:id", langCont.Delete)
 
 	networth := e.Group("/networth")
+	networth.Use(middleware.JWTWithConfig(controllers.Config()))
 	networth.POST("", netCont.Create)
 	networth.GET("", netCont.ReadAll)
 	networth.GET("/:id", netCont.ReadByID)
@@ -115,6 +121,7 @@ func Init() *echo.Echo {
 	networth.DELETE("/:id", netCont.Delete)
 
 	training := e.Group("/training")
+	training.Use(middleware.JWTWithConfig(controllers.Config()))
 	training.POST("", trainCont.Create)
 	training.GET("", trainCont.ReadAll)
 	training.GET("/:id", trainCont.ReadByID)
@@ -122,6 +129,7 @@ func Init() *echo.Echo {
 	training.DELETE("/:id", trainCont.Delete)
 
 	organization := e.Group("/organization")
+	organization.Use(middleware.JWTWithConfig(controllers.Config()))
 	organization.POST("", orgCont.Create)
 	organization.GET("", orgCont.ReadAll)
 	organization.GET("/:id", orgCont.ReadByID)
@@ -129,6 +137,7 @@ func Init() *echo.Echo {
 	organization.DELETE("/:id", orgCont.Delete)
 
 	social := e.Group("/social")
+	social.Use(middleware.JWTWithConfig(controllers.Config()))
 	social.POST("", socialCont.Create)
 	social.GET("", socialCont.ReadAll)
 	social.GET("/:id", socialCont.ReadByID)
@@ -136,6 +145,7 @@ func Init() *echo.Echo {
 	social.DELETE("/:id", socialCont.Delete)
 
 	talent := e.Group("/talent")
+	talent.Use(middleware.JWTWithConfig(controllers.Config()))
 	talent.POST("", talCont.Create)
 	talent.GET("", talCont.ReadAll)
 	talent.GET("/:id", talCont.ReadByID)

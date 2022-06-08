@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"Kynesia/ent"
+	"Kynesia/ent/register"
 	"Kynesia/ent/training"
 	"Kynesia/helpers"
 	"Kynesia/requests"
@@ -61,7 +62,20 @@ func (trainController *trainingController) Create(c echo.Context) error {
 func (trainController *trainingController) ReadAll(c echo.Context) error {
 	ctx := context.Background()
 
-	trainings := trainController.db.Training.Query().AllX(ctx)
+	// Take register cookie for id register scholarship
+	scholarship, err := c.Cookie("Register")
+
+	// Check if register cookie exist or not
+	if err != nil {
+		return c.JSON(http.StatusOK, echo.Map{
+			"message": "Select scholarship first!",
+		})
+	}
+
+	// Convert id register scholarship to int
+	scholarshipID, _ := strconv.Atoi(scholarship.Value)
+
+	trainings := trainController.db.Training.Query().Where(training.HasRegisterWith(register.ID(scholarshipID))).AllX(ctx)
 
 	return c.JSON(http.StatusOK, trainings)
 }
@@ -91,9 +105,9 @@ func (trainController *trainingController) Delete(c echo.Context) error {
 
 	id := helpers.ConvertId(c.Param("id"))
 
-	if check := trainController.db.Training.Query().Where(training.ID(id)).ExistX(ctx); check == false{
+	if check := trainController.db.Training.Query().Where(training.ID(id)).ExistX(ctx); check == false {
 		return c.JSON(http.StatusBadRequest, echo.Map{
-			"message":"Training does not exist!",
+			"message": "Training does not exist!",
 		})
 	}
 

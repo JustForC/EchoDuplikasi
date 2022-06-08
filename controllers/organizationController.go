@@ -3,6 +3,7 @@ package controllers
 import (
 	"Kynesia/ent"
 	"Kynesia/ent/organization"
+	"Kynesia/ent/register"
 	"Kynesia/helpers"
 	"Kynesia/requests"
 	"context"
@@ -60,7 +61,20 @@ func (orgController *organizationController) Create(c echo.Context) error {
 func (orgController *organizationController) ReadAll(c echo.Context) error {
 	ctx := context.Background()
 
-	organizations := orgController.db.Organization.Query().AllX(ctx)
+	// Take register cookie for id register scholarship
+	scholarship, err := c.Cookie("Register")
+
+	// Check if register cookie exist or not
+	if err != nil {
+		return c.JSON(http.StatusOK, echo.Map{
+			"message": "Select scholarship first!",
+		})
+	}
+
+	// Convert id register scholarship to int
+	scholarshipID, _ := strconv.Atoi(scholarship.Value)
+
+	organizations := orgController.db.Organization.Query().Where(organization.HasRegisterWith(register.ID(scholarshipID))).AllX(ctx)
 
 	return c.JSON(http.StatusOK, organizations)
 }

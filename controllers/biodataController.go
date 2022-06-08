@@ -3,6 +3,7 @@ package controllers
 import (
 	"Kynesia/ent"
 	"Kynesia/ent/biodata"
+	"Kynesia/ent/register"
 	"Kynesia/helpers"
 	"Kynesia/requests"
 	"context"
@@ -87,7 +88,20 @@ func (bioController *biodataController) Create(c echo.Context) error {
 func (bioController *biodataController) ReadAll(c echo.Context) error {
 	ctx := context.Background()
 
-	biodata := bioController.db.Biodata.Query().AllX(ctx)
+	// Take register cookie for id register scholarship
+	scholarship, err := c.Cookie("Register")
+
+	// Check if register cookie exist or not
+	if err != nil {
+		return c.JSON(http.StatusOK, echo.Map{
+			"message": "Select scholarship first!",
+		})
+	}
+
+	// Convert id register scholarship to int
+	scholarshipID, _ := strconv.Atoi(scholarship.Value)
+
+	biodata := bioController.db.Biodata.Query().Where(biodata.HasRegisterWith(register.ID(scholarshipID))).AllX(ctx)
 
 	return c.JSON(http.StatusOK, biodata)
 }

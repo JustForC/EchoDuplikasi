@@ -3,6 +3,7 @@ package controllers
 import (
 	"Kynesia/ent"
 	"Kynesia/ent/language"
+	"Kynesia/ent/register"
 	"Kynesia/helpers"
 	"Kynesia/requests"
 	"context"
@@ -61,7 +62,20 @@ func (langController *languageController) Create(c echo.Context) error {
 func (langController *languageController) ReadAll(c echo.Context) error {
 	ctx := context.Background()
 
-	languages := langController.db.Language.Query().AllX(ctx)
+	// Take register cookie for id register scholarship
+	scholarship, err := c.Cookie("Register")
+
+	// Check if register cookie exist or not
+	if err != nil {
+		return c.JSON(http.StatusOK, echo.Map{
+			"message": "Select scholarship first!",
+		})
+	}
+
+	// Convert id register scholarship to int
+	scholarshipID, _ := strconv.Atoi(scholarship.Value)
+
+	languages := langController.db.Language.Query().Where(language.HasRegisterWith(register.ID(scholarshipID))).AllX(ctx)
 
 	return c.JSON(http.StatusOK, languages)
 }

@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"Kynesia/ent"
+	"Kynesia/ent/register"
 	"Kynesia/ent/talent"
 	"Kynesia/helpers"
 	"Kynesia/requests"
@@ -55,7 +56,20 @@ func (talController *talentController) Create(c echo.Context) error {
 func (talController *talentController) ReadAll(c echo.Context) error {
 	ctx := context.Background()
 
-	talents := talController.db.Talent.Query().AllX(ctx)
+	// Take register cookie for id register scholarship
+	scholarship, err := c.Cookie("Register")
+
+	// Check if register cookie exist or not
+	if err != nil {
+		return c.JSON(http.StatusOK, echo.Map{
+			"message": "Select scholarship first!",
+		})
+	}
+
+	// Convert id register scholarship to int
+	scholarshipID, _ := strconv.Atoi(scholarship.Value)
+
+	talents := talController.db.Talent.Query().Where(talent.HasRegisterWith(register.ID(scholarshipID))).AllX(ctx)
 
 	return c.JSON(http.StatusOK, talents)
 }
@@ -65,9 +79,9 @@ func (talController *talentController) ReadByID(c echo.Context) error {
 
 	id := helpers.ConvertId(c.Param("id"))
 
-	if check := talController.db.Talent.Query().Where(talent.ID(id)).ExistX(ctx); check == false{
+	if check := talController.db.Talent.Query().Where(talent.ID(id)).ExistX(ctx); check == false {
 		return c.JSON(http.StatusBadRequest, echo.Map{
-			"message":"Talent does not exist!",
+			"message": "Talent does not exist!",
 		})
 	}
 
@@ -85,9 +99,9 @@ func (talController *talentController) Delete(c echo.Context) error {
 
 	id := helpers.ConvertId(c.Param("id"))
 
-	if check := talController.db.Talent.Query().Where(talent.ID(id)).ExistX(ctx); check == false{
+	if check := talController.db.Talent.Query().Where(talent.ID(id)).ExistX(ctx); check == false {
 		return c.JSON(http.StatusOK, echo.Map{
-			"message":"Talent does not exist!",
+			"message": "Talent does not exist!",
 		})
 	}
 

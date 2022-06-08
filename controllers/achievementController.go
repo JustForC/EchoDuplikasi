@@ -3,6 +3,7 @@ package controllers
 import (
 	"Kynesia/ent"
 	"Kynesia/ent/achievement"
+	"Kynesia/ent/register"
 	"Kynesia/requests"
 	"context"
 	"net/http"
@@ -24,7 +25,7 @@ func (achievController *achievementController) Create(c echo.Context) error {
 	req := new(requests.AchievementRequest)
 
 	// Binding request to request model
-	if err := c.Bind(req); req != nil {
+	if err := c.Bind(req); err != nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{
 			"message": err.Error(),
 		})
@@ -53,8 +54,7 @@ func (achievController *achievementController) Create(c echo.Context) error {
 		SetName(req.Name).
 		SetLevel(req.Level).
 		SetOrganizer(req.Organizer).
-		AddRegisterIDs(scholarshipID).
-		SaveX(ctx)
+		AddRegisterIDs(scholarshipID).SaveX(ctx)
 
 	return c.JSON(http.StatusOK, achievement)
 }
@@ -62,8 +62,21 @@ func (achievController *achievementController) Create(c echo.Context) error {
 func (achievController *achievementController) ReadAll(c echo.Context) error {
 	ctx := context.Background()
 
+	// Take register cookie for id register scholarship
+	scholarship, err := c.Cookie("Register")
+
+	// Check if register cookie exist or not
+	if err != nil {
+		return c.JSON(http.StatusOK, echo.Map{
+			"message": "Select scholarship first!",
+		})
+	}
+
+	// Convert id register scholarship to int
+	scholarshipID, _ := strconv.Atoi(scholarship.Value)
+
 	// Taking all achievement
-	achievements := achievController.db.Achievement.Query().AllX(ctx)
+	achievements := achievController.db.Achievement.Query().Where(achievement.HasRegisterWith(register.ID(scholarshipID))).AllX(ctx)
 
 	return c.JSON(http.StatusOK, achievements)
 }
